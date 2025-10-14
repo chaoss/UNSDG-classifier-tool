@@ -22,22 +22,23 @@ const EditModal: React.FC<EditModalProps> = ({
   const [showAddForm, setShowAddForm] = useState(false);
   const [newSDGNumber, setNewSDGNumber] = useState("");
   const [newSDGName, setNewSDGName] = useState("");
-  const [newSDGScore, setNewSDGScore] = useState(0.5);
+  const [newSDGScore, setNewSDGScore] = useState(1.0);
 
-  const updateEditableResult = (sdgKey: string, newValue: number) => {
+  // const updateEditableResult = (sdgKey: string, newValue: number) => {
+  //   setEditableResults((prev) => ({
+  //     ...prev,
+  //     [sdgKey]: newValue,
+  //   }));
+  // };
+
+  const removeSDG = (sdgKey: string) => {
     setEditableResults((prev) => ({
       ...prev,
-      [sdgKey]: newValue,
+      [sdgKey]: 0,
     }));
   };
 
-  const removeSDG = (sdgKey: string) => {
-    setEditableResults((prev) => {
-      const updated = { ...prev };
-      delete updated[sdgKey];
-      return updated;
-    });
-  };
+  console.log("Editable Results:", editableResults);
 
   const addNewSDG = () => {
     if (newSDGNumber && newSDGName) {
@@ -103,7 +104,7 @@ const EditModal: React.FC<EditModalProps> = ({
         <div className="p-6 overflow-y-auto max-h-[60vh]">
           <div className="flex justify-between items-center mb-4">
             <p className="text-gray-600">
-              Adjust the confidence scores for each SDG goal (0.000 to 1.000)
+              Add the SDG&apos;s that are highly relevant to your project
             </p>
             <button
               onClick={() => setShowAddForm(!showAddForm)}
@@ -149,7 +150,7 @@ const EditModal: React.FC<EditModalProps> = ({
                     disabled
                     value={newSDGName}
                     onChange={(e) => setNewSDGName(e.target.value)}
-                    placeholder="e.g., Custom Goal Name"
+                    placeholder="SDG Goal Name"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
@@ -163,9 +164,10 @@ const EditModal: React.FC<EditModalProps> = ({
                     max="1"
                     step="0.01"
                     value={newSDGScore}
-                    onChange={(e) =>
-                      setNewSDGScore(parseFloat(e.target.value) || 0)
-                    }
+                    // onChange={(e) =>
+                    //   setNewSDGScore(parseFloat(e.target.value) || 0)
+                    // }
+                    disabled
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
@@ -230,12 +232,7 @@ const EditModal: React.FC<EditModalProps> = ({
                           max="1"
                           step="0.001"
                           value={confidence}
-                          onChange={(e) =>
-                            updateEditableResult(
-                              sdgKey,
-                              parseFloat(e.target.value) || 0
-                            )
-                          }
+                          disabled
                           className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         />
                         <span className="text-sm text-gray-500">
@@ -244,7 +241,7 @@ const EditModal: React.FC<EditModalProps> = ({
                         <button
                           onClick={() => removeSDG(sdgKey)}
                           className="ml-2 text-red-500 hover:text-red-700 transition-colors"
-                          title="Remove this SDG"
+                          title="Set SDG score to 0"
                         >
                           <RiDeleteBin5Line />
                         </button>
