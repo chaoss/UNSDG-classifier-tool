@@ -1,12 +1,39 @@
 import React from "react";
 
+type SDGValue = {
+  prediction: number;
+  sdg?: {
+    "@type"?: string;
+    code?: string;
+    icon?: string;
+    id?: string;
+    label?: string;
+    name?: string;
+    type?: string;
+    [k: string]: any;
+  };
+};
+
+type SDGData = {
+  prediction: number;
+  sdg: {
+    "@type": string;
+    code: string;
+    icon: string;
+    id: string;
+    label: string;
+    name: string;
+    type: string;
+  };
+};
+
 type SDGCardProps = {
   sdgKey: string;
   confidence: number;
 };
 
 type CardGridProps = {
-  sdgPredictions: Record<string, number>;
+  sdgPredictions: SDGData[] | Record<string, SDGValue>;
 };
 
 const SDGCard = ({ sdgKey, confidence }: SDGCardProps) => {
@@ -24,11 +51,11 @@ const SDGCard = ({ sdgKey, confidence }: SDGCardProps) => {
   let colorClasses = "";
   let bgColor = "";
 
-  if (confidenceScore >= 0.9) {
+  if (confidenceScore >= 0.8) {
     confidenceLevel = "High";
     colorClasses = "text-green-700 border-green-300";
     bgColor = "bg-green-50";
-  } else if (confidenceScore >= 0.7) {
+  } else if (confidenceScore >= 0.6) {
     confidenceLevel = "Medium";
     colorClasses = "text-yellow-700 border-yellow-300";
     bgColor = "bg-yellow-50";
@@ -101,12 +128,39 @@ const SDGCard = ({ sdgKey, confidence }: SDGCardProps) => {
 };
 
 const CardGrid = ({ sdgPredictions }: CardGridProps) => {
+  // Convert object to array if needed
+  const predictionsArray: SDGData[] = Array.isArray(sdgPredictions)
+    ? sdgPredictions
+    : (Object.values(sdgPredictions)
+        .filter((item) => item?.sdg && item.prediction > 0)
+        .map((item) => ({
+          prediction: item.prediction,
+          sdg: {
+            "@type": item.sdg["@type"] || "sdg",
+            code: item.sdg.code || "",
+            icon: item.sdg.icon || "",
+            id: item.sdg.id || "",
+            label: item.sdg.label || "",
+            name: item.sdg.name || "",
+            type: item.sdg.type || "Goal",
+          },
+        })) as SDGData[]);
+
+  console.log("SDG Predictions:", predictionsArray);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {Object.entries(sdgPredictions)
-        .sort(([, a], [, b]) => Number(b) - Number(a))
-        .map(([sdgKey, confidence]) => (
-          <SDGCard key={sdgKey} sdgKey={sdgKey} confidence={confidence} />
+      {/* Left container */}
+      {/* A visual representation probably a Pie Chart or Donut Chart */}
+      {/* Right container */}
+      {predictionsArray
+        .sort((a, b) => b.prediction - a.prediction)
+        .map((item) => (
+          <SDGCard
+            key={item.sdg.code}
+            sdgKey={`SDG ${item.sdg.code}: ${item.sdg.name}`}
+            confidence={item.prediction}
+          />
         ))}
     </div>
   );

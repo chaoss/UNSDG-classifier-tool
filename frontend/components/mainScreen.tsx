@@ -1,77 +1,95 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import Goals from "@/assets/UNSDG Goals Image.jpg";
 import Image from "next/image";
 import axios from "axios";
-import { SlCloudUpload } from "react-icons/sl";
+// import { SlCloudUpload } from "react-icons/sl";
 import { TiTick } from "react-icons/ti";
 import { ImCross } from "react-icons/im";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-interface MainScreenProps {
-  githubUrl: string;
-  setGithubUrl: (url: string) => void;
-  handleInteract: () => void;
-  isLoading: boolean;
-}
-
-const MainScreen: React.FC<MainScreenProps> = ({
-  githubUrl,
-  setGithubUrl,
-  handleInteract,
-  isLoading,
-}) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+const MainScreen: React.FC<{
+  setResults: React.Dispatch<React.SetStateAction<string | null>>;
+}> = ({ setResults }) => {
+  // const fileInputRef = useRef<HTMLInputElement>(null);
+  // const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
 
   const [projectName, setProjectName] = useState("");
   const [projectUrl, setProjectUrl] = useState("");
+  const [problemStatement, setProblemStatement] = useState("");
+  const [longTermGoal, setLongTermGoal] = useState("");
+  const [solutionApproach, setSolutionApproach] = useState("");
+  const [targetAudience, setTargetAudience] = useState("");
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setSelectedFile(file);
-    setUploadMsg(null);
-    if (!file) return;
-  };
+  // const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0] || null;
+  //   setSelectedFile(file);
+  //   setUploadMsg(null);
+  // };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // handleInteract();
-    if (!selectedFile) {
-      setUploadMsg("Please upload an SDG.md file before submitting.");
-    }
+    // if (!selectedFile) {
+    //   setUploadMsg("Please upload an SDG.md file before submitting.");
+    //   return;
+    // }
 
-    if (!projectName || !projectUrl) {
+    if (
+      !projectName ||
+      !projectUrl ||
+      !problemStatement ||
+      !longTermGoal ||
+      !solutionApproach ||
+      !targetAudience
+    ) {
       setUploadMsg("Please fill in all required fields before submitting.");
+      return;
     }
 
     if (projectUrl.includes("github.com") === false) {
       setUploadMsg("Please enter a valid GitHub repository URL.");
+      return;
     }
 
-    const formData = new FormData();
-    formData.append("project_name", projectName);
-    formData.append("project_url", projectUrl);
-    formData.append("file", selectedFile);
+    const finalizedData = {
+      projectName: projectName,
+      projectUrl: projectUrl,
+      problemStatement: problemStatement,
+      longTermGoal: longTermGoal,
+      solutionApproach: solutionApproach,
+      targetAudience: targetAudience,
+    };
+    // const formData = new FormData();
+    // formData.append("project_name", projectName);
+    // formData.append("project_url", projectUrl);
+    // if (selectedFile) {w
+    //   formData.append("file", selectedFile);
+    // }
+
     try {
       setIsUploading(true);
+      setUploadMsg(null);
       const base = "http://127.0.0.1:5000/";
-      const response = await axios.post(base + "api/upload_md", formData, {
+      const response = await axios.post(base + "api/classify", finalizedData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       });
+
       if (!response.statusText || response.statusText !== "OK") {
-        throw new Error("File Upload Failed");
+        throw new Error(response.data.error);
       }
       if (response.data && response.data.repo_url) {
-        setGithubUrl(response.data.repo_url);
-        setUploadMsg("File Uploaded Successfully!");
+        setUploadMsg("Text Analyzing Successfully!");
       }
+
+      console.log("API Response:", response.data);
+      setResults(response.data);
     } catch (error) {
-      console.error("Error uploading file:", error);
-      setUploadMsg("File Upload Failed. Please try again.");
+      console.error("Error:", error);
+      setUploadMsg("Text Analyzing Failed. Please try again.");
     } finally {
       setIsUploading(false);
     }
@@ -94,56 +112,8 @@ const MainScreen: React.FC<MainScreenProps> = ({
                 repository.
               </p>
             </div>
-
-            {/* Input section */}
-            {/* <div className="space-y-4">
-              <div className="flex gap-4">
-                <input
-                  type="text"
-                  placeholder="Paste your github repository link here.."
-                  value={githubUrl}
-                  onChange={(e) => setGithubUrl(e.target.value)}
-                  className="flex-1 px-6 py-4 rounded-2xl border-0 text-gray-600 placeholder-gray-400 text-lg shadow-sm focus:outline-none"
-                />
-                <button
-                  onClick={handleInteract}
-                  disabled={isLoading}
-                  className="px-8 py-4 bg-purple-700 hover:bg-purple-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-2xl transition-colors duration-200 shadow-lg"
-                >
-                  Generate
-                </button>
-              </div>
-            </div> */}
           </div>
 
-          {/* Upload your SDG.md file */}
-          {/* <div className="flex items-center gap-4">
-          <input
-            type="file"
-            ref={fileInputRef}
-            accept=".md, text/markdown"
-            onChange={handleFileChange}
-            className="hidden"
-          />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading}
-            className="px-6 py-3 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-2xl text-gray-800 font-medium border border-gray-200"
-          >
-            {isUploading ? "Uploading..." : "Upload your SDG.md file"}
-          </button>
-          {selectedFile && (
-            <span className="text-sm text-gray-600 truncate max-w-[50%">
-              {selectedFile.name}
-            </span>
-          )}
-          {uploadMsg && (
-            <span className="text-sm text-gray-500">{uploadMsg}</span>
-          )}
-        </div> */}
-
-          {/* Right Illustration */}
           <div className="flex justify-center lg:justify-end">
             <Image
               src={Goals}
@@ -200,8 +170,84 @@ const MainScreen: React.FC<MainScreenProps> = ({
               />
             </div>
 
-            {/* File Upload */}
+            {/* Problem Statement */}
             <div>
+              <label
+                htmlFor="problemStatement"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                Problem Statement
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <textarea
+                id="problemStatement"
+                value={problemStatement}
+                onChange={(e) => setProblemStatement(e.target.value)}
+                placeholder="Describe the problem your project aims to solve"
+                required
+                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none  focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              />
+            </div>
+
+            {/* Long Term Goal */}
+            <div>
+              <label
+                htmlFor="longTermGoal"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                Long Term Goal
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <textarea
+                id="longTermGoal"
+                value={longTermGoal}
+                onChange={(e) => setLongTermGoal(e.target.value)}
+                placeholder="Describe the long term goal of your project"
+                required
+                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none  focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              />
+            </div>
+
+            {/* Solution Approach */}
+            <div>
+              <label
+                htmlFor="solutionApproach"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                Solution Approach
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <textarea
+                id="solutionApproach"
+                value={solutionApproach}
+                onChange={(e) => setSolutionApproach(e.target.value)}
+                placeholder="Describe your solution approach"
+                required
+                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              />
+            </div>
+
+            {/* Target Audience */}
+            <div>
+              <label
+                htmlFor="targetAudience"
+                className="block text-sm font-semibold text-gray-700 mb-2 "
+              >
+                Target Audience
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <textarea
+                id="targetAudience"
+                value={targetAudience}
+                onChange={(e) => setTargetAudience(e.target.value)}
+                placeholder="Describe your target audience"
+                required
+                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              />
+            </div>
+
+            {/* File Upload */}
+            {/* <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 SDG.md file
                 <span className="text-red-500 ml-1">*</span>
@@ -243,7 +289,7 @@ const MainScreen: React.FC<MainScreenProps> = ({
                   File size: {(selectedFile.size / 1024).toFixed(2)} KB
                 </p>
               )}
-            </div>
+            </div> */}
 
             {/* Upload Message */}
             {uploadMsg && (
@@ -276,26 +322,6 @@ const MainScreen: React.FC<MainScreenProps> = ({
             >
               {isUploading ? (
                 <span className="flex items-center justify-center gap-2">
-                  {/* <svg
-                    className="animate-spin h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg> */}
                   <AiOutlineLoading3Quarters className="animate-spin h-5 w-5" />
                   Processing...
                 </span>

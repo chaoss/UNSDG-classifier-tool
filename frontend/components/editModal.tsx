@@ -4,10 +4,24 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { IoAdd } from "react-icons/io5";
 import SDG from "./sdg";
 
+type SDGValue = {
+  prediction: number;
+  sdg?: {
+    "@type"?: string;
+    code?: string;
+    icon?: string;
+    id?: string;
+    label?: string;
+    name?: string;
+    type?: string;
+    [k: string]: any;
+  };
+};
+
 type EditModalProps = {
-  editableResults: Record<string, number>;
+  editableResults: Record<string, SDGValue>;
   setEditableResults: React.Dispatch<
-    React.SetStateAction<Record<string, number>>
+    React.SetStateAction<Record<string, SDGValue>>
   >;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   saveEditedResults: () => void;
@@ -24,41 +38,54 @@ const EditModal: React.FC<EditModalProps> = ({
   const [newSDGName, setNewSDGName] = useState("");
   const [newSDGScore, setNewSDGScore] = useState(1.0);
 
-  // const updateEditableResult = (sdgKey: string, newValue: number) => {
-  //   setEditableResults((prev) => ({
-  //     ...prev,
-  //     [sdgKey]: newValue,
-  //   }));
-  // };
-
   const removeSDG = (sdgKey: string) => {
-    setEditableResults((prev) => ({
-      ...prev,
-      [sdgKey]: 0,
-    }));
+    setEditableResults((prev) => {
+      const cur = prev[sdgKey] || {};
+      return {
+        ...prev,
+        [sdgKey]: { ...(cur as SDGValue), prediction: 0 },
+      };
+    });
   };
 
   console.log("Editable Results:", editableResults);
 
   const addNewSDG = () => {
     if (newSDGNumber && newSDGName) {
-      const sdgKey = `SDG ${newSDGNumber}: ${newSDGName}`;
+      const sdgKey = Object.keys(editableResults).length;
 
       // Check if SDG already exists
-      if (editableResults[sdgKey]) {
+      const exists = Object.values(editableResults).some(
+        (value) => String(value?.sdg?.code) === String(newSDGNumber)
+      );
+
+      if (exists) {
         alert("This SDG already exists!");
         return;
       }
 
+      const newValue: SDGValue = {
+        prediction: newSDGScore,
+        sdg: {
+          "@type": "sdg",
+          code: String(newSDGNumber),
+          icon: `https://aurora-sdg-classifier.uni-due.de/resources/sdg_icon_${newSDGNumber}.png`,
+          id: `http://metadata.un.org/sdg/${newSDGNumber}`,
+          name: newSDGName,
+          label: `Goal ${newSDGNumber}`,
+          type: "Goal",
+        },
+      };
+
       setEditableResults((prev) => ({
         ...prev,
-        [sdgKey]: newSDGScore,
+        [sdgKey]: newValue,
       }));
 
       // Reset form
       setNewSDGNumber("");
       setNewSDGName("");
-      setNewSDGScore(0.5);
+      setNewSDGScore(1.0);
       setShowAddForm(false);
     }
   };
@@ -66,7 +93,7 @@ const EditModal: React.FC<EditModalProps> = ({
   const cancelAddSDG = () => {
     setNewSDGNumber("");
     setNewSDGName("");
-    setNewSDGScore(0.5);
+    setNewSDGScore(1.0);
     setShowAddForm(false);
   };
 
@@ -164,9 +191,6 @@ const EditModal: React.FC<EditModalProps> = ({
                     max="1"
                     step="0.01"
                     value={newSDGScore}
-                    // onChange={(e) =>
-                    //   setNewSDGScore(parseFloat(e.target.value) || 0)
-                    // }
                     disabled
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
@@ -191,11 +215,15 @@ const EditModal: React.FC<EditModalProps> = ({
 
           <div className="space-y-4">
             {Object.entries(editableResults)
-              .sort(([, a], [, b]) => Number(b) - Number(a))
-              .map(([sdgKey, confidence]) => {
-                const sdgMatch = sdgKey.match(/SDG (\d+): (.+)/);
-                const sdgNumber = sdgMatch ? sdgMatch[1] : "";
-                const sdgName = sdgMatch ? sdgMatch[2] : sdgKey;
+              .sort(
+                ([, a], [, b]) =>
+                  Number(b.prediction ?? 0) - Number(a.prediction ?? 0)
+              )
+              .map(([sdgKey, value]) => {
+                const confidence = value.prediction ?? 0;
+                const sdgNumber =
+                  value?.sdg?.code ?? sdgKey.match(/SDG (\d+):/)?.[1] ?? "";
+                const sdgName = value?.sdg?.name ?? sdgKey;
 
                 return (
                   <div
