@@ -21,28 +21,29 @@ def classify():
     data = request.json
     projectName = data.get('projectName')
     projectUrl  = data.get('projectUrl')
-    problemStatement = data.get('problemStatement')
-    longTermGoal = data.get('longTermGoal')
-    solutionApproach = data.get('solutionApproach')
-    targetAudience = data.get('targetAudience')
+    projectDescription = data.get('projectDescription')
+    # problemStatement = data.get('problemStatement')
+    # longTermGoal = data.get('longTermGoal')
+    # solutionApproach = data.get('solutionApproach')
+    # targetAudience = data.get('targetAudience')
 
     if not projectUrl:
         return jsonify({'error': 'URL is required'}), 400
     
-    text = "\n".join([
-        projectName or "",
-        problemStatement or "",
-        solutionApproach or "",  
-        longTermGoal or "",
-        targetAudience or ""   
-    ])
+    # text = "\n".join([
+    #     projectName or "",
+    #     problemStatement or "",
+    #     solutionApproach or "",  
+    #     longTermGoal or "",
+    #     targetAudience or ""   
+    # ])
 
     # print("Classifying text:", text)
 
-    result = aurora_main(text)
+    result = aurora_main(projectDescription)
 
     # Go through result.get("predictions") and remove all entries with value less than 0.4
-  
+    # print("Raw predictions:", result.get("predictions", []))
 
     preds = result.get("predictions", []) or []
     filtered_predictions = [p for p in preds if (p.get("prediction") or 0) > 0.4]
