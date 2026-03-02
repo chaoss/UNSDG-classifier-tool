@@ -6,7 +6,7 @@ import RawResults from "./rawResults";
 import EditModal from "./editModal";
 import { SDGValue, ResultsData } from "@/types/main";
 import axios from "axios";
-
+import { IoIosInformationCircleOutline } from "react-icons/io";
 /*
 Results Component
 - Displays the results of the SDG analysis
@@ -237,7 +237,16 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                     {activeTab === "aurora" && (
                       <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>
                     )}
-                    <span className="ml-2">Aurora Model</span>
+                    <span className="ml-2 flex items-center">
+                      Aurora Model
+                      <span className="relative group inline-block">
+                        <IoIosInformationCircleOutline className="ml-2 text-purple-600 cursor-help" />
+                        <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg shadow-lg z-10 whitespace-normal">
+                          This is a third party API from EU Alliance Research
+                          <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-800"></span>
+                        </span>
+                      </span>
+                    </span>
                   </button>
 
                   <button
@@ -254,6 +263,14 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                     )}
                     <span className="ml-2">
                       Sentence Transformer Description
+                      <span className="relative group inline-block">
+                        <IoIosInformationCircleOutline className="ml-2 text-purple-600 cursor-help" />
+                        <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg shadow-lg z-10 whitespace-normal">
+                          This is a sentence transformer modal from Huggingface
+                          that analyzes the project description.
+                          <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-800"></span>
+                        </span>
+                      </span>
                     </span>
                   </button>
 
@@ -269,7 +286,18 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                     {activeTab === "st-url" && (
                       <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>
                     )}
-                    <span className="ml-2">Sentence Transformer URL</span>
+                    <span className="ml-2">
+                      Sentence Transformer URL
+                      <span className="relative group inline-block">
+                        <IoIosInformationCircleOutline className="ml-2 text-purple-600 cursor-help" />
+                        <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg shadow-lg z-10 whitespace-normal">
+                          This is a sentence transformer modal from Huggingface
+                          that analyzes the github repository URL and all its
+                          metadata.
+                          <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-800"></span>
+                        </span>
+                      </span>
+                    </span>
                   </button>
                 </div>
               </div>
