@@ -76,10 +76,7 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
       );
 
       if (response) {
-        setResults({
-          ...results,
-          predictions: response.data.predictions,
-        });
+        setResults(response as ResultsData);
       }
     } catch (error) {
       console.error("Error fetching data for tab:", error);
