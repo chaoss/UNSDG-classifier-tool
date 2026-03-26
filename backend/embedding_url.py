@@ -2,6 +2,7 @@ import os
 import re
 import base64
 import requests
+from urllib.parse import urlparse
 from typing import List, Dict, Tuple
 from transformers import pipeline
 from sentence_transformers import SentenceTransformer
@@ -13,16 +14,33 @@ GITHUB_API = "https://api.github.com"
 
 def parse_repo(url: str) -> Tuple[str, str]:
     """
-    Accepts URLs like https://github.com/owner/repo or owner/repo.
+    Accepts strictly URLs like https://github.com/owner/repo or owner/repo.
     Returns (owner, repo).
+    Raises ValueError if URL is invalid.
     """
     u = url.strip()
-    if u.startswith("http"):
-        parts = u.rstrip("/").split("/")
-        owner, repo = parts[-2], parts[-1]
+    if u.startswith("http://") or u.startswith("https://"):
+        parsed = urlparse(u)
+        if parsed.hostname not in ["github.com", "www.github.com"]:
+            raise ValueError(f"Invalid domain (expected github.com): {url}")
+            
+        path_parts = parsed.path.strip("/").split("/")
+        if len(path_parts) != 2:
+            raise ValueError(f"Invalid repository URL format (expected https://github.com/owner/repo): {url}")
+            
+        owner, repo = path_parts[0], path_parts[1]
+        if repo.endswith(".git"):
+            repo = repo[:-4]
+        return owner, repo
     else:
-        owner, repo = u.split("/", 1)
-    return owner, repo
+        parts = u.strip("/").split("/")
+        if len(parts) != 2:
+            raise ValueError(f"Invalid repository format (expected owner/repo): {url}")
+            
+        owner, repo = parts[0], parts[1]
+        if repo.endswith(".git"):
+            repo = repo[:-4]
+        return owner, repo
 
 def gh_get(path: str, params: dict = None, accept_preview: bool = False) -> dict:
     headers = {"User-Agent": "sdg-classifier"}

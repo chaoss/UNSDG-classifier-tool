@@ -1,5 +1,6 @@
 import uuid
 import json
+import requests
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from datetime import datetime, UTC
@@ -28,9 +29,9 @@ def classify_aurora():
 
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
-    
-   
-    
+
+
+
     # 1. Aurora API Model (text-based)
     print("\n===== RUNNING AURORA API MODEL =====")
     try:
@@ -39,15 +40,15 @@ def classify_aurora():
             project_name=projectName,
             project_url=projectUrl
         )
-       
+
         print("Aurora API model completed successfully")
     except Exception as e:
         print(f"Aurora API model failed: {str(e)}")
-        aurora_result = {
+        return jsonify({
             "error": str(e),
             "message": "Aurora API classification failed"
-        }
-    
+        }), 500
+
     # Transform predictions to array format
     sdg_preds = aurora_result.get("sdg_predictions", {})
     if isinstance(sdg_preds, dict):
@@ -57,9 +58,9 @@ def classify_aurora():
         ]
     else:
         preds = sdg_preds  # Already in correct format
-    
+
     filtered_predictions = [p for p in preds if p.get("prediction", 0) > 0.4]
-    
+
     return jsonify({
         "projectName": aurora_result.get("project_name"),
         "projectUrl": aurora_result.get("project_url"),
@@ -76,8 +77,8 @@ def classify_st_description():
 
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
-    
-  
+
+
     # 3. Sentence Transformer Description Model (text-based)
     print("\n===== RUNNING SENTENCE TRANSFORMER DESCRIPTION MODEL =====")
     try:
@@ -86,7 +87,7 @@ def classify_st_description():
             project_name=projectName,
             project_url=projectUrl
         )
-       
+
         print("ST Description model completed successfully")
     except Exception as e:
         print(f"ST Description model failed: {str(e)}")
@@ -95,9 +96,9 @@ def classify_st_description():
             "message": "Sentence Transformer Description model classification failed"
         }
         return jsonify(st_desc_result), 500
-    
+
     # Convert st-description-model predictions to the expected format for logging
-    # (keeping backward compatibility with existing data/predictions.json structure)   
+    # (keeping backward compatibility with existing data/predictions.json structure)
     preds = [
         {"sdg": name, "prediction": score}
         for name, score in st_desc_result.get("sdg_predictions", {}).items()
@@ -119,22 +120,31 @@ def classify_st_url():
 
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
-    
-   
+
+
 
      # 2. Sentence Transformer URL Model (GitHub URL-based)
     print("\n===== RUNNING SENTENCE TRANSFORMER URL MODEL =====")
     if projectUrl:
         try:
             st_url_result = classify_url(projectUrl)
-            
+
             print("ST URL model completed successfully")
+        except ValueError as ve:
+            print(f"ST URL model invalid URL: {str(ve)}")
+            return jsonify({'error': str(ve)}), 400
+        except requests.exceptions.HTTPError as he:
+            print(f"ST URL model HTTP Error: {str(he)}")
+            return jsonify({
+                "error": f"Failed to fetch repository data. Please ensure the repository is public and exists. ({str(he)})",
+                "message": "Sentence Transformer URL model classification failed"
+            }), 400
         except Exception as e:
             print(f"ST URL model failed: {str(e)}")
-            st_url_result = {
+            return jsonify({
                 "error": str(e),
                 "message": "Sentence Transformer URL model classification failed"
-            }
+            }), 500
     else:
         st_url_result = {
             "message": "No project URL provided, skipping URL-based classification"
@@ -150,7 +160,7 @@ def classify_st_url():
             "projectUrl": projectUrl,
             "predictions": filtered_predictions,
         }), 200
-    
+
 # @app.post("/api/upload-md")
 # def aurora_api():
 
@@ -161,7 +171,7 @@ def classify_st_url():
 #         return jsonify({"error": "Project name is required"}), 400
 #     if not project_url:
 #         return jsonify({"error": "Project URL is required"}), 400
-    
+
 
 #     if "file" not in request.files:
 #         return jsonify({"error":"No file part named 'file' in form-data."}), 400
@@ -172,20 +182,20 @@ def classify_st_url():
 #     if not allowed_ext(f.filename):
 #         return jsonify({"error" : "Only .md files are allowed."}), 400
 
-   
+
 #     filename = secure_filename(f.filename)
 
 #     text = f.read().decode("utf-8", errors="replace")
 
 #     result = aurora_main(text)
-    
+
 #     return jsonify({
 #         "project_name": project_name,
 #         "project_url": project_url,
 #         "filename": filename,
 #         "size_bytes": len(text.encode("utf-8")),
-#         "content_preview": text[:2000],  
-#         "predictions": result.get("predictions", "") 
+#         "content_preview": text[:2000],
+#         "predictions": result.get("predictions", "")
 #     }), 200
 
 if __name__ == '__main__':
