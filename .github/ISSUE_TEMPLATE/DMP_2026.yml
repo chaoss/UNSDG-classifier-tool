@@ -5,8 +5,8 @@ labels: ["DMP 2026"]
 body:
   - type: markdown
     attributes:
-    value: |
-    Project Link: https://github.com/chaoss/UNSDG-classifier-tool
+      value: |
+        Project Link: https://github.com/chaoss/UNSDG-classifier-tool
 
   - type: textarea
     id: ticket-description
