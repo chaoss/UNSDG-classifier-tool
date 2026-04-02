@@ -1,5 +1,5 @@
 import React from "react";
-import { SDGValue, SDGCardProps, CardGridProps } from "@/types/main";
+import { SDGValue, CardGridProps } from "@/types/main";
 
 /*
 CardGrid Component
@@ -7,10 +7,13 @@ CardGrid Component
 - Each card shows SDG number, name, confidence score, and a progress bar
 */
 
-const SDGCard = ({ sdgKey, confidence }: SDGCardProps) => {
-  const sdgMatch = sdgKey.match(/SDG (\d+): (.+)/);
-  const sdgNumber = sdgMatch ? sdgMatch[1] : "";
-  const sdgName = sdgMatch ? sdgMatch[2] : sdgKey;
+type SDGCardProps = {
+  sdgNumber: string;
+  sdgName: string;
+  confidence: number;
+};
+
+const SDGCard = ({ sdgNumber, sdgName, confidence }: SDGCardProps) => {
 
   const confidenceScore = Number(confidence);
   const confidencePercentage = Math.round(confidenceScore * 100);
@@ -93,36 +96,48 @@ const SDGCard = ({ sdgKey, confidence }: SDGCardProps) => {
 };
 
 const CardGrid = ({ sdgPredictions }: CardGridProps) => {
-  const predictionsArray: SDGValue[] = Array.isArray(sdgPredictions)
-    ? sdgPredictions
-    : (Object.values(sdgPredictions ?? {})
-        .filter((item): item is SDGValue => {
-          return item.sdg != null && item.prediction > 0;
-        })
-        .map((item) => ({
-          prediction: item.prediction,
-          sdg: item.sdg,
-        })) as SDGValue[]);
+  const predictionsArray: Array<SDGValue & { sourceKey: string }> =
+    Array.isArray(sdgPredictions)
+      ? sdgPredictions.map((item, index) => ({
+          ...item,
+          sourceKey: String(index),
+        }))
+      : (Object.entries(sdgPredictions ?? {})
+          .map(([sourceKey, item]) => {
+            if (typeof item === "number") {
+              return { prediction: item, sourceKey };
+            }
+            return { ...item, sourceKey };
+          })
+          .filter((item): item is SDGValue & { sourceKey: string } => {
+            return item.sdg != null && item.prediction > 0;
+          }) as Array<SDGValue & { sourceKey: string }>);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {predictionsArray
         .sort((a, b) => b.prediction - a.prediction)
         .map((item, index) => {
-          // Handle both string and object formats for sdg
-          const sdgKey =
+          const fallbackNumberFromKey = item.sourceKey.match(/\d+/)?.[0];
+          const sdgNumber =
             typeof item.sdg === "string"
-              ? item.sdg
-              : `SDG ${item.sdg?.code}: ${item.sdg?.name}`;
-          const sdgCode =
+              ? item.sdg.match(/\d+/)?.[0] ||
+                fallbackNumberFromKey ||
+                (index + 1).toString()
+              : item.sdg?.code || fallbackNumberFromKey || (index + 1).toString();
+          const sdgName =
             typeof item.sdg === "string"
-              ? item.sdg.match(/SDG (\d+)/)?.[1] || index.toString()
-              : item.sdg?.code || index.toString();
+              ? item.sdg.replace(/^SDG\s*\d+\s*:?\s*/i, "").trim() || item.sdg
+              : item.sdg?.name ||
+                item.sdg?.label ||
+                item.sourceKey.replace(/^SDG\s*\d+\s*:?\s*/i, "").trim() ||
+                `SDG ${sdgNumber}`;
 
           return (
             <SDGCard
-              key={sdgCode}
-              sdgKey={sdgKey}
+              key={`${sdgNumber}-${index}`}
+              sdgNumber={sdgNumber}
+              sdgName={sdgName}
               confidence={item.prediction}
             />
           );

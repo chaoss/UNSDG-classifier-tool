@@ -19,6 +19,26 @@ const EditModal: React.FC<EditModalProps> = ({
   setIsModalOpen,
   saveEditedResults,
 }) => {
+  const parseSdgFromString = (value: string) => {
+    const number = value.match(/\d+/)?.[0] ?? "";
+    const name = value.replace(/^SDG\s*\d+\s*:?\s*/i, "").trim() || value;
+    return { number, name };
+  };
+
+  const getSdgNumber = (sdgKey: string, value: SDGValue) => {
+    if (typeof value.sdg === "string") {
+      return parseSdgFromString(value.sdg).number || sdgKey;
+    }
+    return value?.sdg?.code ?? parseSdgFromString(sdgKey).number ?? sdgKey;
+  };
+
+  const getSdgName = (sdgKey: string, value: SDGValue) => {
+    if (typeof value.sdg === "string") {
+      return parseSdgFromString(value.sdg).name;
+    }
+    return value?.sdg?.name ?? value?.sdg?.label ?? sdgKey;
+  };
+
   const [showAddForm, setShowAddForm] = useState(false);
   const [newSDGNumber, setNewSDGNumber] = useState("");
   const [newSDGName, setNewSDGName] = useState("");
@@ -40,7 +60,7 @@ const EditModal: React.FC<EditModalProps> = ({
     if (newSDGNumber && newSDGName) {
       const sdgKey = Object.keys(editableResults).length;
       const exists = Object.values(editableResults).some(
-        (value) => String(value?.sdg?.code) === String(newSDGNumber),
+        (value) => String(getSdgNumber("", value)) === String(newSDGNumber),
       );
 
       if (exists) {
@@ -201,9 +221,8 @@ const EditModal: React.FC<EditModalProps> = ({
               )
               .map(([sdgKey, value]) => {
                 const confidence = value.prediction ?? 0;
-                const sdgNumber =
-                  value?.sdg?.code ?? sdgKey.match(/SDG (\d+):/)?.[1] ?? "";
-                const sdgName = value?.sdg?.name ?? sdgKey;
+                const sdgNumber = getSdgNumber(sdgKey, value);
+                const sdgName = getSdgName(sdgKey, value);
 
                 return (
                   <div
