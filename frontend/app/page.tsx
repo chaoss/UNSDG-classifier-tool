@@ -4,36 +4,51 @@ import { useState } from "react";
 import Results from "@/components/results";
 import Error from "@/components/error";
 import MainScreen from "@/components/mainScreen";
+import BatchScreen from "@/components/batchScreen";
 import { ResultsData } from "@/types/main";
 
-/**
- * Main Application Component - UN SDG Advocate
- *
- * Flow:
- * 1. User enters Project Name, GitHub repository URL and project SDG relevance description
- * 2. The data is then sent to Flask backend for analysis
- * 4. Results show SDG predictions with confidence levels
- * 5. User can edit predictions via modal interface
- * 6. Edited results are saved and stored in state
- */
 export default function Home() {
   const [results, setResults] = useState<ResultsData | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  console.log("Current Results State:", results);
+  const [mode, setMode] = useState<"single" | "batch">("single");
 
   return (
     <div className="min-h-screen bg-gradient-to-br">
       {results ? (
-        <Results
-          results={results}
-          setResults={setResults}
-          setError={setError}
-        />
+        <Results results={results} setResults={setResults} setError={setError} />
       ) : error ? (
         <Error error={error} setError={setError} setResults={setResults} />
       ) : (
-        <MainScreen setResults={setResults} />
+        <>
+          <div className="flex justify-center gap-4 pt-6">
+            <button
+              onClick={() => setMode("single")}
+              className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                mode === "single"
+                  ? "bg-purple-700 text-white"
+                  : "bg-white text-purple-700 border border-purple-700"
+              }`}
+            >
+              Single Repository
+            </button>
+            <button
+              onClick={() => setMode("batch")}
+              className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                mode === "batch"
+                  ? "bg-purple-700 text-white"
+                  : "bg-white text-purple-700 border border-purple-700"
+              }`}
+            >
+              Batch Analysis
+            </button>
+          </div>
+
+          {mode === "single" ? (
+            <MainScreen setResults={setResults} />
+          ) : (
+            <BatchScreen />
+          )}
+        </>
       )}
     </div>
   );

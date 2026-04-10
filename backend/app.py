@@ -1,6 +1,7 @@
 import os
 # import uuid
 # import json
+import time
 import requests
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
@@ -198,6 +199,85 @@ def osdg_external_api():
         "projectUrl": projectUrl,
         "predictions": osdg_result
     }), 200
+@app.route('/api/classify_batch', methods=['POST'])
+def classify_batch():
+    data = request.get_json()
+    repositories = data.get('repositories', [])
+
+    if not repositories:
+        return jsonify({"error": "No repositories provided"}), 400
+
+    if len(repositories) > 20:
+        return jsonify({"error": "Maximum 20 repositories allowed per batch"}), 400
+
+    results = []
+
+    for repo in repositories:
+        project_name = repo.get('projectName', '')
+        project_url = repo.get('projectUrl', '')
+        project_description = repo.get('projectDescription', '')
+
+        if not project_url:
+            results.append({
+                "projectName": project_name,
+                "projectUrl": project_url,
+                "status": "error",
+                "error": "Missing project URL"
+            })
+            continue
+
+        if not project_description:
+            results.append({
+                "projectName": project_name,
+                "projectUrl": project_url,
+                "status": "error",
+                "error": "Missing project description"
+            })
+            continue
+
+        try:
+            aurora_result = aurora_classify(
+                text=project_description,
+                project_name=project_name,
+                project_url=project_url
+            )
+
+            sdg_preds = aurora_result.get("sdg_predictions", {})
+
+            if isinstance(sdg_preds, dict):
+                preds = [
+                    {"sdg": name, "prediction": score}
+                    for name, score in sdg_preds.items()
+                ]
+            else:
+                preds = sdg_preds
+
+            filtered = [p for p in preds if p.get("prediction", 0) > 0.4]
+            top = max(filtered, key=lambda x: x['prediction']) if filtered else None
+
+            results.append({
+                "projectName": project_name,
+                "projectUrl": project_url,
+                "status": "success",
+                "topSdg": top['sdg'] if top else "N/A",
+                "confidence": round(top['prediction'], 3) if top else 0,
+                "allPredictions": filtered
+            })
+
+        except Exception as e:
+            print(f"Batch classification failed for {project_url}: {str(e)}")
+            results.append({
+                "projectName": project_name,
+                "projectUrl": project_url,
+                "status": "error",
+                "error": str(e)
+            })
+
+        time.sleep(1)  # Rate limit protection
+
+    return jsonify({"results": results, "total": len(results)}), 200
+
+
 # @app.post("/api/upload-md")
 # def aurora_api():
 
