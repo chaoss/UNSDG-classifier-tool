@@ -50,6 +50,14 @@ def classify_aurora():
             "message": "Aurora API classification failed"
         }), 500
 
+    # Check if aurora_api.py caught an error internally and returned it in the dict
+    if "error" in aurora_result:
+        print(f"Aurora API returned error: {aurora_result['error']}")
+        return jsonify({
+            "error": aurora_result["error"],
+            "message": aurora_result.get("message", "Aurora API classification failed")
+        }), 502
+
     # Transform predictions to array format
     sdg_preds = aurora_result.get("sdg_predictions", {})
     if isinstance(sdg_preds, dict):
@@ -188,10 +196,11 @@ def osdg_external_api():
         osdg_result = osdg_response.json()
     except requests.exceptions.RequestException as e:
         print(f"OSDG API request failed: {str(e)}")
+        status_code = e.response.status_code if e.response is not None else 500
         return jsonify({
             "error": f"Failed to connect to OSDG API: {str(e)}",
             "message": "OSDG API classification failed"
-        }), 500
+        }), status_code
 
     return jsonify({
         "projectName": projectName,
