@@ -55,3 +55,4 @@ If you find a bug or want to request a feature, open an issue with:
 - Steps to reproduce
 - Expected and actual behavior
 - Relevant logs, screenshots, or links
+- Create an issue beforehand and discuss with maintainers
