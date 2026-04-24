@@ -47,6 +47,7 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
     };
 
     try {
+      console.log(`Starting to fetch data for model: ${newTab}`);
       // const base = "http://127.0.0.1:5000/";
       // let endpoint = "";
 
@@ -76,9 +77,15 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
       );
 
       if (response) {
+        console.log("Data fetched successfully from backend");
+        console.log("FULL RESPONSE:", response);
+        console.log("PREDICTIONS:", response.data.data.predictions);
         setResults(response as ResultsData);
+      } else {
+        console.log("No response received from backend");
       }
     } catch (error) {
+      console.error("Failed to fetch data from backend:", error);
       console.error("Error fetching data for tab:", error);
       setError("Failed to load data for selected model. Please try again.");
     } finally {
@@ -230,11 +237,10 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                   <button
                     onClick={() => handleTabChange("aurora")}
                     disabled={isLoadingTab}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${
-                      activeTab === "aurora"
-                        ? "bg-purple-50 text-purple-700 font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${activeTab === "aurora"
+                      ? "bg-purple-50 text-purple-700 font-semibold"
+                      : "text-gray-700 hover:bg-gray-50"
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {activeTab === "aurora" && (
                       <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>
@@ -254,11 +260,10 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                   <button
                     onClick={() => handleTabChange("st-description")}
                     disabled={isLoadingTab}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${
-                      activeTab === "st-description"
-                        ? "bg-purple-50 text-purple-700 font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${activeTab === "st-description"
+                      ? "bg-purple-50 text-purple-700 font-semibold"
+                      : "text-gray-700 hover:bg-gray-50"
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {activeTab === "st-description" && (
                       <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>
@@ -279,11 +284,10 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                   <button
                     onClick={() => handleTabChange("st-url")}
                     disabled={isLoadingTab}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${
-                      activeTab === "st-url"
-                        ? "bg-purple-50 text-purple-700 font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${activeTab === "st-url"
+                      ? "bg-purple-50 text-purple-700 font-semibold"
+                      : "text-gray-700 hover:bg-gray-50"
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {activeTab === "st-url" && (
                       <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>

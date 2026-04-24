@@ -1,9 +1,27 @@
-pipeline
-sentence-transformers
-transformers
-requests
-numpy
-accelerate
-flask
-flask-cors
-Flask-UUID
+# Core backend
+flask==2.3.3
+flask-cors==4.0.0
+requests==2.31.0
+
+# ML / NLP stack (stable compatible set)
+transformers==4.28.1
+sentence-transformers==2.2.2
+huggingface_hub==0.13.4
+tokenizers==0.13.2
+accelerate==0.24.1
+
+# PyTorch (CPU-safe stable version)
+torch==2.1.2
+
+# Serialization / model compatibility
+protobuf==3.20.3
+#older 
+# pipeline
+# sentence-transformers
+# transformers
+# requests
+# numpy
+# accelerate
+# flask
+# flask-cors
+# Flask-UUID
