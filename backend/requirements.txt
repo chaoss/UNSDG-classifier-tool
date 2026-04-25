@@ -7,3 +7,4 @@ accelerate
 flask
 flask-cors
 Flask-UUID
+flasgger
