@@ -1,10 +1,10 @@
-import os
 # import uuid
 # import json
 import requests
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from datetime import datetime, UTC
+import config
 from embedding_description import main as classify_description
 from embedding_url import main as classify_url
 from aurora_api import main as aurora_classify
@@ -172,17 +172,24 @@ def osdg_external_api():
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
 
+    if not config.OSDG_TOKEN:
+        return jsonify({
+            "error": "OSDG_TOKEN is not configured",
+            "message": (
+                "Set OSDG_TOKEN in backend/.env or the host environment "
+                "before using the OSDG classifier"
+            )
+        }), 503
+
     # Call the external OSDG API
     try:
         osdg_response = requests.post(
-            "http://20.73.166.85/label_text",
+            config.OSDG_API_URL,
             json={
                 "text": projectDescription
             },
-            headers={
-                "token": os.environ.get("OSDG_TOKEN")  # Ensure you have the OSDG token set in your environment variables
-            },
-            timeout=1000  # Set a timeout for the request
+            headers={"token": config.OSDG_TOKEN},
+            timeout=config.HTTP_TIMEOUT_SECONDS
         )
         osdg_response.raise_for_status()  # Raise an error for bad status codes
         osdg_result = osdg_response.json()

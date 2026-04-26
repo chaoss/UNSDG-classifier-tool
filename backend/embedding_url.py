@@ -1,4 +1,3 @@
-import os
 import re
 import base64
 import requests
@@ -7,10 +6,11 @@ from typing import List, Dict, Tuple
 from transformers import pipeline
 from sentence_transformers import SentenceTransformer
 import numpy as np
+import config
 from sdg_constants import SDG_LABELS, SDG_NAMES, SDG_DESCS
 
 # --- GitHub fetch utilities ---
-GITHUB_API = "https://api.github.com"
+GITHUB_API = config.GITHUB_API_URL
 
 def parse_repo(url: str) -> Tuple[str, str]:
     """
@@ -44,15 +44,14 @@ def parse_repo(url: str) -> Tuple[str, str]:
 
 def gh_get(path: str, params: dict = None, accept_preview: bool = False) -> dict:
     headers = {"User-Agent": "sdg-classifier"}
-    token = os.environ.get("GITHUB_TOKEN")
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
+    if config.GITHUB_TOKEN:
+        headers["Authorization"] = f"Bearer {config.GITHUB_TOKEN}"
     if accept_preview:
         # topics API requires a custom media type on some API versions
         headers["Accept"] = "application/vnd.github.mercy-preview+json, application/vnd.github+json"
     else:
         headers["Accept"] = "application/vnd.github+json"
-    r = requests.get(GITHUB_API + path, headers=headers, params=params, timeout=30)
+    r = requests.get(GITHUB_API + path, headers=headers, params=params, timeout=config.HTTP_TIMEOUT_SECONDS)
     r.raise_for_status()
     return r.json()
 
@@ -216,4 +215,4 @@ def main(url: str):
 
 # if __name__ == "__main__":
 #     url = "https://github.com/processing/p5.js"
-#     main(url) 
+#     main(url)
