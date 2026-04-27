@@ -50,6 +50,8 @@ cd backend
 python3 -m venv myvenv
 source ./myvenv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env
+# Update values if needed before starting backend
 python3 app.py
 ```
 
