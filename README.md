@@ -28,7 +28,7 @@ An AI-powered tool that analyzes GitHub repositories and determines their alignm
 
 ```bash
 git clone <repository-url>
-cd UNSDG-advocate
+cd UNSDG-classifier-tool
 ```
 
 ### 2. Bash script approach
