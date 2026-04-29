@@ -10,6 +10,23 @@ David Lippert and Ruth Ikegah are co-chairs of the CHAOSS UN SDG working group. 
 
 Our project is officially listed in the [Code4GoodTech Dedicated Mentoring Program](https://codeforgoodtech.in/dedicated-mentoring-program/) for this summer 2026.  Please follow their process to apply for the single intern position.
 
+## Start Here
+
+If you are new to this repository, use this onboarding path:
+
+1. Join the bi-weekly call and introduce yourself.
+2. Pick a focus group that best matches your skills.
+3. Comment on an issue before starting work.
+4. Start with a small scoped contribution and ask for feedback early.
+
+### Focus Groups
+
+- [Developers Focus Group](./FOCUS%20GROUPS/developer-group.md)
+- [Designers Focus Group](./FOCUS%20GROUPS/designers-group.md)
+- [Community Managers Focus Group](./FOCUS%20GROUPS/communitymanagers-group.md)
+- [Research/Data Analysts Focus Group](./FOCUS%20GROUPS/researchers-group.md)
+- [Technical Writers Focus Group](./FOCUS%20GROUPS/technicalwriters-group.md)
+
 ## Features
 
 - 🔍 **Repository Analysis**: Analyzes GitHub repositories using AI to determine SDG alignment
