@@ -65,6 +65,7 @@ const MainScreen: React.FC<{
 
       const response = await sdgApi.classifyAurora(finalizedData);
 
+
       if (response && response.repo_url) {
         setUploadMsg("Text Analyzing Successfully!");
       }
@@ -93,6 +94,7 @@ const MainScreen: React.FC<{
       console.error("Error:", error);
       setUploadMsg("Text Analyzing Failed. Please try again.");
     } finally {
+
       setIsUploading(false);
     }
   };
@@ -272,11 +274,10 @@ const MainScreen: React.FC<{
             {/* Upload Message */}
             {uploadMsg && (
               <div
-                className={`p-4 rounded-2xl ${
-                  uploadMsg.includes("success")
-                    ? "bg-green-50  border border-green-200 "
-                    : "bg-red-50 text-red-700 border border-red-200"
-                }`}
+                className={`p-4 rounded-2xl ${uploadMsg.includes("success")
+                  ? "bg-green-50  border border-green-200 "
+                  : "bg-red-50 text-red-700 border border-red-200"
+                  }`}
               >
                 <div className="flex items-center gap-2">
                   {uploadMsg.includes("success") ? (
