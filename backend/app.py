@@ -9,6 +9,10 @@ from embedding_description import main as classify_description
 from embedding_url import main as classify_url
 from aurora_api import main as aurora_classify
 
+OSDG_API_URL = os.environ.get(
+    "OSDG_API_URL",
+    "http://20.73.166.85/label_text"
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -175,7 +179,7 @@ def osdg_external_api():
     # Call the external OSDG API
     try:
         osdg_response = requests.post(
-            "http://20.73.166.85/label_text",
+            OSDG_API_URL,
             json={
                 "text": projectDescription
             },
