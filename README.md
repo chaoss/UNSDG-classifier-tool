@@ -135,11 +135,7 @@ Analyzes a GitHub repository and its description for SDG alignment using Aurora 
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+If you are interested in contributing to this project, please read the [Contributing.md](Contributing.md) file.
 
 ## License
 
