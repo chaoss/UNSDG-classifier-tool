@@ -43,7 +43,15 @@ chmod +x ./bash.sh
 
 ### 3. Manual approach
 
-### 3.1. Backend Setup
+### 3.1 Environment Configuration
+
+Before running the backend or frontend, configure the environment variables:
+
+1. In the `backend` folder, copy `.env.example` to `.env`.
+   - **Important**: Consider adding a `GITHUB_TOKEN` to your `backend/.env` file to prevent GitHub API rate limits.
+2. In the `frontend` folder, copy `.env.example` to `.env`.
+
+### 3.2. Backend Setup
 
 ```bash
 cd backend

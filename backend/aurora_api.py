@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 from sdg_constants import SDG_LABELS_DICT as SDG_LABELS
@@ -16,7 +17,7 @@ def main(text: str, project_name: str = None, project_url: str = None):
         Dictionary with predictions in standardized format
     """
     try:
-        url = "https://aurora-sdg.labs.vu.nl/classifier/classify/elsevier-sdg-multi"
+        url = os.environ.get("AURORA_API_URL", "https://aurora-sdg.labs.vu.nl/classifier/classify/elsevier-sdg-multi")
         payload = json.dumps({"text": text})
         headers = {'Content-Type': 'application/json'}
         response = requests.request("POST", url, headers=headers, data=payload)
@@ -90,13 +91,28 @@ def main(text: str, project_name: str = None, project_url: str = None):
         
         return formatted_result
         
-    except requests.exceptions.RequestException as e:
-       
+    except requests.exceptions.Timeout:
         return {
             "project_name": project_name or "Unknown",
             "project_url": project_url or "",
             "sdg_predictions": {},
-            "error": str(e),
+            "error": "The request to the Aurora API timed out.",
+            "message": "Network timeout error"
+        }
+    except requests.exceptions.ConnectionError:
+        return {
+            "project_name": project_name or "Unknown",
+            "project_url": project_url or "",
+            "sdg_predictions": {},
+            "error": "Failed to connect to the Aurora API.",
+            "message": "Network connection error"
+        }
+    except requests.exceptions.RequestException as e:
+        return {
+            "project_name": project_name or "Unknown",
+            "project_url": project_url or "",
+            "sdg_predictions": {},
+            "error": "Failed to communicate with Aurora API.",
             "message": "Aurora API request failed"
         }
     except Exception as e:
@@ -104,6 +120,6 @@ def main(text: str, project_name: str = None, project_url: str = None):
             "project_name": project_name or "Unknown",
             "project_url": project_url or "",
             "sdg_predictions": {},
-            "error": f"{type(e).__name__}: {str(e)}",
+            "error": "An internal error occurred during classification.",
             "message": "Aurora API processing failed"
         }
