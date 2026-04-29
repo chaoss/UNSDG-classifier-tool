@@ -104,12 +104,12 @@ const MainScreen: React.FC<{
           {/* Main Content */}
           <div className="space-y-8">
             <div className="space-y-6">
-              <h1 className="text-6xl font-bold text-black leading-tight">
+              <h1 className="text-6xl font-bold text-foreground leading-tight">
                 Check which{" "}
-                <span className="text-purple-700">UN SDG goals</span> your
+                <span className="text-purple-700 dark:text-purple-400">UN SDG goals</span> your
                 project satisfy
               </h1>
-              <p className="text-xl text-gray-800 leading-relaxed">
+              <p className="text-xl text-muted-foreground leading-relaxed">
                 A simple tool that identifies relevant UN Sustainable
                 Development Goals (SDGs) based on the content of a Github
                 repository.
@@ -126,10 +126,10 @@ const MainScreen: React.FC<{
           </div>
         </div>
       </div>
-      <div className="text-center px-8 py-16 bg-purple-400">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-white mb-2">
+      <div className="px-4 py-16">
+        <div className="max-w-3xl mx-auto bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-gray-200 dark:border-slate-800 rounded-3xl p-8 md:p-12 shadow-2xl dark:shadow-none">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               Analyze Your Project
             </h2>
           </div>
@@ -138,7 +138,7 @@ const MainScreen: React.FC<{
             <div>
               <label
                 htmlFor="projectName"
-                className="block text-sm font-semibold text-gray-700 mb-2"
+                className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 text-left"
               >
                 Project Name
                 <span className="text-red-500 ml-1">*</span>
@@ -150,14 +150,14 @@ const MainScreen: React.FC<{
                 onChange={(e) => setProjectName(e.target.value)}
                 placeholder="Enter your project name"
                 required
-                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                className="w-full bg-gray-50 dark:bg-slate-950/50 px-6 py-4 rounded-2xl border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-500/50 focus:border-transparent transition-all duration-200"
               />
             </div>
 
             <div>
               <label
                 htmlFor="projectUrl"
-                className="block text-sm font-semibold text-gray-700 mb-2"
+                className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 text-left"
               >
                 Project GitHub URL
                 <span className="text-red-500 ml-1">*</span>
@@ -169,7 +169,7 @@ const MainScreen: React.FC<{
                 onChange={(e) => setProjectUrl(e.target.value)}
                 placeholder="https://github.com/username/repo"
                 required
-                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none  focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                className="w-full bg-gray-50 dark:bg-slate-950/50 px-6 py-4 rounded-2xl border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-500/50 focus:border-transparent transition-all"
               />
             </div>
 
@@ -177,7 +177,7 @@ const MainScreen: React.FC<{
             <div>
               <label
                 htmlFor="projectDescription"
-                className="block text-sm font-semibold text-gray-700 mb-2 "
+                className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 text-left"
               >
                 SDG Relevance Description
                 <span className="text-red-500 ml-1">*</span>
@@ -189,7 +189,7 @@ const MainScreen: React.FC<{
                 placeholder="Please write a description of your project's relevance to the UN SDGs in around 100 to 120 words."
                 required
                 rows={12}
-                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                className="w-full bg-gray-50 dark:bg-slate-950/50 px-6 py-4 rounded-2xl border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-500/50 focus:border-transparent transition-all"
               />
             </div>
 
@@ -296,7 +296,7 @@ const MainScreen: React.FC<{
             <button
               type="submit"
               disabled={isUploading || !projectName || !projectUrl}
-              className="w-full px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="w-full px-8 py-4 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500/90 dark:hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               {isUploading ? (
                 <span className="flex items-center justify-center gap-2">

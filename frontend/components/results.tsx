@@ -180,7 +180,7 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
         <div className="space-y-8">
           {/* Header with back button */}
           <div className="flex items-center justify-between">
-            <h1 className="text-4xl font-bold text-black">
+            <h1 className="text-4xl font-bold text-foreground">
               UN SDG Analysis Results
             </h1>
             <button
@@ -189,7 +189,7 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                 setError(null);
                 setSaveMessage(null);
               }}
-              className="px-6 py-3 bg-purple-700 hover:bg-purple-800 text-white font-semibold rounded-xl transition-colors duration-200"
+              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500/90 dark:hover:bg-indigo-500 text-white font-semibold rounded-xl transition-colors duration-200"
             >
               Analyze Another Repository
             </button>
@@ -204,26 +204,26 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
           )}
 
           {/* Repository URL */}
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">
+          <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-xl p-6 shadow-lg dark:shadow-none">
+            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Analyzed Repository:
             </h3>
-            <p className="text-purple-700 font-medium break-all">
+            <p className="text-indigo-600 dark:text-indigo-400 font-medium break-all">
               {results?.projectUrl ?? "—"}
             </p>
           </div>
           {/* Results Display */}
           <div className="space-y-6">
-            <h3 className="text-2xl font-semibold text-gray-800">
+            <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
               UN SDG Goals Analysis
             </h3>
 
             {/* Vertical Tabs Layout */}
-            <div className="flex gap-6">
+            <div className="flex flex-col lg:flex-row gap-6">
               {/* Sidebar Navigation */}
-              <div className="w-64 flex-shrink-0">
-                <div className="bg-white rounded-xl shadow-lg p-2 space-y-1">
-                  <h4 className="text-sm font-semibold text-gray-600 px-4 py-2">
+              <div className="w-full lg:w-64 flex-shrink-0">
+                <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-xl shadow-lg dark:shadow-none p-2 space-y-1">
+                  <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 px-4 py-2">
                     Available Models
                   </h4>
 
@@ -232,17 +232,17 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                     disabled={isLoadingTab}
                     className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${
                       activeTab === "aurora"
-                        ? "bg-purple-50 text-purple-700 font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
+                        ? "bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-semibold"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800"
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {activeTab === "aurora" && (
-                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>
+                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-indigo-600 dark:bg-indigo-500 rounded-r-full"></div>
                     )}
                     <span className="ml-2 flex items-center">
                       Aurora Model
                       <span className="relative group inline-block">
-                        <IoIosInformationCircleOutline className="ml-2 text-purple-600 cursor-help" />
+                        <IoIosInformationCircleOutline className="ml-2 text-indigo-600 dark:text-indigo-400 cursor-help" />
                         <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg shadow-lg z-10 whitespace-normal">
                           This is a third party API from EU Alliance Research
                           <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-800"></span>
@@ -256,17 +256,17 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                     disabled={isLoadingTab}
                     className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${
                       activeTab === "st-description"
-                        ? "bg-purple-50 text-purple-700 font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
+                        ? "bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-semibold"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800"
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {activeTab === "st-description" && (
-                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>
+                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-indigo-600 dark:bg-indigo-500 rounded-r-full"></div>
                     )}
                     <span className="ml-2">
                       Sentence Transformer Description
                       <span className="relative group inline-block">
-                        <IoIosInformationCircleOutline className="ml-2 text-purple-600 cursor-help" />
+                        <IoIosInformationCircleOutline className="ml-2 text-indigo-600 dark:text-indigo-400 cursor-help" />
                         <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg shadow-lg z-10 whitespace-normal">
                           This is a sentence transformer modal from Huggingface
                           that analyzes the project description.
@@ -281,17 +281,17 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                     disabled={isLoadingTab}
                     className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${
                       activeTab === "st-url"
-                        ? "bg-purple-50 text-purple-700 font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
+                        ? "bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-semibold"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800"
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {activeTab === "st-url" && (
-                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>
+                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-indigo-600 dark:bg-indigo-500 rounded-r-full"></div>
                     )}
                     <span className="ml-2">
                       Sentence Transformer URL
                       <span className="relative group inline-block">
-                        <IoIosInformationCircleOutline className="ml-2 text-purple-600 cursor-help" />
+                        <IoIosInformationCircleOutline className="ml-2 text-indigo-600 dark:text-indigo-400 cursor-help" />
                         <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg shadow-lg z-10 whitespace-normal">
                           This is a sentence transformer modal from Huggingface
                           that analyzes the github repository URL and all its
@@ -308,8 +308,8 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
               <div className="flex-1">
                 {isLoadingTab ? (
                   <div className="flex items-center justify-center py-20">
-                    <AiOutlineLoading3Quarters className="animate-spin text-purple-600 text-4xl" />
-                    <span className="ml-3 text-gray-600">
+                    <AiOutlineLoading3Quarters className="animate-spin text-indigo-600 dark:text-indigo-400 text-4xl" />
+                    <span className="ml-3 text-gray-600 dark:text-gray-400">
                       Loading model results...
                     </span>
                   </div>
@@ -318,18 +318,18 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                     {/* SDG Cards Grid */}
                     <CardGrid sdgPredictions={results.predictions} />
                     {/* Action Buttons */}
-                    <div className="flex justify-end mt-6">
+                    <div className="flex flex-col sm:flex-row justify-end mt-6 gap-4">
                       <button
                         onClick={handleDownload}
-                        className="cursor-pointer mx-4 px-4 py-2 bg-white text-purple-600 border border-purple-600 rounded-md hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                        className="cursor-pointer px-4 py-2 bg-white dark:bg-transparent text-indigo-600 dark:text-indigo-400 border border-indigo-600 dark:border-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                       >
-                        <span className="flex items-center">
+                        <span className="flex items-center justify-center">
                           Yes, Download SDG Analysis File
                         </span>
                       </button>
                       <button
                         onClick={handleChanges}
-                        className="cursor-pointer px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200"
+                        className="cursor-pointer px-4 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500/90 dark:hover:bg-indigo-500 text-white rounded-md transition-colors duration-200"
                       >
                         Maybe, we need some edits
                       </button>
