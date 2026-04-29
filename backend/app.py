@@ -51,12 +51,19 @@ def classify_aurora():
             project_name=projectName,
             project_url=projectUrl
         )
+        
+        if "error" in aurora_result:
+            print(f"Aurora API returned an error: {aurora_result['error']}")
+            return jsonify({
+                "error": aurora_result["error"],
+                "message": aurora_result.get("message", "Aurora API classification failed")
+            }), 502
 
         print("Aurora API model completed successfully")
     except Exception as e:
         print(f"Aurora API model failed: {str(e)}")
         return jsonify({
-            "error": str(e),
+            "error": "Internal processing error occurred.",
             "message": "Aurora API classification failed"
         }), 500
 
@@ -106,7 +113,7 @@ def classify_st_description():
     except Exception as e:
         print(f"ST Description model failed: {str(e)}")
         st_desc_result = {
-            "error": str(e),
+            "error": "Internal processing error occurred.",
             "message": "Sentence Transformer Description model classification failed"
         }
         return jsonify(st_desc_result), 500
@@ -150,16 +157,26 @@ def classify_st_url():
         except ValueError as ve:
             print(f"ST URL model invalid URL: {str(ve)}")
             return jsonify({'error': str(ve)}), 400
+        except requests.exceptions.Timeout:
+            return jsonify({
+                "error": "The request to GitHub timed out. Please try again later.",
+                "message": "Network timeout error"
+            }), 504
+        except requests.exceptions.ConnectionError:
+            return jsonify({
+                "error": "Failed to connect to GitHub. Please check your network connection.",
+                "message": "Network connection error"
+            }), 502
         except requests.exceptions.HTTPError as he:
             print(f"ST URL model HTTP Error: {str(he)}")
             return jsonify({
-                "error": f"Failed to fetch repository data. Please ensure the repository is public and exists. ({str(he)})",
+                "error": "Failed to fetch repository data. Please ensure the repository is public and exists.",
                 "message": "Sentence Transformer URL model classification failed"
             }), 400
         except Exception as e:
             print(f"ST URL model failed: {str(e)}")
             return jsonify({
-                "error": str(e),
+                "error": "An internal error occurred while processing the repository URL.",
                 "message": "Sentence Transformer URL model classification failed"
             }), 500
     else:
@@ -205,10 +222,20 @@ def osdg_external_api():
         )
         osdg_response.raise_for_status()  # Raise an error for bad status codes
         osdg_result = osdg_response.json()
+    except requests.exceptions.Timeout:
+        return jsonify({
+            "error": "The request to the OSDG API timed out.",
+            "message": "Network timeout error"
+        }), 504
+    except requests.exceptions.ConnectionError:
+        return jsonify({
+            "error": "Failed to connect to the OSDG API.",
+            "message": "Network connection error"
+        }), 502
     except requests.exceptions.RequestException as e:
         print(f"OSDG API request failed: {str(e)}")
         return jsonify({
-            "error": f"Failed to connect to OSDG API: {str(e)}",
+            "error": "Failed to communicate with OSDG API.",
             "message": "OSDG API classification failed"
         }), 500
 

@@ -87,9 +87,13 @@ const MainScreen: React.FC<{
 
       // console.log("API Response:", response.data);
       setResults(response as ResultsData);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error);
-      setUploadMsg("Text Analyzing Failed. Please try again.");
+      const backendError = error.response?.data?.message || error.response?.data?.error;
+      const fallbackError = error.message === "Network Error" 
+        ? "Network error: Unable to reach the server. Please try again later."
+        : "Text Analyzing Failed. Please try again.";
+      setUploadMsg(backendError || fallbackError);
     } finally {
       setIsUploading(false);
     }
