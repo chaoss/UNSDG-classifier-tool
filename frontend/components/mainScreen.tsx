@@ -31,33 +31,31 @@ const MainScreen: React.FC<{
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      !projectName ||
-      !projectUrl ||
-      !projectDescription
-      // !problemStatement ||
-      // !longTermGoal ||
-      // !solutionApproach ||
-      // !targetAudience
-    ) {
+    const trimmedName = projectName.trim();
+    const trimmedUrl = projectUrl.trim();
+    const trimmedDesc = projectDescription.trim();
+
+    if (!trimmedName || !trimmedUrl || !trimmedDesc) {
       setUploadMsg("Please fill in all required fields before submitting.");
       return;
     }
 
-    if (projectUrl.includes("github.com") === false) {
-      setUploadMsg("Please enter a valid GitHub repository URL.");
+    // GitHub URL validation regex
+    const githubUrlRegex = /^https?:\/\/(www\.)?github\.com\/[\w.-]+\/[\w.-]+\/?$/;
+    if (!githubUrlRegex.test(trimmedUrl)) {
+      setUploadMsg("Please enter a valid GitHub repository URL (e.g., https://github.com/username/repository).");
       return;
     }
 
     const finalizedData = {
-      projectName: projectName,
-      projectUrl: projectUrl,
-      projectDescription: projectDescription,
+      projectName: trimmedName,
+      projectUrl: trimmedUrl,
+      projectDescription: trimmedDesc,
     };
 
-    localStorage.setItem("projectDescription", projectDescription);
-    localStorage.setItem("projectName", projectName);
-    localStorage.setItem("projectUrl", projectUrl);
+    localStorage.setItem("projectDescription", trimmedDesc);
+    localStorage.setItem("projectName", trimmedName);
+    localStorage.setItem("projectUrl", trimmedUrl);
 
     try {
       setIsUploading(true);

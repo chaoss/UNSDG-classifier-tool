@@ -8,10 +8,17 @@ from datetime import datetime, UTC
 from embedding_description import main as classify_description
 from embedding_url import main as classify_url
 from aurora_api import main as aurora_classify
+import re
 
 
 app = Flask(__name__)
 CORS(app)
+
+def is_valid_github_url(url):
+    if not url:
+        return False
+    pattern = r'^https?:\/\/(www\.)?github\.com\/[\w.-]+\/[\w.-]+\/?$'
+    return re.match(pattern, url) is not None
 
 
 
@@ -30,6 +37,9 @@ def classify_aurora():
 
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
+        
+    if not is_valid_github_url(projectUrl):
+        return jsonify({'error': 'A valid GitHub repository URL is required'}), 400
 
 
 
@@ -78,6 +88,9 @@ def classify_st_description():
 
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
+        
+    if not is_valid_github_url(projectUrl):
+        return jsonify({'error': 'A valid GitHub repository URL is required'}), 400
 
 
     # 3. Sentence Transformer Description Model (text-based)
@@ -121,6 +134,9 @@ def classify_st_url():
 
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
+        
+    if not is_valid_github_url(projectUrl):
+        return jsonify({'error': 'A valid GitHub repository URL is required'}), 400
 
 
 
@@ -171,6 +187,9 @@ def osdg_external_api():
 
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
+        
+    if not is_valid_github_url(projectUrl):
+        return jsonify({'error': 'A valid GitHub repository URL is required'}), 400
 
     # Call the external OSDG API
     try:
