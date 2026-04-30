@@ -36,7 +36,7 @@ Our project is officially listed in the [Code4GoodTech Dedicated Mentoring Progr
 
 ```bash
 git clone <repository-url>
-cd UNSDG-advocate
+cd UNSDG-classifier-tool
 ```
 
 ### 2. Bash script approach
