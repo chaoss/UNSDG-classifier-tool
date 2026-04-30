@@ -8,10 +8,37 @@ from datetime import datetime, UTC
 from embedding_description import main as classify_description
 from embedding_url import main as classify_url
 from aurora_api import main as aurora_classify
+import re
+import logging
+from dotenv import load_dotenv
 
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+# Configure logging
+log_level_str = os.environ.get("LOG_LEVEL", "INFO").upper()
+log_level = getattr(logging, log_level_str, logging.INFO)
+logging.basicConfig(
+    level=log_level,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
+@app.before_request
+def log_request_info():
+    app.logger.info(f"Incoming Request: {request.method} {request.url} - Size: {request.content_length} bytes")
+
+@app.after_request
+def log_response_info(response):
+    app.logger.info(f"Outgoing Response: {request.method} {request.url} - Status: {response.status} - Size: {response.content_length} bytes")
+    return response
+
+def is_valid_github_url(url):
+    if not url:
+        return False
+    pattern = r'^https?:\/\/(www\.)?github\.com\/[\w.-]+\/[\w.-]+\/?$'
+    return re.match(pattern, url) is not None
 
 
 
@@ -30,11 +57,14 @@ def classify_aurora():
 
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
+        
+    if not is_valid_github_url(projectUrl):
+        return jsonify({'error': 'A valid GitHub repository URL is required'}), 400
 
 
 
     # 1. Aurora API Model (text-based)
-    print("\n===== RUNNING AURORA API MODEL =====")
+    app.logger.info("===== RUNNING AURORA API MODEL =====")
     try:
         aurora_result = aurora_classify(
             text=projectDescription,
@@ -42,9 +72,9 @@ def classify_aurora():
             project_url=projectUrl
         )
 
-        print("Aurora API model completed successfully")
+        app.logger.info("Aurora API model completed successfully")
     except Exception as e:
-        print(f"Aurora API model failed: {str(e)}")
+        app.logger.error(f"Aurora API model failed: {str(e)}", exc_info=True)
         return jsonify({
             "error": str(e),
             "message": "Aurora API classification failed"
@@ -78,10 +108,13 @@ def classify_st_description():
 
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
+        
+    if not is_valid_github_url(projectUrl):
+        return jsonify({'error': 'A valid GitHub repository URL is required'}), 400
 
 
     # 3. Sentence Transformer Description Model (text-based)
-    print("\n===== RUNNING SENTENCE TRANSFORMER DESCRIPTION MODEL =====")
+    app.logger.info("===== RUNNING SENTENCE TRANSFORMER DESCRIPTION MODEL =====")
     try:
         st_desc_result = classify_description(
             project_description=projectDescription,
@@ -89,9 +122,9 @@ def classify_st_description():
             project_url=projectUrl
         )
 
-        print("ST Description model completed successfully")
+        app.logger.info("ST Description model completed successfully")
     except Exception as e:
-        print(f"ST Description model failed: {str(e)}")
+        app.logger.error(f"ST Description model failed: {str(e)}", exc_info=True)
         st_desc_result = {
             "error": str(e),
             "message": "Sentence Transformer Description model classification failed"
@@ -121,27 +154,30 @@ def classify_st_url():
 
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
+        
+    if not is_valid_github_url(projectUrl):
+        return jsonify({'error': 'A valid GitHub repository URL is required'}), 400
 
 
 
      # 2. Sentence Transformer URL Model (GitHub URL-based)
-    print("\n===== RUNNING SENTENCE TRANSFORMER URL MODEL =====")
+    app.logger.info("===== RUNNING SENTENCE TRANSFORMER URL MODEL =====")
     if projectUrl:
         try:
             st_url_result = classify_url(projectUrl)
 
-            print("ST URL model completed successfully")
+            app.logger.info("ST URL model completed successfully")
         except ValueError as ve:
-            print(f"ST URL model invalid URL: {str(ve)}")
+            app.logger.warning(f"ST URL model invalid URL: {str(ve)}")
             return jsonify({'error': str(ve)}), 400
         except requests.exceptions.HTTPError as he:
-            print(f"ST URL model HTTP Error: {str(he)}")
+            app.logger.error(f"ST URL model HTTP Error: {str(he)}", exc_info=True)
             return jsonify({
                 "error": f"Failed to fetch repository data. Please ensure the repository is public and exists. ({str(he)})",
                 "message": "Sentence Transformer URL model classification failed"
             }), 400
         except Exception as e:
-            print(f"ST URL model failed: {str(e)}")
+            app.logger.error(f"ST URL model failed: {str(e)}", exc_info=True)
             return jsonify({
                 "error": str(e),
                 "message": "Sentence Transformer URL model classification failed"
@@ -171,6 +207,9 @@ def osdg_external_api():
 
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
+        
+    if not is_valid_github_url(projectUrl):
+        return jsonify({'error': 'A valid GitHub repository URL is required'}), 400
 
     # Call the external OSDG API
     try:
@@ -187,7 +226,7 @@ def osdg_external_api():
         osdg_response.raise_for_status()  # Raise an error for bad status codes
         osdg_result = osdg_response.json()
     except requests.exceptions.RequestException as e:
-        print(f"OSDG API request failed: {str(e)}")
+        app.logger.error(f"OSDG API request failed: {str(e)}", exc_info=True)
         return jsonify({
             "error": f"Failed to connect to OSDG API: {str(e)}",
             "message": "OSDG API classification failed"
