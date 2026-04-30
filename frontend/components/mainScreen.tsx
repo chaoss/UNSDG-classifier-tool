@@ -89,9 +89,10 @@ const MainScreen: React.FC<{
 
       // console.log("API Response:", response.data);
       setResults(response as ResultsData);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error);
-      setUploadMsg("Text Analyzing Failed. Please try again.");
+      const backendMessage = error.response?.data?.message;
+      setUploadMsg(backendMessage || "Text Analyzing Failed. Please try again.");
     } finally {
       setIsUploading(false);
     }

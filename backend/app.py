@@ -13,11 +13,25 @@ from aurora_api import main as aurora_classify
 app = Flask(__name__)
 CORS(app)
 
+def success_response(data, message="Classification successful", status_code=200):
+    return jsonify({
+        "status": "success",
+        "message": message,
+        "data": data,
+        "error": None
+    }), status_code
 
+def error_response(message, error=None, status_code=400):
+    return jsonify({
+        "status": "error",
+        "message": message,
+        "data": None,
+        "error": error
+    }), status_code
 
 @app.route('/api/hello', methods=['GET'])
 def hello():
-    return jsonify({'message': 'Hello, World!'})
+    return success_response({'message': 'Hello, World!'})
 
 
 
@@ -29,7 +43,7 @@ def classify_aurora():
     projectDescription = data.get('projectDescription')
 
     if not projectDescription:
-        return jsonify({'error': 'Project description is required'}), 400
+        return error_response('Project description is required', status_code=400)
 
 
 
@@ -45,10 +59,7 @@ def classify_aurora():
         print("Aurora API model completed successfully")
     except Exception as e:
         print(f"Aurora API model failed: {str(e)}")
-        return jsonify({
-            "error": str(e),
-            "message": "Aurora API classification failed"
-        }), 500
+        return error_response("Aurora API classification failed", error=str(e), status_code=500)
 
     # Transform predictions to array format
     sdg_preds = aurora_result.get("sdg_predictions", {})
@@ -62,11 +73,11 @@ def classify_aurora():
 
     filtered_predictions = [p for p in preds if p.get("prediction", 0) > 0.4]
 
-    return jsonify({
+    return success_response({
         "projectName": aurora_result.get("project_name"),
         "projectUrl": aurora_result.get("project_url"),
         "predictions": filtered_predictions
-    }), 200
+    })
 
 
 @app.route('/api/classify_st_description', methods=['POST'])
@@ -77,7 +88,7 @@ def classify_st_description():
     projectDescription = data.get('projectDescription')
 
     if not projectDescription:
-        return jsonify({'error': 'Project description is required'}), 400
+        return error_response('Project description is required', status_code=400)
 
 
     # 3. Sentence Transformer Description Model (text-based)
@@ -92,11 +103,7 @@ def classify_st_description():
         print("ST Description model completed successfully")
     except Exception as e:
         print(f"ST Description model failed: {str(e)}")
-        st_desc_result = {
-            "error": str(e),
-            "message": "Sentence Transformer Description model classification failed"
-        }
-        return jsonify(st_desc_result), 500
+        return error_response("Sentence Transformer Description model classification failed", error=str(e), status_code=500)
 
     # Convert st-description-model predictions to the expected format for logging
     # (keeping backward compatibility with existing data/predictions.json structure)
@@ -105,11 +112,11 @@ def classify_st_description():
         for name, score in st_desc_result.get("sdg_predictions", {}).items()
     ]
     filtered_predictions = [p for p in preds if p.get("prediction", 0) > 0.4]
-    return jsonify({
+    return success_response({
             "projectName": projectName,
             "projectUrl": projectUrl,
             "predictions": filtered_predictions,
-        }), 200
+        })
 
 
 @app.route('/api/classify_st_url', methods=['POST'])
@@ -120,7 +127,7 @@ def classify_st_url():
     projectDescription = data.get('projectDescription')
 
     if not projectDescription:
-        return jsonify({'error': 'Project description is required'}), 400
+        return error_response('Project description is required', status_code=400)
 
 
 
@@ -133,19 +140,13 @@ def classify_st_url():
             print("ST URL model completed successfully")
         except ValueError as ve:
             print(f"ST URL model invalid URL: {str(ve)}")
-            return jsonify({'error': str(ve)}), 400
+            return error_response(str(ve), status_code=400)
         except requests.exceptions.HTTPError as he:
             print(f"ST URL model HTTP Error: {str(he)}")
-            return jsonify({
-                "error": f"Failed to fetch repository data. Please ensure the repository is public and exists. ({str(he)})",
-                "message": "Sentence Transformer URL model classification failed"
-            }), 400
+            return error_response("Sentence Transformer URL model classification failed", error=f"Failed to fetch repository data. Please ensure the repository is public and exists. ({str(he)})", status_code=400)
         except Exception as e:
             print(f"ST URL model failed: {str(e)}")
-            return jsonify({
-                "error": str(e),
-                "message": "Sentence Transformer URL model classification failed"
-            }), 500
+            return error_response("Sentence Transformer URL model classification failed", error=str(e), status_code=500)
     else:
         st_url_result = {
             "message": "No project URL provided, skipping URL-based classification"
@@ -156,11 +157,11 @@ def classify_st_url():
         for name, score in st_url_result.get("sdg_predictions", {}).items()
     ]
     filtered_predictions = [p for p in preds if p.get("prediction", 0) > 0.4]
-    return jsonify({
+    return success_response({
             "projectName": projectName,
             "projectUrl": projectUrl,
             "predictions": filtered_predictions,
-        }), 200
+        })
 
 @app.route("/api/osdg_api", methods=["POST"])
 def osdg_external_api():
@@ -170,7 +171,7 @@ def osdg_external_api():
     projectDescription = data.get('projectDescription')
 
     if not projectDescription:
-        return jsonify({'error': 'Project description is required'}), 400
+        return error_response('Project description is required', status_code=400)
 
     # Call the external OSDG API
     try:
@@ -188,16 +189,13 @@ def osdg_external_api():
         osdg_result = osdg_response.json()
     except requests.exceptions.RequestException as e:
         print(f"OSDG API request failed: {str(e)}")
-        return jsonify({
-            "error": f"Failed to connect to OSDG API: {str(e)}",
-            "message": "OSDG API classification failed"
-        }), 500
+        return error_response("OSDG API classification failed", error=f"Failed to connect to OSDG API: {str(e)}", status_code=500)
 
-    return jsonify({
+    return success_response({
         "projectName": projectName,
         "projectUrl": projectUrl,
         "predictions": osdg_result
-    }), 200
+    })
 # @app.post("/api/upload-md")
 # def aurora_api():
 
