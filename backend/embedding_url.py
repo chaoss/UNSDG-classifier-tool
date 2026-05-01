@@ -10,7 +10,7 @@ import numpy as np
 from sdg_constants import SDG_LABELS, SDG_NAMES, SDG_DESCS
 
 # --- GitHub fetch utilities ---
-GITHUB_API = "https://api.github.com"
+GITHUB_API = os.environ.get("GITHUB_API_URL", "https://api.github.com")
 
 def parse_repo(url: str) -> Tuple[str, str]:
     """
