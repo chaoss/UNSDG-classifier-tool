@@ -47,7 +47,7 @@ export interface SDGClassificationResponse {
   projectName?: string;
   projectUrl?: string;
   repo_url?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export type SDGCardProps = {
