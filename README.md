@@ -58,16 +58,52 @@ cd backend
 python3 -m venv myvenv
 source ./myvenv/bin/activate
 pip install -r requirements.txt
+
+# (optional) configure backend runtime endpoints / tokens
+cp .env.example .env
+# edit .env to override defaults - at minimum set OSDG_TOKEN if you plan to use
+# the /api/osdg_api endpoint, and GITHUB_TOKEN to raise GitHub API rate limits
+
 python3 app.py
 ```
+
+#### Configuration
+
+External service endpoints and credentials are read from environment variables
+at runtime. See [`backend/.env.example`](backend/.env.example) for the full
+list. Supported variables:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `AURORA_API_URL` | `https://aurora-sdg.labs.vu.nl/classifier/classify/elsevier-sdg-multi` | Aurora SDG classifier endpoint |
+| `OSDG_API_URL` | `http://20.73.166.85/label_text` | OSDG label-text endpoint |
+| `GITHUB_API_URL` | `https://api.github.com` | GitHub REST API base |
+| `OSDG_TOKEN` | _(empty)_ | Token required by the `/api/osdg_api` endpoint |
+| `GITHUB_TOKEN` | _(empty)_ | GitHub PAT to raise rate limit from 60 to 5000 req/hour |
+| `HTTP_TIMEOUT_SECONDS` | `30` | Outbound HTTP request timeout; must be a positive integer |
+
+The app uses [python-dotenv](https://pypi.org/project/python-dotenv/) to load
+`backend/.env` automatically when present. Variables already set in the host
+environment take precedence.
 
 ### 3.2. Frontend Setup
 
 ```bash
 cd frontend
 npm install
+
+# (optional) configure the backend API origin for hosted/staging deployments
+cp .env.example .env.local
+# edit .env.local if the Flask API is not running at http://127.0.0.1:5000/
+
 npm run dev
 ```
+
+#### Frontend Configuration
+
+The Next.js frontend reads `NEXT_PUBLIC_API_BASE_URL` at build/runtime to find
+the Flask backend. See [`frontend/.env.example`](frontend/.env.example). The
+default remains `http://127.0.0.1:5000/` for local development.
 
 ### 4. Access the Application
 

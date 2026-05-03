@@ -1,5 +1,6 @@
 import requests
 import json
+import config
 from sdg_constants import SDG_LABELS_DICT as SDG_LABELS
 
 
@@ -16,10 +17,12 @@ def main(text: str, project_name: str = None, project_url: str = None):
         Dictionary with predictions in standardized format
     """
     try:
-        url = "https://aurora-sdg.labs.vu.nl/classifier/classify/elsevier-sdg-multi"
+        url = config.AURORA_API_URL
         payload = json.dumps({"text": text})
         headers = {'Content-Type': 'application/json'}
-        response = requests.request("POST", url, headers=headers, data=payload)
+        response = requests.request(
+            "POST", url, headers=headers, data=payload, timeout=config.HTTP_TIMEOUT_SECONDS
+        )
         # response.raise_for_status()
         
         raw_result = response.json()
