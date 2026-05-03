@@ -66,8 +66,15 @@ python3 app.py
 ```bash
 cd frontend
 npm install
+
+# Optional: point the frontend at a non-local backend API.
+cp .env.example .env.local
+
 npm run dev
 ```
+
+The frontend reads `NEXT_PUBLIC_API_BASE_URL` from `frontend/.env.local`.
+The default is `http://127.0.0.1:5000/` for local development.
 
 ### 4. Access the Application
 
@@ -140,6 +147,12 @@ Analyzes a GitHub repository and its description for SDG alignment using Aurora 
 3. Make your changes
 4. Add tests if applicable
 5. Submit a pull request
+
+## Deployment
+
+See [Deployment Readiness Plan](docs/deployment-readiness.md) for the current
+hosting recommendation, CI checks, and follow-up work for the DMP 2026 MVP
+requirements in issue #8.
 
 ## License
 
