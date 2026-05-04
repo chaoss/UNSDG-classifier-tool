@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdDone } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import CardGrid from "./cardGrid";
@@ -28,11 +28,27 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("aurora");
   const [isLoadingTab, setIsLoadingTab] = useState(false);
+  const [modelResultsCache, setModelResultsCache] = useState<Record<string, ResultsData>>({});
+
+  //store initial data
+    useEffect(() => {
+    if (results && activeTab && !modelResultsCache[activeTab]) {
+      setModelResultsCache((prev) => ({
+        ...prev,
+        [activeTab]: results,
+      }));
+    }
+  }, [results]);
 
   const handleTabChange = async (newTab: string) => {
     if (newTab === activeTab || !results) return;
-
     setIsLoadingTab(true);
+    if (modelResultsCache[newTab]) {
+      setResults(modelResultsCache[newTab]);
+      setActiveTab(newTab);
+      setIsLoadingTab(false);
+      return;
+    }
     setActiveTab(newTab);
 
     const requestData = {
@@ -76,7 +92,15 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
       );
 
       if (response) {
-        setResults(response as ResultsData);
+        const typedResponse = response as ResultsData;
+
+        setResults(typedResponse);
+
+        // Store in cache
+        setModelResultsCache((prev) => ({
+          ...prev,
+          [newTab]: typedResponse,
+        }));
       }
     } catch (error) {
       console.error("Error fetching data for tab:", error);
@@ -93,11 +117,20 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
 
   const saveEditedResults = () => {
     if (results) {
-      setResults({
+      const updatedResults = {
         ...results,
         predictions: { ...(editableResults ?? {}) },
-      });
+      };
+
+      setResults(updatedResults);
+
+      // Update cache as well
+      setModelResultsCache((prev) => ({
+        ...prev,
+        [activeTab]: updatedResults,
+      }));
     }
+
     setIsModalOpen(false);
     setSaveMessage("SDG predictions updated successfully!");
 
