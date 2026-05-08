@@ -90,13 +90,28 @@ def main(text: str, project_name: str = None, project_url: str = None):
         
         return formatted_result
         
-    except requests.exceptions.RequestException as e:
-       
+    except requests.exceptions.Timeout:
         return {
             "project_name": project_name or "Unknown",
             "project_url": project_url or "",
             "sdg_predictions": {},
-            "error": str(e),
+            "error": "The request to the Aurora API timed out.",
+            "message": "Network timeout error"
+        }
+    except requests.exceptions.ConnectionError:
+        return {
+            "project_name": project_name or "Unknown",
+            "project_url": project_url or "",
+            "sdg_predictions": {},
+            "error": "Failed to connect to the Aurora API.",
+            "message": "Network connection error"
+        }
+    except requests.exceptions.RequestException as e:
+        return {
+            "project_name": project_name or "Unknown",
+            "project_url": project_url or "",
+            "sdg_predictions": {},
+            "error": "Failed to communicate with Aurora API.",
             "message": "Aurora API request failed"
         }
     except Exception as e:
@@ -104,6 +119,6 @@ def main(text: str, project_name: str = None, project_url: str = None):
             "project_name": project_name or "Unknown",
             "project_url": project_url or "",
             "sdg_predictions": {},
-            "error": f"{type(e).__name__}: {str(e)}",
+            "error": "An internal error occurred during classification.",
             "message": "Aurora API processing failed"
         }
