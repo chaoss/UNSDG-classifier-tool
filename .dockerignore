@@ -1,0 +1,33 @@
+# Python
+**/__pycache__
+**/*.py[cod]
+**/*.pyo
+**/.venv
+**/venv
+**/myvenv
+**/*.egg-info
+**/.pytest_cache
+
+# Node
+**/node_modules
+**/.next
+**/out
+**/build
+
+# Environment — never bake secrets into images
+**/.env
+**/.env.local
+
+# Version control and editor
+.git
+.gitignore
+.DS_Store
+.vscode
+.idea
+
+# macOS
+**/.DS_Store
+
+# Docs — not needed inside images
+*.md
+LICENSE
