@@ -27,42 +27,46 @@ Our project is officially listed in the [Code4GoodTech Dedicated Mentoring Progr
 
 ## Quick Start
 
+For detailed setup instructions, troubleshooting, and contributor guidelines, please see our **[Development Guide (DEVELOPMENT.md)](./DEVELOPMENT.md)**.
+
 ### Prerequisites
 
-- Node.js 18+ and npm (Download link: https://nodejs.org/en/download/)
-- Python 3.8+ (Download link: https://www.python.org/downloads/)
+- **Node.js**: v18+ and npm
+- **Python**: v3.8+ 
 
-### 1. Clone and Setup
+### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd UNSDG-advocate
+git clone https://github.com/chaoss/UNSDG-classifier-tool.git
+cd UNSDG-classifier-tool
 ```
 
-### 2. Bash script approach
+### 2. Fast Setup (Linux/macOS)
 
-- Make sure you have all of your prerequisites installed in your local computer like Node.js and Python
-- Make sure you are inside the folder.
+If you have all prerequisites, you can use the provided script:
 
 ```bash
 chmod +x ./bash.sh
 ./bash.sh
 ```
 
-### 3. Manual approach
+### 3. Manual Setup (Cross-Platform)
 
-### 3.1. Backend Setup
-
+#### Backend Setup
 ```bash
 cd backend
-python3 -m venv myvenv
-source ./myvenv/bin/activate
+python -m venv venv
+
+# Activate (Linux/macOS)
+source venv/bin/activate
+# Activate (Windows PowerShell)
+.\venv\Scripts\Activate.ps1
+
 pip install -r requirements.txt
-python3 app.py
+python app.py
 ```
 
-### 3.2. Frontend Setup
-
+#### Frontend Setup
 ```bash
 cd frontend
 npm install
@@ -71,8 +75,10 @@ npm run dev
 
 ### 4. Access the Application
 
-- Frontend: http://localhost:3000
-- Backend API: http://127.0.0.1:5000
+- **Frontend**: [http://localhost:3000](http://localhost:3000)
+- **Backend API**: [http://127.0.0.1:5000](http://127.0.0.1:5000)
+
+> **Note**: On the first run, the backend will download AI models (approx. 2GB). Please ensure you have a stable internet connection.
 
 ## Usage
 
