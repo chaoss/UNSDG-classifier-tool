@@ -21,6 +21,7 @@ services:
     environment:
       - FLASK_ENV=development
       - FLASK_DEBUG=1
+      - FLASK_APP=app.py
     volumes:
       - ./backend:/app
       - /app/__pycache__
