@@ -1,0 +1,52 @@
+# One-command local setup for UNSDG-classifier-tool
+#
+# Usage:
+#   cp backend/.env.example backend/.env
+#   # fill in GITHUB_TOKEN and OSDG_TOKEN in backend/.env
+#   docker compose up --build
+#
+# Frontend → http://localhost:3000
+# Backend  → http://localhost:5000
+
+services:
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    volumes:
+      - ./backend:/app
+      - /app/__pycache__
+      - hf-model-cache:/root/.cache/huggingface
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  hf-model-cache:
