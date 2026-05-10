@@ -7,7 +7,9 @@ from services.errors import UpstreamResponseError
 AURORA_CLASSIFY_URL = (
     "https://aurora-sdg.labs.vu.nl/classifier/classify/elsevier-sdg-multi"
 )
-OSDG_LABEL_URL = "http://20.73.166.85/label_text"
+# Prefer an HTTPS OSDG endpoint when one is available; keep the current URL as
+# the fallback to preserve existing local behavior.
+OSDG_LABEL_URL = os.environ.get("OSDG_LABEL_URL", "http://20.73.166.85/label_text")
 
 _client = APIClient()
 
