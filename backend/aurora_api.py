@@ -1,4 +1,5 @@
 import requests
+import time
 import json
 from sdg_constants import SDG_LABELS_DICT as SDG_LABELS
 
@@ -19,9 +20,30 @@ def main(text: str, project_name: str = None, project_url: str = None):
         url = "https://aurora-sdg.labs.vu.nl/classifier/classify/elsevier-sdg-multi"
         payload = json.dumps({"text": text})
         headers = {'Content-Type': 'application/json'}
-        response = requests.request("POST", url, headers=headers, data=payload)
-        # response.raise_for_status()
-        
+
+        max_retries = 3
+        retry_delay = 1  # seconds between retries
+
+        for attempt in range(max_retries):
+            response = requests.request("POST", url, headers=headers, data=payload, timeout=30)
+
+            if response.status_code == 429:
+                wait = retry_delay * (2 ** attempt)
+                print(f"Aurora API rate limited (429). Retrying in {wait}s... (attempt {attempt + 1}/{max_retries})")
+                time.sleep(wait)
+                continue
+
+            response.raise_for_status()
+            break
+        else:
+            return {
+                "project_name": project_name or "Unknown",
+                "project_url": project_url or "",
+                "sdg_predictions": {},
+                "error": "Aurora API rate limit exceeded after 3 retries",
+                "message": "Aurora API classification failed"
+            }
+
         raw_result = response.json()
         
         # Transform Aurora API response to match embedding model format
