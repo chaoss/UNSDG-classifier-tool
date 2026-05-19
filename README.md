@@ -62,5 +62,5 @@ This project is part of the [CHAOSS](https://chaoss.community) community, a Linu
  
 ## License
  
-This project is released under the MIT License.  
+This project is released under the [MIT License.](https://github.com/chaoss/UNSDG-classifier-tool/blob/main/LICENSE)  
 Copyright © CHAOSS, a Linux Foundation® project.
