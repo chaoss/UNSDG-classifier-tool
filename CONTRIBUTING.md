@@ -186,4 +186,57 @@ chore(deps): upgrade node dependencies
 ```
  
 Keep the subject line under 72 characters. Use the body to explain the *why* behind the change when it's not obvious from the title.
+
+## Coding Standards
  
+- Follow the existing code style in the project.
+- Run the linter before committing: `npm run lint`
+- Format your code: `npm run format` (if configured)
+- Avoid committing commented out code or debug `console.log` statements.
+- Use descriptive variable and function names.
+- Keep functions small and focused on a single responsibility.
+
+## Reporting Bugs
+ 
+When filing a bug report, please include:
+ 
+1. **A clear, descriptive title**
+2. **Steps to reproduce** — the more specific, the better
+3. **Expected behavior** — what you expected to happen
+4. **Actual behavior** — what actually happened
+5. **Environment** — OS, browser, Node.js version
+6. **Screenshots or error messages** if applicable
+Use the [bug report issue template](https://github.com/chaoss/UNSDG-classifier-tool/issues/new) when available.
+
+## Suggesting Features
+ 
+Before suggesting a new feature:
+ 
+- Check whether a similar idea already exists in [open issues](https://github.com/chaoss/UNSDG-classifier-tool/issues).
+- Consider whether the feature aligns with the project's goal of helping open source projects connect with UN SDGs.
+When opening a feature request, describe:
+ 
+1. The problem the feature solves
+2. Your proposed solution
+3. Alternatives you considered
+4. Any relevant examples from similar tools
+
+## Community & Communication
+ 
+| Channel | Purpose |
+|---------|---------|
+| [GitHub Issues](https://github.com/chaoss/UNSDG-classifier-tool/issues) | Bug reports, feature requests, task tracking |
+| [GitHub Discussions](https://github.com/chaoss/UNSDG-classifier-tool/discussions) | Open-ended questions and ideas |
+| [CHAOSS Slack — #wg-un-sdg](https://join.slack.com/t/chaoss-workspace/shared_invite/zt-r65szij9-QajX59hkZUct82b0uACA6g) | Real time chat with the working group |
+| [CHAOSS Community Calls](https://zoom.us/j/4998687533) | Tuesdays at 11am US Central |
+ 
+We'd love to see you at a community call — it's a great way to get oriented and meet the team.
+
+## Recognition
+ 
+All contributors are valued members of this community. Contributors will be acknowledged in the project's contributor list. If you're a first time contributor to any CHAOSS project, **welcome we're glad you're here!🫡**
+
+## License
+ 
+This project is released under the MIT License.  
+Copyright © CHAOSS, a Linux Foundation® project.
