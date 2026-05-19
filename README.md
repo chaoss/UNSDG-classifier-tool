@@ -1,4 +1,4 @@
-# UN SDG Advocate 🌍
+# UN SDG CLASSIFIER TOOL 🌍
 
 A responsive web application developed under the [CHAOSS](https://chaoss.community) UN-SDG Working Group that analyzes open source project repositories and classifies them against the [United Nations Sustainable Development Goals (SDGs)](https://sdgs.un.org/goals). By reading a repository's directory structure, metadata, and content, the tool helps open source communities understand and communicate the real-world impact of their work.
 
