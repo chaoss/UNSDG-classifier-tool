@@ -33,7 +33,7 @@ export default function Home() {
       ) : error ? (
         <Error error={error} setError={setError} setResults={setResults} />
       ) : (
-        <MainScreen setResults={setResults} />
+        <MainScreen setResults={setResults} setError={setError} />
       )}
     </div>
   );

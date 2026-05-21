@@ -16,7 +16,8 @@ MainScreen Component
 
 const MainScreen: React.FC<{
   setResults: React.Dispatch<React.SetStateAction<ResultsData | null>>;
-}> = ({ setResults }) => {
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+}> = ({ setResults, setError }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
 
@@ -89,9 +90,10 @@ const MainScreen: React.FC<{
 
       // console.log("API Response:", response.data);
       setResults(response as ResultsData);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error);
-      setUploadMsg("Text Analyzing Failed. Please try again.");
+      const errorMessage = error.response?.data?.error || error.message || "Text Analyzing Failed. Please try again.";
+      setError(errorMessage);
     } finally {
       setIsUploading(false);
     }
