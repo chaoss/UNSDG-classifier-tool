@@ -70,3 +70,12 @@ export type EditModalProps = {
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   saveEditedResults: () => void;
 };
+export type BatchResult = {
+  projectName: string;
+  projectUrl: string;
+  status: "success" | "error";
+  topSdg?: string;
+  confidence?: number;
+  allPredictions?: { sdg: string; prediction: number }[];
+  error?: string;
+};

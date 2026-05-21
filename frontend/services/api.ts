@@ -1,9 +1,6 @@
 import axios from "axios";
-import {
-  ResultsData,
-  SDGClassificationRequest,
-  SDGClassificationResponse,
-} from "@/types/main";
+import { BatchResult, ResultsData, SDGClassificationRequest, SDGClassificationResponse } from "@/types/main";
+
 
 const API_BASE_URL = "http://127.0.0.1:5000/";
 
@@ -62,4 +59,13 @@ export const classifyByModel = async (
     default:
       return sdgApi.classifyAurora(data);
   }
+};
+
+export const classifyBatch = async (repositories: {
+  projectName: string;
+  projectUrl: string;
+  projectDescription: string;
+}[]): Promise<{ results: BatchResult[]; total: number }> => {
+  const response = await apiClient.post('/api/classify_batch', { repositories });
+  return response.data;
 };
