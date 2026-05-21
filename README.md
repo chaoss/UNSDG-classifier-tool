@@ -3,7 +3,7 @@
 A responsive web application developed under the [CHAOSS](https://chaoss.community) UN-SDG Working Group that analyzes open source project repositories and classifies them against the [United Nations Sustainable Development Goals (SDGs)](https://sdgs.un.org/goals). By reading a repository's directory structure, metadata, and content, the tool helps open source communities understand and communicate the real-world impact of their work.
 
 ## Community
-Please join our bi-weekly zoom call if you are interested in contributing to this project.  Details can be found [here:](https://teamup.com/event/show/id/roRw4g34gHBc6rc6JgjGYxVHFdCAki/add-to-calendar)
+Please join our bi weekly zoom call if you are interested in contributing to this project.  Details can be found [here:](https://ics.teamup.com/feed/ksk9vit7vig1w48j3s/13658871.ics)
 
 David Lippert and Ruth Ikegah are co-chairs of the CHAOSS UN SDG working group.  David is the lead maintainer on this UNSDG-classifier-tool and he is new to maintaining open source software, so please be patient.  In addition, Sunil Shah was the lead developer on this project and he is no longer being paid to work on this effort, so the amount of time he will be able to support our work is unclear.  Nevertheless, we are very excited about what we can accomplish together and our community includes exceptional people from around the globe including members of the United Nations, so we are very happy for you to join us.
 
