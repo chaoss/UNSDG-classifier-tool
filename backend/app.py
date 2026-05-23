@@ -4,24 +4,36 @@ import os
 import requests
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
+from flasgger import Swagger, swag_from
 from datetime import datetime, UTC
 from embedding_description import main as classify_description
 from embedding_url import main as classify_url
 from aurora_api import main as aurora_classify
+from swagger_docs import (
+    SWAGGER_TEMPLATE,
+    HELLO_DOC,
+    CLASSIFY_AURORA_DOC,
+    CLASSIFY_ST_DESCRIPTION_DOC,
+    CLASSIFY_ST_URL_DOC,
+    OSDG_API_DOC,
+)
 
 
 app = Flask(__name__)
 CORS(app)
+swagger = Swagger(app, template=SWAGGER_TEMPLATE)
 
 
 
 @app.route('/api/hello', methods=['GET'])
+@swag_from(HELLO_DOC)
 def hello():
     return jsonify({'message': 'Hello, World!'})
 
 
 
 @app.route('/api/classify_aurora', methods=['POST'])
+@swag_from(CLASSIFY_AURORA_DOC)
 def classify_aurora():
     data = request.json
     projectName = data.get('projectName')
@@ -70,6 +82,7 @@ def classify_aurora():
 
 
 @app.route('/api/classify_st_description', methods=['POST'])
+@swag_from(CLASSIFY_ST_DESCRIPTION_DOC)
 def classify_st_description():
     data = request.json
     projectName = data.get('projectName')
@@ -113,6 +126,7 @@ def classify_st_description():
 
 
 @app.route('/api/classify_st_url', methods=['POST'])
+@swag_from(CLASSIFY_ST_URL_DOC)
 def classify_st_url():
     data = request.json
     projectName = data.get('projectName')
@@ -163,6 +177,7 @@ def classify_st_url():
         }), 200
 
 @app.route("/api/osdg_api", methods=["POST"])
+@swag_from(OSDG_API_DOC)
 def osdg_external_api():
     data = request.json
     projectName = data.get('projectName')
