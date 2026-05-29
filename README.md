@@ -44,7 +44,7 @@ We warmly welcome contributions of all kinds both code and non-code! Please read
 - 📁 **Download the SDGs**: Download the SDG and upload it in your repository
 - 💻 **Modern UI**: Clean, responsive React.js interface with real-time loading states
 
-## Techical Architecture
+## Technical Architecture
 
 - **Frontend**: Next.js 14+ with TypeScript, Tailwind CSS, and React Icons
 - **Backend**: Flask API with Aurora SDG API classifier
