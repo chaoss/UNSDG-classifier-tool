@@ -1,4 +1,5 @@
 import os
+import time
 # import uuid
 # import json
 import requests
@@ -172,19 +173,36 @@ def osdg_external_api():
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
 
-    # Call the external OSDG API
+    max_retries = 3
+    retry_delay = 1  # seconds between retries
+
     try:
-        osdg_response = requests.post(
-            "http://20.73.166.85/label_text",
-            json={
-                "text": projectDescription
-            },
-            headers={
-                "token": os.environ.get("OSDG_TOKEN")  # Ensure you have the OSDG token set in your environment variables
-            },
-            timeout=1000  # Set a timeout for the request
-        )
-        osdg_response.raise_for_status()  # Raise an error for bad status codes
+        for attempt in range(max_retries):
+            osdg_response = requests.post(
+                "http://20.73.166.85/label_text",
+                json={
+                    "text": projectDescription
+                },
+                headers={
+                    "token": os.environ.get("OSDG_TOKEN")
+                },
+                timeout=30
+            )
+
+            if osdg_response.status_code == 429:
+                wait = retry_delay * (2 ** attempt)
+                print(f"OSDG API rate limited (429). Retrying in {wait}s... (attempt {attempt + 1}/{max_retries})")
+                time.sleep(wait)
+                continue
+
+            osdg_response.raise_for_status()
+            break
+        else:
+            return jsonify({
+                "error": "OSDG API rate limit exceeded after 3 retries",
+                "message": "OSDG API classification failed"
+            }), 429
+
         osdg_result = osdg_response.json()
     except requests.exceptions.RequestException as e:
         print(f"OSDG API request failed: {str(e)}")
