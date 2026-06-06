@@ -1,4 +1,3 @@
-import os
 # import uuid
 # import json
 import requests
@@ -8,6 +7,8 @@ from datetime import datetime, UTC
 from embedding_description import main as classify_description
 from embedding_url import main as classify_url
 from aurora_api import main as aurora_classify
+from services.errors import UpstreamAPIError
+from services.external_apis import classify_with_osdg
 
 
 app = Flask(__name__)
@@ -43,6 +44,13 @@ def classify_aurora():
         )
 
         print("Aurora API model completed successfully")
+    except UpstreamAPIError as exc:
+        print(f"Aurora API upstream failure: {str(exc)}")
+        return jsonify({
+            "error": str(exc),
+            "message": "Aurora API classification failed",
+            "provider": exc.provider,
+        }), exc.status_code or 502
     except Exception as e:
         print(f"Aurora API model failed: {str(e)}")
         return jsonify({
@@ -172,21 +180,9 @@ def osdg_external_api():
     if not projectDescription:
         return jsonify({'error': 'Project description is required'}), 400
 
-    # Call the external OSDG API
     try:
-        osdg_response = requests.post(
-            "http://20.73.166.85/label_text",
-            json={
-                "text": projectDescription
-            },
-            headers={
-                "token": os.environ.get("OSDG_TOKEN")  # Ensure you have the OSDG token set in your environment variables
-            },
-            timeout=1000  # Set a timeout for the request
-        )
-        osdg_response.raise_for_status()  # Raise an error for bad status codes
-        osdg_result = osdg_response.json()
-    except requests.exceptions.RequestException as e:
+        osdg_result = classify_with_osdg(projectDescription)
+    except UpstreamAPIError as e:
         print(f"OSDG API request failed: {str(e)}")
         return jsonify({
             "error": f"Failed to connect to OSDG API: {str(e)}",

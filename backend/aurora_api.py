@@ -1,6 +1,6 @@
-import requests
-import json
 from sdg_constants import SDG_LABELS_DICT as SDG_LABELS
+from services.errors import UpstreamAPIError
+from services.external_apis import classify_with_aurora
 
 
 def main(text: str, project_name: str = None, project_url: str = None):
@@ -16,13 +16,7 @@ def main(text: str, project_name: str = None, project_url: str = None):
         Dictionary with predictions in standardized format
     """
     try:
-        url = "https://aurora-sdg.labs.vu.nl/classifier/classify/elsevier-sdg-multi"
-        payload = json.dumps({"text": text})
-        headers = {'Content-Type': 'application/json'}
-        response = requests.request("POST", url, headers=headers, data=payload)
-        # response.raise_for_status()
-        
-        raw_result = response.json()
+        raw_result = classify_with_aurora(text)
         
         # Transform Aurora API response to match embedding model format
         # Aurora API can return different structures, handle both cases
@@ -90,15 +84,8 @@ def main(text: str, project_name: str = None, project_url: str = None):
         
         return formatted_result
         
-    except requests.exceptions.RequestException as e:
-       
-        return {
-            "project_name": project_name or "Unknown",
-            "project_url": project_url or "",
-            "sdg_predictions": {},
-            "error": str(e),
-            "message": "Aurora API request failed"
-        }
+    except UpstreamAPIError:
+        raise
     except Exception as e:
         return {
             "project_name": project_name or "Unknown",
