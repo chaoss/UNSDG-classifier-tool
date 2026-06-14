@@ -1,6 +1,9 @@
 import requests
 import json
+import logging
 from sdg_constants import SDG_LABELS_DICT as SDG_LABELS
+
+logger = logging.getLogger(__name__)
 
 
 def main(text: str, project_name: str = None, project_url: str = None):
@@ -74,9 +77,9 @@ def main(text: str, project_name: str = None, project_url: str = None):
                         if score > 0.5:
                             sdg_predictions[sdg_name] = float(f"{float(score):.3f}")
                     else:
-                        print(f"DEBUG - Warning: Could not extract SDG name from prediction {idx}")
+                        logger.warning(f"Could not extract SDG name from prediction {idx}")
                 else:
-                    print(f"DEBUG - Warning: Prediction {idx} is not a dict: {type(pred)}")
+                    logger.warning(f"Prediction {idx} is not a dict: {type(pred)}")
         
         # Format output to match embedding_url.py structure
         formatted_result = {
