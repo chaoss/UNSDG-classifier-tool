@@ -18,31 +18,31 @@ export const sdgApi = {
   classifyAurora: async (
     data: SDGClassificationRequest,
   ): Promise<SDGClassificationResponse> => {
-    const response = await apiClient.post<SDGClassificationResponse>(
+    const response = await apiClient.post<{ data: SDGClassificationResponse }>(
       "api/classify_aurora",
       data,
     );
-    return response.data;
+    return response.data.data;
   },
 
   classifySTDescription: async (
     data: SDGClassificationRequest,
   ): Promise<SDGClassificationResponse> => {
-    const response = await apiClient.post<SDGClassificationResponse>(
+    const response = await apiClient.post<{ data: SDGClassificationResponse }>(
       "api/classify_st_description",
       data,
     );
-    return response.data;
+    return response.data.data;
   },
 
   classifySTUrl: async (
     data: SDGClassificationRequest,
   ): Promise<SDGClassificationResponse> => {
-    const response = await apiClient.post<SDGClassificationResponse>(
+    const response = await apiClient.post<{ data: SDGClassificationResponse }>(
       "api/classify_st_url",
       data,
     );
-    return response.data;
+    return response.data.data;
   },
 };
 
