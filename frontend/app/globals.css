@@ -45,12 +45,12 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --background: #f8fafc; /* Softer, cool off-white instead of blinding pure white */
+  --foreground: #0f172a; /* Slate-900 text */
+  --card: #ffffff;       /* Pure white for elevated cards */
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
@@ -79,12 +79,12 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
+  --background: #111827; /* Dark grayish-blue instead of solid black */
+  --foreground: #bbbbbb; /* Crisp, cool-toned silver-grey */
+  --card: #1f2937;
+  --card-foreground: #bbbbbb;
+  --popover: #1f2937;
+  --popover-foreground: #bbbbbb;
   --primary: oklch(0.922 0 0);
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
