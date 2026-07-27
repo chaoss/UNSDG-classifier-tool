@@ -8,3 +8,4 @@ flask
 flask-cors
 Flask-UUID
 markdowncleaner
+pytest

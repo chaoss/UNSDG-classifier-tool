@@ -6,10 +6,15 @@ from DPGA registry spreadsheet (single-SDG-tagged entries only, for
 clean signal). Compare predicted vs ground truth, compute COSINE_LOW/HIGH.
 """
 
+import os
+import sys
 import requests
 import numpy as np
 import time
 import re
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
 import sdg_constants
 from embedding_url import get_embedder
 

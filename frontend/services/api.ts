@@ -25,16 +25,6 @@ export const sdgApi = {
     return response.data;
   },
 
-  classifySTDescription: async (
-    data: SDGClassificationRequest,
-  ): Promise<SDGClassificationResponse> => {
-    const response = await apiClient.post<SDGClassificationResponse>(
-      "api/classify_st_description",
-      data,
-    );
-    return response.data;
-  },
-
   classifySTUrl: async (
     data: SDGClassificationRequest,
   ): Promise<SDGClassificationResponse> => {
@@ -49,14 +39,12 @@ export const sdgApi = {
 // Helper to get classification by model
 
 export const classifyByModel = async (
-  modelType: "aurora" | "st-description" | "st-url",
+  modelType: "aurora" | "st-url",
   data: SDGClassificationRequest,
 ): Promise<SDGClassificationResponse> => {
   switch (modelType) {
     case "aurora":
       return sdgApi.classifyAurora(data);
-    case "st-description":
-      return sdgApi.classifySTDescription(data);
     case "st-url":
       return sdgApi.classifySTUrl(data);
     default:

@@ -73,7 +73,7 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
 
     try {
       const response = await classifyByModel(
-        newTab as "aurora" | "st-description" | "st-url",
+        newTab as "aurora" | "st-url",
         requestData,
       );
 
@@ -240,31 +240,6 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                         <IoIosInformationCircleOutline className="ml-2 text-purple-600 cursor-help" />
                         <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg shadow-lg z-10 whitespace-normal">
                           This is a third party API from EU Alliance Research
-                          <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-800"></span>
-                        </span>
-                      </span>
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() => handleTabChange("st-description")}
-                    disabled={isLoadingTab}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${
-                      activeTab === "st-description"
-                        ? "bg-purple-50 text-purple-700 font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  >
-                    {activeTab === "st-description" && (
-                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>
-                    )}
-                    <span className="ml-2">
-                      Sentence Transformer Description
-                      <span className="relative group inline-block">
-                        <IoIosInformationCircleOutline className="ml-2 text-purple-600 cursor-help" />
-                        <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg shadow-lg z-10 whitespace-normal">
-                          This is a sentence transformer modal from Huggingface
-                          that analyzes the project description.
                           <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-800"></span>
                         </span>
                       </span>
