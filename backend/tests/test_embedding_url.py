@@ -128,63 +128,54 @@ class TestFetchRepoText:
         assert captured["topics"] == ["a", "b"]
         assert captured["readme"] == "# readme"
 
-    def test_meta_error_on_first_call_recovers_on_second_call(self, monkeypatch):
+    def test_meta_error_falls_back_to_default_meta_without_aborting(self, monkeypatch):
         """
-        fetch_repo_text wraps its first provider.fetch_meta() call in a
-        try/except ProviderError, but a few lines later unconditionally
-        calls provider.fetch_meta() again to build the value actually
-        used in the result. That means a *transient* error on the first
-        call is genuinely swallowed and doesn't abort the function -- but
-        only because the second, unprotected call happens to succeed.
+        provider.fetch_meta() is called exactly once, wrapped in
+        try/except ProviderError. A raise there must fall back to the
+        default empty meta dict and let the rest of fetch_repo_text
+        (topics, readme, summary) proceed normally rather than aborting.
         """
         provider = self._provider()
-        provider.fetch_meta.side_effect = [
-            ProviderError("transient failure"),
-            {"name": "n", "description": "d", "homepage": "h"},
-        ]
-        provider.fetch_topics.return_value = []
+        provider.fetch_meta.side_effect = ProviderError("boom")
+        provider.fetch_topics.return_value = ["x"]
+        provider.fetch_readme.return_value = "readme text"
+        monkeypatch.setattr(embedding_url, "get_provider", lambda url, token=None: provider)
+        captured = {}
+        monkeypatch.setattr(
+            embedding_url, "summarize_for_sdg",
+            lambda **kw: captured.update(kw) or "summary",
+        )
+
+        result = embedding_url.fetch_repo_text("https://github.com/o/r")
+
+        assert provider.fetch_meta.call_count == 1
+        assert result["meta"]["name"] == ""
+        assert result["meta"]["description"] == ""
+        assert result["meta"]["homepage"] == ""
+        # topics/readme still get fetched and used -- one provider's failure
+        # doesn't abort the whole call.
+        assert result["meta"]["topics"] == ["x"]
+        assert captured["readme"] == "readme text"
+
+    def test_topics_error_falls_back_to_empty_list(self, monkeypatch):
+        provider = self._provider()
+        provider.fetch_meta.return_value = {"name": "n", "description": "d", "homepage": ""}
+        provider.fetch_topics.side_effect = ProviderError("boom")
         provider.fetch_readme.return_value = ""
         monkeypatch.setattr(embedding_url, "get_provider", lambda url, token=None: provider)
         monkeypatch.setattr(embedding_url, "summarize_for_sdg", lambda **kw: "summary")
 
         result = embedding_url.fetch_repo_text("https://github.com/o/r")
+
+        assert provider.fetch_topics.call_count == 1
+        assert result["meta"]["topics"] == []
         assert result["meta"]["name"] == "n"
-        assert provider.fetch_meta.call_count == 2
 
-    def test_persistent_meta_error_propagates(self, monkeypatch):
-        """
-        Pins the flip side of the above: if provider.fetch_meta() keeps
-        raising ProviderError, the second (unprotected) call re-raises it
-        and it propagates out of fetch_repo_text -- so "errors are caught
-        and don't abort the call" only holds for transient failures, not
-        persistent ones.
-        """
-        provider = self._provider()
-        provider.fetch_meta.side_effect = ProviderError("persistent failure")
-        provider.fetch_topics.return_value = []
-        provider.fetch_readme.return_value = ""
-        monkeypatch.setattr(embedding_url, "get_provider", lambda url, token=None: provider)
-        monkeypatch.setattr(embedding_url, "summarize_for_sdg", lambda **kw: "summary")
-
-        with pytest.raises(ProviderError):
-            embedding_url.fetch_repo_text("https://github.com/o/r")
-
-    def test_topics_error_on_first_call_recovers_on_second_call(self, monkeypatch):
-        provider = self._provider()
-        provider.fetch_meta.return_value = {"name": "n", "description": "d", "homepage": ""}
-        provider.fetch_topics.side_effect = [ProviderError("transient"), ["x", "y"]]
-        provider.fetch_readme.return_value = ""
-        monkeypatch.setattr(embedding_url, "get_provider", lambda url, token=None: provider)
-        monkeypatch.setattr(embedding_url, "summarize_for_sdg", lambda **kw: "summary")
-
-        result = embedding_url.fetch_repo_text("https://github.com/o/r")
-        assert result["meta"]["topics"] == ["x", "y"]
-
-    def test_readme_error_on_first_call_recovers_on_second_call(self, monkeypatch):
+    def test_readme_error_falls_back_to_empty_string(self, monkeypatch):
         provider = self._provider()
         provider.fetch_meta.return_value = {"name": "n", "description": "d", "homepage": ""}
         provider.fetch_topics.return_value = []
-        provider.fetch_readme.side_effect = [ProviderError("transient"), "recovered readme"]
+        provider.fetch_readme.side_effect = ProviderError("boom")
         monkeypatch.setattr(embedding_url, "get_provider", lambda url, token=None: provider)
         captured = {}
         monkeypatch.setattr(
@@ -193,7 +184,9 @@ class TestFetchRepoText:
         )
 
         embedding_url.fetch_repo_text("https://github.com/o/r")
-        assert captured["readme"] == "recovered readme"
+
+        assert provider.fetch_readme.call_count == 1
+        assert captured["readme"] == ""
 
 
 # ─────────────────────────── zero_shot_scores ────────────────────────────────
@@ -243,21 +236,22 @@ class TestZeroShotScores:
         assert arr.shape == (17,)
         assert (arr == 0.5).all()
 
-    def test_list_scores_type_hits_unbound_local_error(self, monkeypatch):
+    def test_list_scores_type_returned_as_is(self, monkeypatch):
         """
-        Pins a real bug: in the `elif isinstance(scores_obj, (list, tuple))`
-        branch, the code assigns `scores_list` but the function's final
-        `return` statement reads `ordered_scores`, which is only ever
-        assigned in the dict branch above it. A list/tuple `scores` payload
-        therefore raises UnboundLocalError instead of returning scores.
+        A list/tuple `scores` payload is assumed to already be in
+        SDG_NAMES order (there's no label to key off of), and is returned
+        directly rather than being re-ordered.
         """
+        values = list(range(17))
         monkeypatch.setattr(
             embedding_url.requests, "post",
-            MagicMock(return_value=_mock_post_response({"scores": list(range(17))})),
+            MagicMock(return_value=_mock_post_response({"scores": values})),
         )
 
-        with pytest.raises(UnboundLocalError):
-            embedding_url.zero_shot_scores("text", sdg_constants.SDG_NAMES)
+        arr, details = embedding_url.zero_shot_scores("text", sdg_constants.SDG_NAMES)
+
+        np.testing.assert_array_equal(arr, values)
+        assert details["scores"] == values
 
     def test_detailed_info_sequence_truncated_to_500_chars(self, monkeypatch):
         full = {name: 0.1 for name in sdg_constants.SDG_NAMES}
