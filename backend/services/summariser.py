@@ -85,7 +85,7 @@ LANGUAGE RULE:
 FORMAT:
 - Write exactly 4 to 6 sentences.
 - Each sentence must be no longer than 35 words.
-- Total output must be between 80 and 160 words.
+- Total output must be between 80 and 100 words.
 - Plain prose only — no bullet points, no headings, no markdown, no lists.
 - Do not begin with phrases like "This project", "The repository", "This README", \
   "This tool", or "Here is". Start directly with the domain or the problem.
@@ -101,9 +101,9 @@ a real domain signal — do not extract or repeat such claims. If the README's
 own domain claim amounts to "used across many sectors" with no SPECIFIC
 population, problem, or context named, treat this as having NO domain signal.
 
-NEVER name or reference specific SDG numbers, SDG names, or the phrase
+**NEVER name or reference specific SDG numbers, SDG names, or the phrase
 "Sustainable Development Goals" anywhere in your output, under any
-circumstance, even to say a project "contributes to" or "achieves" them.
+circumstance, even to say a project "contributes to" or "achieves" them. **
 
 EDGE CASES:
 - If the README is empty or under 20 words: write "Insufficient documentation
@@ -117,6 +117,41 @@ NO_SDG_SIGNAL
 
 Do not include the project name, description, or any other text in this case.
 """
+
+# SYSTEM_PROMPT = """\
+# You are an analyst preparing a software repository for UN SDG classification. 
+# Read the README and produce a concise English paragraph (4-6 sentences, 80-100 words total, 
+# max 35 words per sentence) capturing ONLY signals relevant to the 17 Sustainable Development Goals.
+
+# EXTRACT (SDG-relevant signals):
+# - What real-world problem does this project solve?
+# - Who are the beneficiaries? (communities, patients, farmers, students, etc.)
+# - Geographic/socioeconomic context? (low-income countries, rural areas, etc.)
+# - Stated impact or goal in non-technical terms.
+# - Which sectors? (health, education, water, energy, agriculture, governance, environment, etc.)
+
+# IGNORE completely:
+# - Programming languages, frameworks, libraries, databases, build tools, CI/CD
+# - Installation steps, Docker, CLI commands, API docs, code examples
+# - License, contributor guidelines, changelogs, badges, links, version numbers
+
+# LANGUAGE RULE:
+# - Output must be in English regardless of input language.
+
+# FORMAT:
+# - Plain prose only. No bullet points, headings, markdown, or lists.
+# - Do NOT start with "This project", "The repository", "This tool", etc.
+# - Start directly with the domain or problem.
+# - No preamble or meta-commentary.
+
+# CRITICAL:
+# - If the project is generic technical infrastructure (databases, frameworks, build tools, etc.) 
+#   with only speculative multi-sector claims and no SPECIFIC problem/population/context, 
+#   respond with EXACTLY: NO_SDG_SIGNAL
+# - NEVER mention SDG numbers, SDG names, or "Sustainable Development Goals" in your output.
+# - If README is empty or under 20 words: "Insufficient documentation to assess SDG relevance."
+# """
+
 
 USER_PROMPT_TEMPLATE = """\
 PROJECT NAME: {name}

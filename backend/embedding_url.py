@@ -77,6 +77,8 @@ def fetch_repo_text(url: str, project_description: str = "", max_issues: int = 1
     print(f"\033[33m readme: {readme[:200]}...\033[0m\n")
     print(f"\033[34m {extracted_summary}\033[0m")
 
+    
+
 
     return {
         "owner": provider._owner,
@@ -146,8 +148,8 @@ def zero_shot_scores(text: str, labels: List[str]) -> Tuple[np.ndarray, Dict]:
 
 
 
-COSINE_LOW  = 0.27 # e.g. 5th percentile of real observed similarities
-COSINE_HIGH = 0.34  # e.g. 95th percentile of real observed similarities
+COSINE_LOW  = 0.27 
+COSINE_HIGH = 0.4
 
 def embedding_similarity_scores(text: str, label_texts: List[str]) -> np.ndarray:
     emb = get_embedder()
@@ -204,7 +206,7 @@ def classify_repo(url: str, threshold: float = 0.5, top_k: int = 10, use_ensembl
 # ── CHANGE 4: main() accepts and passes project_description ──────────────────
 def main(url: str, project_description: str = ""):
 
-    result = classify_repo(url, threshold=0.4, use_ensemble=True, proj_desc=project_description)
+    result = classify_repo(url, threshold=0.7, use_ensemble=True, proj_desc=project_description)
 
     predictions = {
         "project_name": result["repo"],
@@ -217,11 +219,6 @@ def main(url: str, project_description: str = ""):
     print(f"\033[32m {predictions} \033[0m\n")
     return predictions
 
-if __name__ == "__main__":
-    print("\033[43m GET THE REPO_ANALYSED RESULTS\033[0m")
-    #urls = ["https://github.com/torvalds/linux", "https://gitlab.com/gitlab-org/gitlab-runner", "https://codeberg.org/forgejo/forgejo"]
-    urls = ["https://github.com/firecrawl/firecrawl", "https://github.com/citylearn-project/CityLearn", "https://gitlab.com/trapper-project/trapper", "https://github.com/OpenMRS/openmrs-core", "https://github.com/opentripplanner/OpenTripPlanner ", "https://gitlab.windenergy.dtu.dk/pyconturb/pyconturb", "https://bitbucket.org/cioapps/wapor-et-look"]
-    for u in urls:
-        print(f"\033[33m {u} \033[0m")
-        res = main(u)
-        print(f"\033[32m {res} \033[0m\n")
+# if __name__ == "__main__":
+#     url = "https://github.com/processing/p5.js"
+#     main(url) 

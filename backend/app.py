@@ -5,6 +5,8 @@ from flask_cors import CORS
 #from embedding_description import main as classify_description
 from embedding_url import main as classify_url
 from aurora_api import main as aurora_classify
+from dotenv import load_dotenv
+load_dotenv()
 
 try:
     from services.repo_fetcher import (
@@ -67,8 +69,13 @@ def classify_aurora():
 
     return jsonify({
         "projectName": aurora_result.get("project_name"),
+<<<<<<< Updated upstream
         "projectUrl":  aurora_result.get("project_url"),
         "predictions": filtered,
+=======
+        "projectUrl": aurora_result.get("project_url"),
+        "predictions": preds
+>>>>>>> Stashed changes
     }), 200
 
 
@@ -114,9 +121,43 @@ def classify_aurora():
 #     }), 200
 
 
+<<<<<<< Updated upstream
 # ---------------------------------------------------------------------------
 # ST URL
 # ---------------------------------------------------------------------------
+=======
+    # 3. Sentence Transformer Description Model (text-based)
+    print("\n===== RUNNING SENTENCE TRANSFORMER DESCRIPTION MODEL =====")
+    try:
+        st_desc_result = classify_description(
+            project_description=projectDescription,
+            project_name=projectName,
+            project_url=projectUrl
+        )
+
+        print("ST Description model completed successfully")
+    except Exception as e:
+        print(f"ST Description model failed: {str(e)}")
+        st_desc_result = {
+            "error": str(e),
+            "message": "Sentence Transformer Description model classification failed"
+        }
+        return jsonify(st_desc_result), 500
+
+    # Convert st-description-model predictions to the expected format for logging
+    # (keeping backward compatibility with existing data/predictions.json structure)
+    preds = [
+        {"sdg": name, "prediction": score}
+        for name, score in st_desc_result.get("sdg_predictions", {}).items()
+    ]
+    
+    return jsonify({
+            "projectName": projectName,
+            "projectUrl": projectUrl,
+            "predictions": preds,
+        }), 200
+
+>>>>>>> Stashed changes
 
 @app.route('/api/classify_st_url', methods=['POST'])
 def classify_st_url():
@@ -193,7 +234,47 @@ def classify_st_url():
         {"sdg": name, "prediction": score}
         for name, score in st_url_result.get("sdg_predictions", {}).items()
     ]
+<<<<<<< Updated upstream
     filtered = [p for p in preds if p.get("prediction", 0) > 0.4]
+=======
+    
+    return jsonify({
+            "projectName": projectName,
+            "projectUrl": projectUrl,
+            "predictions": preds,
+        }), 200
+
+@app.route("/api/osdg_api", methods=["POST"])
+def osdg_external_api():
+    data = request.json
+    projectName = data.get('projectName')
+    projectUrl  = data.get('projectUrl')
+    projectDescription = data.get('projectDescription')
+
+    if not projectDescription:
+        return jsonify({'error': 'Project description is required'}), 400
+
+    # Call the external OSDG API
+    try:
+        osdg_response = requests.post(
+            "http://20.73.166.85/label_text",
+            json={
+                "text": projectDescription
+            },
+            headers={
+                "token": os.environ.get("OSDG_TOKEN")  # Ensure you have the OSDG token set in your environment variables
+            },
+            timeout=1000  # Set a timeout for the request
+        )
+        osdg_response.raise_for_status()  # Raise an error for bad status codes
+        osdg_result = osdg_response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"OSDG API request failed: {str(e)}")
+        return jsonify({
+            "error": f"Failed to connect to OSDG API: {str(e)}",
+            "message": "OSDG API classification failed"
+        }), 500
+>>>>>>> Stashed changes
 
     return jsonify({
         "projectName": projectName,

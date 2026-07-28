@@ -3,6 +3,8 @@ from torch import nn
 from transformers import AutoTokenizer, AutoModel
 from huggingface_hub import hf_hub_download
 from pathlib import Path
+print(torch.version.cuda)        # should show 12.8
+print(torch.cuda.is_available())
 
 # --- 1. Define the Model Architecture ---
 # This class must match the architecture used during training.
@@ -44,7 +46,7 @@ class SDGClassifier(nn.Module):
 
 # --- 2. Setup and Load Model ---
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+print(f"Using device: {device}")
 # Model configuration
 BASE_MODEL = 'studio-ousia/luke-large-lite'
 NUM_CLASSES = 17

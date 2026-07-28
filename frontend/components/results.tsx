@@ -32,12 +32,13 @@ const isNoSdgs = (predictions: ResultsData["predictions"]): boolean => {
   const keys = Object.keys(predictions);
   if (keys.length === 0) return true;
 
-  const values = Object.values(predictions as any);
+  const values = Object.values(predictions as Record<string, unknown>);
   return values.every((v) => {
     if (v == null) return true;
     if (typeof v === "number") return v <= 0;
-    if (typeof v === "object" && "prediction" in v) {
-      const num = Number((v as any).prediction);
+    if (typeof v === "object" && v !== null && "prediction" in v) {
+      const sdgValue = v as SDGValue;
+      const num = Number(sdgValue.prediction);
       return !Number.isFinite(num) || num <= 0;
     }
     return true;
@@ -53,6 +54,7 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("aurora");
   const [isLoadingTab, setIsLoadingTab] = useState(false);
+  const [downloadFormat, setDownloadFormat] = useState<"json" | "yaml" | "txt">("json");
 
   const handleTabChange = async (newTab: string) => {
     if (newTab === activeTab || !results) return;
@@ -125,6 +127,91 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
     }
   };
 
+  const buildDownloadContent = (predictions: Record<string, number | SDGValue>) => {
+    const unsdgData = {
+      sdg_analysis: {
+        analyzed_at: new Date().toISOString(),
+        repositoryName: results?.projectName,
+        repositoryUrl: results?.projectUrl,
+        predictions,
+        summary: {
+          total_sdgs: Object.keys(predictions).length,
+          high_confidence: Object.values(predictions).filter(
+            (score) => getScore(score) >= 0.7,
+          ).length,
+          medium_confidence: Object.values(predictions).filter(
+            (score) => getScore(score) >= 0.4 && getScore(score) < 0.7,
+          ).length,
+          low_confidence: Object.values(predictions).filter(
+            (score) => getScore(score) < 0.4,
+          ).length,
+        },
+      },
+    };
+
+    if (downloadFormat === "json") {
+      return {
+        content: JSON.stringify(unsdgData, null, 2),
+        fileName: "unsdg.json",
+        mimeType: "application/json",
+      };
+    }
+
+    if (downloadFormat === "yaml") {
+      const lines = [
+        "sdg_analysis:",
+        `  analyzed_at: "${new Date().toISOString()}"`,
+        `  repositoryName: "${String(results?.projectName ?? "").replace(/"/g, '\\"')}"`,
+        `  repositoryUrl: "${String(results?.projectUrl ?? "").replace(/"/g, '\\"')}"`,
+        "  predictions:",
+      ];
+
+      Object.entries(predictions).forEach(([key, value]) => {
+        if (typeof value === "number") {
+          lines.push(`    ${key}: ${value}`);
+        } else {
+          lines.push(`    ${key}: ${JSON.stringify(value)}`);
+        }
+      });
+
+      lines.push("  summary:");
+      lines.push(`    total_sdgs: ${Object.keys(predictions).length}`);
+      lines.push(
+        `    high_confidence: ${Object.values(predictions).filter((score) => getScore(score) >= 0.7).length}`,
+      );
+      lines.push(
+        `    medium_confidence: ${Object.values(predictions).filter((score) => getScore(score) >= 0.4 && getScore(score) < 0.7).length}`,
+      );
+      lines.push(
+        `    low_confidence: ${Object.values(predictions).filter((score) => getScore(score) < 0.4).length}`,
+      );
+
+      return {
+        content: lines.join("\n"),
+        fileName: "unsdg.yaml",
+        mimeType: "text/yaml",
+      };
+    }
+
+    const textLines = [
+      `Repository: ${results?.projectName ?? "N/A"}`,
+      `URL: ${results?.projectUrl ?? "N/A"}`,
+      `Analysis generated: ${new Date().toISOString()}`,
+      "",
+      "SDG Predictions:",
+    ];
+
+    Object.entries(predictions).forEach(([key, value]) => {
+      textLines.push(`${key}: ${getScore(value).toFixed(4)}`);
+    });
+
+    return {
+      content: textLines.join("\n"),
+      fileName: "unsdg.txt",
+      mimeType: "text/plain",
+    };
+  };
+
   const handleDownload = () => {
     if (!results?.predictions || isNoSdgs(results.predictions)) {
       setError("No SDG predictions available.");
@@ -133,44 +220,27 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
 
     try {
       const predictions = results.predictions as Record<string, number | SDGValue>;
-      const unsdgData = {
-        sdg_analysis: {
-          analyzed_at: new Date().toISOString(),
-          repositoryName: results.projectName,
-          repositoryUrl: results.projectUrl,
-          predictions,
-          summary: {
-            total_sdgs: Object.keys(predictions).length,
-            high_confidence: Object.values(predictions).filter(
-              (score) => getScore(score) >= 0.7,
-            ).length,
-            medium_confidence: Object.values(predictions).filter(
-              (score) => getScore(score) >= 0.4 && getScore(score) < 0.7,
-            ).length,
-            low_confidence: Object.values(predictions).filter(
-              (score) => getScore(score) < 0.4,
-            ).length,
-          },
-        },
-      };
-
-      const jsonString = JSON.stringify(unsdgData, null, 2);
-      const blob = new Blob([jsonString], { type: "application/json" });
+      const downloadPayload = buildDownloadContent(predictions);
+      const blob = new Blob([downloadPayload.content], {
+        type: downloadPayload.mimeType,
+      });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = "unsdg.json";
+      link.download = downloadPayload.fileName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      setSaveMessage("SDG analysis file downloaded successfully!");
+      setSaveMessage(
+        `SDG analysis file downloaded as ${downloadFormat.toUpperCase()} successfully!`,
+      );
 
       setTimeout(() => {
         setSaveMessage(null);
       }, 3000);
     } catch {
-      setError("Failed to create json file for download.");
+      setError("Failed to create the requested file for download.");
     }
   };
 
@@ -246,7 +316,7 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                     </span>
                   </button>
 
-                  <button
+                  {/* <button
                     onClick={() => handleTabChange("st-description")}
                     disabled={isLoadingTab}
                     className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${
@@ -269,7 +339,7 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                         </span>
                       </span>
                     </span>
-                  </button>
+                  </button> */}
 
                   <button
                     onClick={() => handleTabChange("st-url")}
@@ -320,10 +390,26 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                       <CardGrid sdgPredictions={results.predictions} />
 
                       {/* Action Buttons */}
-                      <div className="flex justify-end mt-6">
+                      <div className="flex flex-wrap items-center justify-end gap-3 mt-6">
+                        <label className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm">
+                          <span className="font-medium">Download as</span>
+                          <select
+                            value={downloadFormat}
+                            onChange={(event) =>
+                              setDownloadFormat(
+                                event.target.value as "json" | "yaml" | "txt",
+                              )
+                            }
+                            className="rounded border-none bg-transparent text-sm font-medium text-purple-700 outline-none"
+                          >
+                            <option value="json">JSON</option>
+                            <option value="yaml">YAML</option>
+                            <option value="txt">TXT</option>
+                          </select>
+                        </label>
                         <button
                           onClick={handleDownload}
-                          className="cursor-pointer mx-4 px-4 py-2 bg-white text-purple-600 border border-purple-600 rounded-md hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                          className="cursor-pointer px-4 py-2 bg-white text-purple-600 border border-purple-600 rounded-md hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                         >
                           <span className="flex items-center">Yes, Download SDG Analysis File</span>
                         </button>

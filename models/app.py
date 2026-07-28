@@ -39,6 +39,7 @@ SDG_LABELS = [
 print("Model and tokenizer loaded successfully.")
 # ── Global Load (Happens once at server startup) ──────────────────────────────
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(device)
 tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
 print(SDG_LABELS)
 model = SDGClassifier(
