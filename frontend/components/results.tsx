@@ -7,6 +7,7 @@ import EditModal from "./editModal";
 import { SDGValue, ResultsData } from "@/types/main";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { classifyByModel } from "@/services/api";
+import { downloadContextZip } from "@/lib/contextExport";
 
 /*
 Results Component
@@ -88,11 +89,6 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
     }
   };
 
-  const getScore = (v: number | SDGValue | null | undefined) =>
-    typeof v === "number"
-      ? Number(v)
-      : Number((v as SDGValue)?.prediction ?? 0);
-
   const saveEditedResults = () => {
     if (results) {
       setResults({
@@ -125,52 +121,21 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!results?.predictions || isNoSdgs(results.predictions)) {
       setError("No SDG predictions available.");
       return;
     }
 
     try {
-      const predictions = results.predictions as Record<string, number | SDGValue>;
-      const unsdgData = {
-        sdg_analysis: {
-          analyzed_at: new Date().toISOString(),
-          repositoryName: results.projectName,
-          repositoryUrl: results.projectUrl,
-          predictions,
-          summary: {
-            total_sdgs: Object.keys(predictions).length,
-            high_confidence: Object.values(predictions).filter(
-              (score) => getScore(score) >= 0.7,
-            ).length,
-            medium_confidence: Object.values(predictions).filter(
-              (score) => getScore(score) >= 0.4 && getScore(score) < 0.7,
-            ).length,
-            low_confidence: Object.values(predictions).filter(
-              (score) => getScore(score) < 0.4,
-            ).length,
-          },
-        },
-      };
-
-      const jsonString = JSON.stringify(unsdgData, null, 2);
-      const blob = new Blob([jsonString], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "unsdg.json";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      setSaveMessage("SDG analysis file downloaded successfully!");
+      await downloadContextZip(results);
+      setSaveMessage("SDG context files downloaded successfully!");
 
       setTimeout(() => {
         setSaveMessage(null);
       }, 3000);
     } catch {
-      setError("Failed to create json file for download.");
+      setError("Failed to create context files for download.");
     }
   };
 
@@ -300,7 +265,7 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                           onClick={handleDownload}
                           className="cursor-pointer mx-4 px-4 py-2 bg-white text-purple-600 border border-purple-600 rounded-md hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                         >
-                          <span className="flex items-center">Yes, Download SDG Analysis File</span>
+                          <span className="flex items-center">Yes, Download SDG Context Files</span>
                         </button>
                         <button
                           onClick={handleChanges}

@@ -1,5 +1,6 @@
 import React from "react";
 import { SDGValue, CardGridProps } from "@/types/main";
+import { parsePrediction } from "@/lib/sdgReference";
 
 /*
 CardGrid Component
@@ -96,52 +97,28 @@ const SDGCard = ({ sdgNumber, sdgName, confidence }: SDGCardProps) => {
 };
 
 const CardGrid = ({ sdgPredictions }: CardGridProps) => {
-  const predictionsArray: Array<SDGValue & { sourceKey: string }> =
-    Array.isArray(sdgPredictions)
-      ? sdgPredictions.map((item, index) => ({
-          ...item,
-          sourceKey: String(index),
-        }))
-      : (Object.entries(sdgPredictions ?? {})
-          .map(([sourceKey, item]) => {
-            if (typeof item === "number") {
-              return { prediction: item, sourceKey };
-            }
-            return { ...item, sourceKey };
-          })
-          .filter((item): item is SDGValue & { sourceKey: string } => {
-            return item.sdg != null && item.prediction > 0;
-          }) as Array<SDGValue & { sourceKey: string }>);
+  const entries: Array<[string, SDGValue | number]> = Array.isArray(
+    sdgPredictions,
+  )
+    ? sdgPredictions.map((item, index) => [String(index), item])
+    : Object.entries(sdgPredictions ?? {});
+
+  const predictionsArray = entries
+    .map(([sourceKey, item]) => parsePrediction(sourceKey, item))
+    .filter((item): item is NonNullable<typeof item> => item != null);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {predictionsArray
-        .sort((a, b) => b.prediction - a.prediction)
-        .map((item, index) => {
-          const fallbackNumberFromKey = item.sourceKey.match(/\d+/)?.[0];
-          const sdgNumber =
-            typeof item.sdg === "string"
-              ? item.sdg.match(/\d+/)?.[0] ||
-                fallbackNumberFromKey ||
-                (index + 1).toString()
-              : item.sdg?.code || fallbackNumberFromKey || (index + 1).toString();
-          const sdgName =
-            typeof item.sdg === "string"
-              ? item.sdg.replace(/^SDG\s*\d+\s*:?\s*/i, "").trim() || item.sdg
-              : item.sdg?.name ||
-                item.sdg?.label ||
-                item.sourceKey.replace(/^SDG\s*\d+\s*:?\s*/i, "").trim() ||
-                `SDG ${sdgNumber}`;
-
-          return (
-            <SDGCard
-              key={`${sdgNumber}-${index}`}
-              sdgNumber={sdgNumber}
-              sdgName={sdgName}
-              confidence={item.prediction}
-            />
-          );
-        })}
+        .sort((a, b) => b.score - a.score)
+        .map((item, index) => (
+          <SDGCard
+            key={`${item.number}-${index}`}
+            sdgNumber={item.number}
+            sdgName={item.name}
+            confidence={item.score}
+          />
+        ))}
     </div>
   );
 };
