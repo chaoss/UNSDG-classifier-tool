@@ -6,7 +6,7 @@ This document inventories the testing this project needs: what exists today, wha
 
 | Area | Test runner | Status |
 |------|-------------|--------|
-| Backend (`backend/`) | `pytest` (installed, in `requirements.txt`) | Two modules have real automated coverage: [`test_repo_fetcher.py`](../backend/tests/test_repo_fetcher.py) (72 tests, passing) and [`test_embedding_url.py`](../backend/tests/test_embedding_url.py) (24 tests, **1 currently failing** — see [known gap below](#known-gap-this-inventory-surfaced-new-failing-test)). `test_dpga_real_positives.py` and `test_gitlab_provider.py` remain manual, live-network scripts (excluded from collection via `conftest.py`'s `collect_ignore`) — useful as smoke tests, not part of the automated suite. `aurora_api.py`, `summariser.py`, `sdg_constants.py`, and `app.py` (§3–§6 below) still have no tests at all. |
+| Backend (`backend/`) | `pytest` (installed, in `requirements.txt`) | Two modules have real automated coverage: [`test_repo_fetcher.py`](../backend/tests/test_repo_fetcher.py) (72 tests) and [`test_embedding_url.py`](../backend/tests/test_embedding_url.py) (24 tests) — **all 96 passing**. `test_dpga_real_positives.py` and `test_gitlab_provider.py` remain manual, live-network scripts (excluded from collection via `conftest.py`'s `collect_ignore`) — useful as smoke tests, not part of the automated suite. `aurora_api.py`, `summariser.py`, `sdg_constants.py`, and `app.py` (§3–§6 below) still have no tests at all. |
 | ML microservice (`models/`) | none | No tests. Model loads real weights from Hugging Face Hub at import time, which makes naive unit testing hard (see [§7](#7-models--ge-lab-microservice)). The pure-formatting extraction recommended there hasn't been done — rounding/threshold logic is still inline in `models/app.py`'s `predict()`/`predict_cosine()`. |
 | Frontend (`frontend/`) | none | No Jest/Vitest/React Testing Library installed. `npm run lint` is the only check that runs today. |
 
@@ -14,13 +14,9 @@ Run the backend suite with `cd backend && pytest tests/` (the two manual scripts
 
 
 
-### Known gap this inventory surfaced (new, failing test)
-
-`backend/tests/test_embedding_url.py::TestClassifyRepo::test_falls_back_to_top_three_when_nothing_clears_threshold` currently **fails** on `main`/`new_functionalities`. The test (and the §2 checklist item below) assumes `classify_repo` falls back to the top **3** ranked SDGs when nothing clears `threshold`, but [`embedding_url.py`](../backend/embedding_url.py)'s actual fallback is `ranked[:max(1, min(top_k, 10))]` — since `classify_repo`'s default `top_k` is `10`, the no-match fallback now returns **10** predictions, not 3. Either the fallback was intentionally widened to `top_k` and the test/doc weren't updated, or `top_k` should be clamped to 3 in the no-match branch — needs a maintainer call on intended behavior before fixing the test.
-
 ---
 
-## 1. `backend/services/repo_fetcher.py`
+## 1. `backend/services/repo_fetcher.py` (Passed)
 
 Highest priority — this module is pure logic with a deliberate exception hierarchy, and needs no ML model or live network access if `requests` is mocked.
 
@@ -32,15 +28,15 @@ Highest priority — this module is pure logic with a deliberate exception hiera
 - **`_detect_engine`**: GitLab probe succeeds, Gitea/Forgejo probe succeeds, both fail → `None`, network exceptions during probing are swallowed rather than propagated.
 - **`get_provider` factory**: known domain resolves without a network call, unknown domain triggers engine detection, unsupported host raises `UnsupportedHostError` with the expected message, token is passed through to the provider.
 
-## 2. `backend/embedding_url.py`
+## 2. `backend/embedding_url.py` (Passed)
 
-**Covered by [`backend/tests/test_embedding_url.py`](../backend/tests/test_embedding_url.py) (24 tests, 1 failing).** The checklist below is what that file implements; kept here for reference since it doubles as the coverage map.
+**Covered by [`backend/tests/test_embedding_url.py`](../backend/tests/test_embedding_url.py) (24 tests, all passing).** The checklist below is what that file implements; kept here for reference since it doubles as the coverage map.
 
 - **`fetch_repo_text`**: user-supplied `project_description` takes priority over the repo's own metadata description (the documented "CHANGE 2" behavior); provider errors on `fetch_meta`/`fetch_topics`/`fetch_readme` are caught individually and don't abort the whole call.
 - **`zero_shot_scores`**: score ordering matches `SDG_NAMES`; raises `KeyError` when the microservice response is missing expected keys; raises `TypeError` on an unexpected `scores` type; handles the `payload["data"]["scores"]` nested-response shape.
 - **`embedding_similarity_scores`**: output is clipped to `[0, 1]` via `COSINE_LOW`/`COSINE_HIGH`.
 - **`ensemble_scores`**: weighted-average arithmetic is correct for various `alpha` values.
-- **`classify_repo`**: empty extracted text raises `ValueError`; predictions above `threshold` are selected; falls back to the top 3 ranked SDGs when nothing clears the threshold — **currently failing**, see [known gap above](#known-gap-this-inventory-surfaced-new-failing-test): actual code returns `top_k` (default 10) results, not 3.
+- **`classify_repo`**: empty extracted text raises `ValueError`; predictions above `threshold` are selected; `predictions` is `[]` when nothing clears the threshold (see [known gap above](#known-gap-this-inventory-surfaced-resolved-no-threshold-match-behavior)) — no best-effort fallback.
 - **`main`**: scores are formatted to 3 decimal places in the output dict.
 
 All of the above need `requests`, `get_provider`, `summarize_for_sdg`, and `SentenceTransformer` mocked — none of these are integration tests against a live model or network.

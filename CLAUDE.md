@@ -18,7 +18,7 @@ The frontend never talks to `models/` directly — it goes through the Flask bac
 
 Real state as of 2026-08 (see [docs/TESTING.md](docs/TESTING.md) for the fuller inventory):
 
-- `backend/tests/` — pytest, installed via `requirements.txt`. Two real automated suites now: `test_repo_fetcher.py` (72 tests, mocked HTTP, no network) and `test_embedding_url.py` (24 tests — **1 currently failing**: `TestClassifyRepo::test_falls_back_to_top_three_when_nothing_clears_threshold`, because `embedding_url.classify_repo`'s no-threshold-match fallback now returns `top_k` (default 10) results, not the hardcoded 3 the test/doc expect — needs a maintainer call on which is the intended behavior). `test_dpga_real_positives.py` and `test_gitlab_provider.py` are manual/live-network scripts, excluded from collection via `conftest.py`'s `collect_ignore` — don't try to run them as part of the normal suite.
+- `backend/tests/` — pytest, installed via `requirements.txt`. Two real automated suites, all 96 tests passing: `test_repo_fetcher.py` (72 tests, mocked HTTP, no network) and `test_embedding_url.py` (24 tests). `test_dpga_real_positives.py` and `test_gitlab_provider.py` are manual/live-network scripts, excluded from collection via `conftest.py`'s `collect_ignore` — don't try to run them as part of the normal suite.
 - `frontend/` — no test runner installed yet (`npm run lint` is the only check).
 - `models/` — no tests; hard to unit test because weight-loading happens at import time. If asked to add tests here, extract pure formatting/scoring logic first rather than mocking the model load.
 - No CI workflow exists in `.github/workflows` yet — nothing runs these automatically on PRs.
@@ -36,6 +36,5 @@ When adding backend logic, prefer pure/mockable functions (see `repo_fetcher.py`
 
 - `_sanitise_url` in `repo_fetcher.py` validates URL *shape* only, not destination — no SSRF guard against internal/private hosts yet.
 - The trailing `SDGs = [...]` list at the bottom of `backend/sdg_constants.py` looks like leftover dead code.
-- `embedding_url.classify_repo`'s no-match fallback returns `top_k` (default 10) predictions instead of a hardcoded top 3 — see the failing test noted in Testing above.
 
 See `CLAUDE.local.md` (untracked) for maintainer-specific working notes.

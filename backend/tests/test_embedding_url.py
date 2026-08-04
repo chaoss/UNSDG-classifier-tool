@@ -334,7 +334,13 @@ class TestClassifyRepo:
         selected_names = [name for name, _ in result["predictions"]]
         assert set(selected_names) == {sdg_constants.SDG_NAMES[0], sdg_constants.SDG_NAMES[2]}
 
-    def test_falls_back_to_top_three_when_nothing_clears_threshold(self, monkeypatch):
+    def test_no_predictions_when_nothing_clears_threshold(self, monkeypatch):
+        """
+        No fallback to "closest guesses" -- a repo that clears no SDG
+        threshold should report no SDGs at all (predictions == []), not a
+        best-effort top-N. `top_all` still carries the full ranking for
+        callers that want it, but it's not surfaced as `predictions`.
+        """
         self._patch_fetch(monkeypatch)
         zs = np.full(17, 0.1)
         zs[5], zs[1], zs[9] = 0.3, 0.25, 0.2
@@ -343,8 +349,8 @@ class TestClassifyRepo:
 
         result = embedding_url.classify_repo("https://github.com/o/r", threshold=0.99, use_ensemble=True)
 
-        assert len(result["predictions"]) == 3
-        assert result["predictions"] == result["top_all"][:3]
+        assert result["predictions"] == []
+        assert len(result["top_all"]) > 0
 
     def test_use_ensemble_false_skips_embedding_similarity_call(self, monkeypatch):
         self._patch_fetch(monkeypatch)
