@@ -175,7 +175,7 @@ def classify_repo(url: str, threshold: float = 0.5, top_k: int = 10, use_ensembl
 
     selected = [(name, sc) for (name, sc) in ranked if sc >= threshold]
     if not selected:
-        selected = ranked[:max(1, min(top_k, 3))]
+        selected = ranked[:max(1, min(top_k, 10))]
 
     return {
         "repo":        f"{data['owner']}/{data['repo']}",  

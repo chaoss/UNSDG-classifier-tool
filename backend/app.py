@@ -4,6 +4,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from embedding_url import main as classify_url
 from aurora_api import main as aurora_classify
+from dotenv import load_dotenv
+load_dotenv()
 
 try:
     from services.repo_fetcher import (

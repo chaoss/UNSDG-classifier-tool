@@ -65,7 +65,6 @@ def predict():
     # cleaned_text = "Our project implements a decentralized grid management system powered by IoT sensors to optimize renewable energy distribution in remote villages. By reducing energy wastage and integrating solar-based microgrids, we are accelerating the transition to clean energy while building resilient community infrastructure."
     # Inference logic
 
-
     enc = tokenizer(
         text,
         add_special_tokens=True,
