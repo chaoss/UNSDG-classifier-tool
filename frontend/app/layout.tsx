@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   title: "UNSDG Goals Checker",
   description:
     "A simple tool that identifies relevant UN Sustainable Development Goals (SDGs) based on the content of a Github repository.",
+  icons: {
+    icon: "/gw-ospo-logo.png",
+    shortcut: "/gw-ospo-logo.png",
+    apple: "/gw-ospo-logo.png",
+  },
 };
 
 export default function RootLayout({
