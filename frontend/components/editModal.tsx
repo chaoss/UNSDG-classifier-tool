@@ -100,19 +100,47 @@ const EditModal: React.FC<EditModalProps> = ({
     setShowAddForm(false);
   };
 
-  const handleSDGSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedNumber = e.target.value;
+  const handleSDGSelection = (selectedNumber: string) => {
     setNewSDGNumber(selectedNumber);
 
     if (selectedNumber) {
-      const sdgNumber = parseInt(selectedNumber) as keyof typeof SDG;
-      if (SDG[sdgNumber]) {
-        setNewSDGName(SDG[sdgNumber]);
+      const sdgNumber = parseInt(selectedNumber);
+      const sdg = SDG.find((s) => s.id === sdgNumber);
+      if (sdg) {
+        setNewSDGName(sdg.name);
       }
     } else {
       setNewSDGName("");
     }
   };
+
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [hoveredSdg, setHoveredSdg] = React.useState<number | null>(null);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setDropdownOpen(false);
+      }
+    };
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscape);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [dropdownOpen]);
+
+  const selectedSdg = newSDGNumber ? SDG.find((s) => s.id === parseInt(newSDGNumber)) : null;
+  const displaySdg = hoveredSdg ? SDG.find((s) => s.id === hoveredSdg) : selectedSdg;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -153,20 +181,55 @@ const EditModal: React.FC<EditModalProps> = ({
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     SDG Number
                   </label>
-                  <select
-                    value={newSDGNumber}
-                    onChange={(e) => {
-                      handleSDGSelection(e);
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  >
-                    <option value="">Select SDG Number</option>
-                    {Array.from({ length: 17 }, (_, i) => i + 1).map((num) => (
-                      <option key={num} value={num}>
-                        SDG {num}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      type="button"
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-left flex items-center justify-between"
+                    >
+                      <span className={newSDGNumber ? "text-gray-900" : "text-gray-400"}>
+                        {newSDGNumber
+                          ? `SDG ${newSDGNumber} - ${SDG.find((s) => s.id === parseInt(newSDGNumber))?.name}`
+                          : "Select SDG Number"}
+                      </span>
+                      <svg
+                        className={`w-4 h-4 text-gray-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {dropdownOpen && (
+                      <div className="absolute z-20 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                        {SDG.map((sdg) => (
+                          <div
+                            key={sdg.id}
+                            onMouseEnter={() => setHoveredSdg(sdg.id)}
+                            onMouseLeave={() => setHoveredSdg(null)}
+                            onClick={() => {
+                              handleSDGSelection(String(sdg.id));
+                              setDropdownOpen(false);
+                            }}
+                            className="px-3 py-2 hover:bg-purple-50 cursor-pointer text-sm text-gray-900"
+                          >
+                            SDG {sdg.id} - {sdg.name}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {displaySdg && (
+                    <div className="mt-2 p-3 bg-purple-50 border border-purple-200 rounded-md">
+                      <p className="font-semibold text-gray-800 text-sm">
+                        SDG {displaySdg.id}: {displaySdg.name}
+                      </p>
+                      <p className="text-gray-600 text-xs mt-1 leading-relaxed">
+                        {displaySdg.description}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
