@@ -116,12 +116,9 @@ const NoSdgPage: React.FC<NoSdgPageProps> = ({ recommendation }) => {
               <textarea
                 readOnly
                 className="w-full p-3 rounded border border-gray-300 focus:border-purple-500 focus:outline-none"
+                value={recommendation ? reasonDescriptions[recommendation.reason] : ""}
                 onClick={e => handleCopy(e.currentTarget.value)}
-              >
-                {recommendation
-                  ? reasonDescriptions[recommendation.reason]
-                  : ""}
-              </textarea>
+              />
             </div>
 
             <div className="flex gap-3">
