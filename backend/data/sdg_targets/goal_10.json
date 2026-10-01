@@ -1,0 +1,226 @@
+[
+  {
+    "code": "10",
+    "title": "Reduce inequality within and among countries",
+    "description": "Goal 10 calls for reducing inequalities in income, as well as those based on sex, age, disability, race, class, ethnicity, religion and opportunity—both within and among countries. It also aims to ensure safe, orderly and regular migration and addresses issues related to representation of developing countries in global decision-making and development assistance.",
+    "uri": "/v1/sdg/Goal/10",
+    "targets": [
+      {
+        "goal": null,
+        "code": "10.1",
+        "title": "By 2030, progressively achieve and sustain income growth of the bottom 40 per cent of the population at a rate higher than the national average",
+        "description": "By 2030, progressively achieve and sustain income growth of the bottom 40 per cent of the population at a rate higher than the national average",
+        "uri": "/v1/Target/10.1",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.1.1",
+            "description": "Growth rates of household expenditure or income per capita among the bottom 40 per cent of the population and the total population",
+            "tier": "1",
+            "uri": "/v1/Indicator/10.1.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "10.2",
+        "title": "By 2030, empower and promote the social, economic and political inclusion of all, irrespective of age, sex, disability, race, ethnicity, origin, religion or economic or other status",
+        "description": "By 2030, empower and promote the social, economic and political inclusion of all, irrespective of age, sex, disability, race, ethnicity, origin, religion or economic or other status",
+        "uri": "/v1/Target/10.2",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.2.1",
+            "description": "Proportion of people living below 50 per cent of median income, by sex, age and persons with disabilities",
+            "tier": "1",
+            "uri": "/v1/Indicator/10.2.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "10.3",
+        "title": "Ensure equal opportunity and reduce inequalities of outcome, including by eliminating discriminatory laws, policies and practices and promoting appropriate legislation, policies and action in this regard",
+        "description": "Ensure equal opportunity and reduce inequalities of outcome, including by eliminating discriminatory laws, policies and practices and promoting appropriate legislation, policies and action in this regard",
+        "uri": "/v1/Target/10.3",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.3.1",
+            "description": "Proportion of population reporting having personally felt discriminated against or harassed in the previous 12 months on the basis of a ground of discrimination prohibited under international human rights law",
+            "tier": "2",
+            "uri": "/v1/Indicator/10.3.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "10.4",
+        "title": "Adopt policies, especially fiscal, wage and social protection policies, and progressively achieve greater equality",
+        "description": "Adopt policies, especially fiscal, wage and social protection policies, and progressively achieve greater equality",
+        "uri": "/v1/Target/10.4",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.4.1",
+            "description": "Labour share of GDP",
+            "tier": "1",
+            "uri": "/v1/Indicator/10.4.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.4.2",
+            "description": "Redistributive impact of fiscal policy on the Gini index",
+            "tier": "2",
+            "uri": "/v1/Indicator/10.4.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "10.5",
+        "title": "Improve the regulation and monitoring of global financial markets and institutions and strengthen the implementation of such regulations",
+        "description": "Improve the regulation and monitoring of global financial markets and institutions and strengthen the implementation of such regulations",
+        "uri": "/v1/Target/10.5",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.5.1",
+            "description": "Financial Soundness Indicators",
+            "tier": "1",
+            "uri": "/v1/Indicator/10.5.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "10.6",
+        "title": "Ensure enhanced representation and voice for developing countries in decision-making in global international economic and financial institutions in order to deliver more effective, credible, accountable and legitimate institutions",
+        "description": "Ensure enhanced representation and voice for developing countries in decision-making in global international economic and financial institutions in order to deliver more effective, credible, accountable and legitimate institutions",
+        "uri": "/v1/Target/10.6",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.6.1",
+            "description": "Proportion of members and voting rights of developing countries in international organizations",
+            "tier": "1",
+            "uri": "/v1/Indicator/10.6.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "10.7",
+        "title": "Facilitate orderly, safe, regular and responsible migration and mobility of people, including through the implementation of planned and well-managed migration policies",
+        "description": "Facilitate orderly, safe, regular and responsible migration and mobility of people, including through the implementation of planned and well-managed migration policies",
+        "uri": "/v1/Target/10.7",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.7.2",
+            "description": "Proportion of countries with migration policies that facilitate orderly, safe, regular and responsible migration and mobility of people",
+            "tier": "1",
+            "uri": "/v1/Indicator/10.7.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.7.3",
+            "description": "Number of people who died or disappeared in the process of migration towards an international destination",
+            "tier": "1",
+            "uri": "/v1/Indicator/10.7.3",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.7.4",
+            "description": "Proportion of the population who are refugees, by country of origin",
+            "tier": "1",
+            "uri": "/v1/Indicator/10.7.4",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.7.1",
+            "description": "Recruitment cost borne by employee as a proportion of monthly income earned in country of destination",
+            "tier": "2",
+            "uri": "/v1/Indicator/10.7.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "10.a",
+        "title": "Implement the principle of special and differential treatment for developing countries, in particular least developed countries, in accordance with World Trade Organization agreements",
+        "description": "Implement the principle of special and differential treatment for developing countries, in particular least developed countries, in accordance with World Trade Organization agreements",
+        "uri": "/v1/Target/10.a",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.a.1",
+            "description": "Proportion of tariff lines applied to imports from least developed countries and developing countries with zero-tariff",
+            "tier": "1",
+            "uri": "/v1/Indicator/10.a.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "10.b",
+        "title": "Encourage official development assistance and financial flows, including foreign direct investment, to States where the need is greatest, in particular least developed countries, African countries, small island developing States and landlocked developing countries, in accordance with their national plans and programmes",
+        "description": "Encourage official development assistance and financial flows, including foreign direct investment, to States where the need is greatest, in particular least developed countries, African countries, small island developing States and landlocked developing countries, in accordance with their national plans and programmes",
+        "uri": "/v1/Target/10.b",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.b.1",
+            "description": "Total resource flows for development (e.g. official development assistance, foreign direct investment and other flows)",
+            "tier": "1",
+            "uri": "/v1/Indicator/10.b.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "10.c",
+        "title": "By 2030, reduce to less than 3 per cent the transaction costs of migrant remittances and eliminate remittance corridors with costs higher than 5 per cent",
+        "description": "By 2030, reduce to less than 3 per cent the transaction costs of migrant remittances and eliminate remittance corridors with costs higher than 5 per cent",
+        "uri": "/v1/Target/10.c",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "10.c.1",
+            "description": "Remittance costs as a proportion of the amount remitted",
+            "tier": "1",
+            "uri": "/v1/Indicator/10.c.1",
+            "series": []
+          }
+        ]
+      }
+    ]
+  }
+]

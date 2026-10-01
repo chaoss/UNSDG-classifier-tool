@@ -54,3 +54,4 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+../models/__pycache__/classifier.cpython-313.pyc

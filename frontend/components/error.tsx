@@ -25,7 +25,7 @@ const Error: React.FC<ErrorProps> = ({ error, setError, setResults }) => {
             setError(null);
             setResults(null);
           }}
-          className="px-6 py-3 bg-purple-700 hover:bg-purple-800 text-white font-semibold rounded-xl transition-colors duration-200"
+          className="px-6 py-3 bg-[#5b92e5] hover:bg-[#4d82d6] text-white font-semibold rounded-xl transition-colors duration-200"
         >
           Try Again
         </button>

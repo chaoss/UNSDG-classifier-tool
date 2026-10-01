@@ -1,0 +1,190 @@
+[
+  {
+    "code": "1",
+    "title": "End poverty in all its forms everywhere",
+    "description": "Goal 1 calls for an end to poverty in all its manifestations, including extreme poverty, over the next 15 years. All people everywhere, including the poorest and most vulnerable, should enjoy a basic standard of living and social protection benefits.",
+    "uri": "/v1/sdg/Goal/1",
+    "targets": [
+      {
+        "goal": null,
+        "code": "1.1",
+        "title": "By 2030, eradicate extreme poverty for all people everywhere, currently measured as people living on less than $1.25 a day",
+        "description": "By 2030, eradicate extreme poverty for all people everywhere, currently measured as people living on less than $1.25 a day",
+        "uri": "/v1/Target/1.1",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.1.1",
+            "description": "Proportion of the population living below the international poverty line by sex, age, employment status and geographic location (urban/rural)",
+            "tier": "1",
+            "uri": "/v1/Indicator/1.1.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "1.2",
+        "title": "By 2030, reduce at least by half the proportion of men, women and children of all ages living in poverty in all its dimensions according to national definitions",
+        "description": "By 2030, reduce at least by half the proportion of men, women and children of all ages living in poverty in all its dimensions according to national definitions",
+        "uri": "/v1/Target/1.2",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.2.1",
+            "description": "Proportion of population living below the national poverty line, by sex and age",
+            "tier": "1",
+            "uri": "/v1/Indicator/1.2.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.2.2",
+            "description": "Proportion of men, women and children of all ages living in poverty in all its dimensions according to national definitions",
+            "tier": "2",
+            "uri": "/v1/Indicator/1.2.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "1.3",
+        "title": "Implement nationally appropriate social protection systems and measures for all, including floors, and by 2030 achieve substantial coverage of the poor and the vulnerable",
+        "description": "Implement nationally appropriate social protection systems and measures for all, including floors, and by 2030 achieve substantial coverage of the poor and the vulnerable",
+        "uri": "/v1/Target/1.3",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.3.1",
+            "description": "Proportion of population covered by social protection floors/systems, by sex, distinguishing children, unemployed persons, older persons, persons with disabilities, pregnant women, newborns, work-injury victims and the poor and the vulnerable",
+            "tier": "1",
+            "uri": "/v1/Indicator/1.3.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "1.4",
+        "title": "By 2030, ensure that all men and women, in particular the poor and the vulnerable, have equal rights to economic resources, as well as access to basic services, ownership and control over land and other forms of property, inheritance, natural resources, appropriate new technology and financial services, including microfinance",
+        "description": "By 2030, ensure that all men and women, in particular the poor and the vulnerable, have equal rights to economic resources, as well as access to basic services, ownership and control over land and other forms of property, inheritance, natural resources, appropriate new technology and financial services, including microfinance",
+        "uri": "/v1/Target/1.4",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.4.1",
+            "description": "Proportion of population living in households with access to basic services",
+            "tier": "1",
+            "uri": "/v1/Indicator/1.4.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.4.2",
+            "description": "Proportion of total adult population with secure tenure rights to land, (a) with legally recognized documentation, and (b) who perceive their rights to land as secure, by sex and type of tenure",
+            "tier": "2",
+            "uri": "/v1/Indicator/1.4.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "1.5",
+        "title": "By 2030, build the resilience of the poor and those in vulnerable situations and reduce their exposure and vulnerability to climate-related extreme events and other economic, social and environmental shocks and disasters",
+        "description": "By 2030, build the resilience of the poor and those in vulnerable situations and reduce their exposure and vulnerability to climate-related extreme events and other economic, social and environmental shocks and disasters",
+        "uri": "/v1/Target/1.5",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.5.1",
+            "description": "Number of deaths, missing persons and directly affected persons attributed to disasters per 100,000 population",
+            "tier": "1",
+            "uri": "/v1/Indicator/1.5.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.5.2",
+            "description": "Direct economic loss attributed to disasters in relation to global gross domestic product (GDP)",
+            "tier": "1",
+            "uri": "/v1/Indicator/1.5.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.5.3",
+            "description": "Number of countries that adopt and implement national disaster risk reduction strategies in line with the Sendai Framework for Disaster Risk Reduction 2015-2030",
+            "tier": "1",
+            "uri": "/v1/Indicator/1.5.3",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.5.4",
+            "description": "Proportion of local governments that adopt and implement local disaster risk reduction strategies in line with national disaster risk reduction strategies",
+            "tier": "2",
+            "uri": "/v1/Indicator/1.5.4",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "1.a",
+        "title": "Ensure significant mobilization of resources from a variety of sources, including through enhanced development cooperation, in order to provide adequate and predictable means for developing countries, in particular least developed countries, to implement programmes and policies to end poverty in all its dimensions",
+        "description": "Ensure significant mobilization of resources from a variety of sources, including through enhanced development cooperation, in order to provide adequate and predictable means for developing countries, in particular least developed countries, to implement programmes and policies to end poverty in all its dimensions",
+        "uri": "/v1/Target/1.a",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.a.2",
+            "description": "Proportion of total government spending on essential services (education, health and social protection)",
+            "tier": "2",
+            "uri": "/v1/Indicator/1.a.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.a.1",
+            "description": "Total official development assistance grants that focus on poverty reduction as a share of the recipient country’s gross national income",
+            "tier": "1",
+            "uri": "/v1/Indicator/1.a.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "1.b",
+        "title": "Create sound policy frameworks at the national, regional and international levels, based on pro-poor and gender-sensitive development strategies, to support accelerated investment in poverty eradication actions",
+        "description": "Create sound policy frameworks at the national, regional and international levels, based on pro-poor and gender-sensitive development strategies, to support accelerated investment in poverty eradication actions",
+        "uri": "/v1/Target/1.b",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "1.b.1",
+            "description": "Pro-poor public social spending",
+            "tier": "2",
+            "uri": "/v1/Indicator/1.b.1",
+            "series": []
+          }
+        ]
+      }
+    ]
+  }
+]

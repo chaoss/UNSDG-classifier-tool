@@ -1,0 +1,208 @@
+[
+  {
+    "code": "4",
+    "title": "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all",
+    "description": "Goal 4 focuses on the acquisition of foundational and higher-order skills; greater and more equitable access to technical and vocational education and training and higher education; training throughout life; and the knowledge, skills and values needed to function well and contribute to society.",
+    "uri": "/v1/sdg/Goal/4",
+    "targets": [
+      {
+        "goal": null,
+        "code": "4.1",
+        "title": "By 2030, ensure that all girls and boys complete free, equitable and quality primary and secondary education leading to relevant and effective learning outcomes",
+        "description": "By 2030, ensure that all girls and boys complete free, equitable and quality primary and secondary education leading to relevant and effective learning outcomes",
+        "uri": "/v1/Target/4.1",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.1.1",
+            "description": "Proportion of children and young people (a) in grades 2/3; (b) at the end of primary; and (c) at the end of lower secondary achieving at least a minimum proficiency level in (i) reading and (ii) mathematics, by sex",
+            "tier": "2",
+            "uri": "/v1/Indicator/4.1.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.1.2",
+            "description": "Completion rate (primary education, lower secondary education, upper secondary education)",
+            "tier": "1",
+            "uri": "/v1/Indicator/4.1.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "4.2",
+        "title": "By 2030, ensure that all girls and boys have access to quality early childhood development, care and pre-primary education so that they are ready for primary education",
+        "description": "By 2030, ensure that all girls and boys have access to quality early childhood development, care and pre-primary education so that they are ready for primary education",
+        "uri": "/v1/Target/4.2",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.2.1",
+            "description": "Proportion of children aged 24-59 months who are developmentally on track in health, learning and psychosocial well-being, by sex",
+            "tier": "2",
+            "uri": "/v1/Indicator/4.2.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.2.2",
+            "description": "Participation rate in organized learning (one year before the official primary entry age), by sex",
+            "tier": "1",
+            "uri": "/v1/Indicator/4.2.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "4.3",
+        "title": "By 2030, ensure equal access for all women and men to affordable and quality technical, vocational and tertiary education, including university",
+        "description": "By 2030, ensure equal access for all women and men to affordable and quality technical, vocational and tertiary education, including university",
+        "uri": "/v1/Target/4.3",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.3.1",
+            "description": "Participation rate of youth and adults in formal and non-formal education and training in the previous 12 months, by sex",
+            "tier": "1",
+            "uri": "/v1/Indicator/4.3.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "4.4",
+        "title": "By 2030, substantially increase the number of youth and adults who have relevant skills, including technical and vocational skills, for employment, decent jobs and entrepreneurship",
+        "description": "By 2030, substantially increase the number of youth and adults who have relevant skills, including technical and vocational skills, for employment, decent jobs and entrepreneurship",
+        "uri": "/v1/Target/4.4",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.4.1",
+            "description": "Proportion of youth and adults with information and communications technology (ICT) skills, by type of skill",
+            "tier": "2",
+            "uri": "/v1/Indicator/4.4.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "4.5",
+        "title": "By 2030, eliminate gender disparities in education and ensure equal access to all levels of education and vocational training for the vulnerable, including persons with disabilities, indigenous peoples and children in vulnerable situations",
+        "description": "By 2030, eliminate gender disparities in education and ensure equal access to all levels of education and vocational training for the vulnerable, including persons with disabilities, indigenous peoples and children in vulnerable situations",
+        "uri": "/v1/Target/4.5",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.5.1",
+            "description": "Parity indices (female/male, rural/urban, bottom/top wealth quintile and others such as disability status, indigenous peoples and conflict-affected, as data become available) for all education indicators on this list that can be disaggregated",
+            "tier": "2",
+            "uri": "/v1/Indicator/4.5.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "4.6",
+        "title": "By 2030, ensure that all youth and a substantial proportion of adults, both men and women, achieve literacy and numeracy",
+        "description": "By 2030, ensure that all youth and a substantial proportion of adults, both men and women, achieve literacy and numeracy",
+        "uri": "/v1/Target/4.6",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.6.1",
+            "description": "Youth/adult literacy rate",
+            "tier": "2",
+            "uri": "/v1/Indicator/4.6.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "4.7",
+        "title": "By 2030, ensure that all learners acquire the knowledge and skills needed to promote sustainable development, including, among others, through education for sustainable development and sustainable lifestyles, human rights, gender equality, promotion of a culture of peace and non-violence, global citizenship and appreciation of cultural diversity and of culture's contribution to sustainable development",
+        "description": "By 2030, ensure that all learners acquire the knowledge and skills needed to promote sustainable development, including, among others, through education for sustainable development and sustainable lifestyles, human rights, gender equality, promotion of a culture of peace and non-violence, global citizenship and appreciation of cultural diversity and of culture's contribution to sustainable development",
+        "uri": "/v1/Target/4.7",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.7.1",
+            "description": "Extent to which (i) global citizenship education and (ii) education for sustainable development are mainstreamed in (a) national education policies; (b) curricula; (c) teacher education; and (d) student assessment",
+            "tier": "2",
+            "uri": "/v1/Indicator/4.7.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "4.a",
+        "title": "Build and upgrade education facilities that are child, disability and gender sensitive and provide safe, non-violent, inclusive and effective learning environments for all",
+        "description": "Build and upgrade education facilities that are child, disability and gender sensitive and provide safe, non-violent, inclusive and effective learning environments for all",
+        "uri": "/v1/Target/4.a",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.a.1",
+            "description": "Proportion of schools offering basic services, by type of service",
+            "tier": "1",
+            "uri": "/v1/Indicator/4.a.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "4.b",
+        "title": "By 2020, substantially expand globally the number of scholarships available to developing countries, in particular least developed countries, small island developing States and African countries, for enrolment in higher education, including vocational training and information and communications technology, technical, engineering and scientific programmes, in developed countries and other developing countries",
+        "description": "By 2020, substantially expand globally the number of scholarships available to developing countries, in particular least developed countries, small island developing States and African countries, for enrolment in higher education, including vocational training and information and communications technology, technical, engineering and scientific programmes, in developed countries and other developing countries",
+        "uri": "/v1/Target/4.b",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.b.1",
+            "description": "Volume of official development assistance flows for scholarships",
+            "tier": "1",
+            "uri": "/v1/Indicator/4.b.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "4.c",
+        "title": "By 2030, substantially increase the supply of qualified teachers, including through international cooperation for teacher training in developing countries, especially least developed countries and small island developing States",
+        "description": "By 2030, substantially increase the supply of qualified teachers, including through international cooperation for teacher training in developing countries, especially least developed countries and small island developing States",
+        "uri": "/v1/Target/4.c",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "4.c.1",
+            "description": "Proportion of teachers with the minimum required qualifications, by education level",
+            "tier": "1",
+            "uri": "/v1/Indicator/4.c.1",
+            "series": []
+          }
+        ]
+      }
+    ]
+  }
+]

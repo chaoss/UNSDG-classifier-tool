@@ -1,0 +1,334 @@
+[
+  {
+    "code": "16",
+    "title": "Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels",
+    "description": "Goal 16 envisages peaceful and inclusive societies based on respect for human rights, the rule of law, good governance at all levels, and transparent, effective and accountable institutions. Many countries still face protracted violence and armed conflict, and far too many people are poorly supported by weak institutions and lack access to justice, information and other fundamental freedoms.",
+    "uri": "/v1/sdg/Goal/16",
+    "targets": [
+      {
+        "goal": null,
+        "code": "16.1",
+        "title": "Significantly reduce all forms of violence and related death rates everywhere",
+        "description": "Significantly reduce all forms of violence and related death rates everywhere",
+        "uri": "/v1/Target/16.1",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.1.1",
+            "description": "Number of victims of intentional homicide per 100,000 population, by sex and age",
+            "tier": "1",
+            "uri": "/v1/Indicator/16.1.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.1.3",
+            "description": "Proportion of population subjected to (a) physical violence, (b) psychological violence and/or (c) sexual violence in the previous 12 months",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.1.3",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.1.4",
+            "description": "Proportion of population that feel safe walking alone around the area they live after dark",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.1.4",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.1.2",
+            "description": "Conflict-related deaths per 100,000 population, by sex, age and cause",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.1.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "16.2",
+        "title": "End abuse, exploitation, trafficking and all forms of violence against and torture of children",
+        "description": "End abuse, exploitation, trafficking and all forms of violence against and torture of children",
+        "uri": "/v1/Target/16.2",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.2.1",
+            "description": "Proportion of children aged 1-17 years who experienced any physical punishment and/or psychological aggression by caregivers in the past month",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.2.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.2.2",
+            "description": "Number of victims of human trafficking per 100,000 population, by sex, age and form of exploitation",
+            "tier": "1",
+            "uri": "/v1/Indicator/16.2.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.2.3",
+            "description": "Proportion of young women and men aged 18-29 years who experienced sexual violence by age 18",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.2.3",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "16.3",
+        "title": "Promote the rule of law at the national and international levels and ensure equal access to justice for all",
+        "description": "Promote the rule of law at the national and international levels and ensure equal access to justice for all",
+        "uri": "/v1/Target/16.3",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.3.2",
+            "description": "Unsentenced detainees as a proportion of overall prison population",
+            "tier": "1",
+            "uri": "/v1/Indicator/16.3.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.3.1",
+            "description": "Proportion of victims of (a) physical, (b) psychological and/or (c) sexual violence in the previous 12 months who reported their victimization to competent authorities or other officially recognized conflict resolution mechanisms",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.3.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.3.3",
+            "description": "Proportion of the population who have experienced a dispute in the past two years and who accessed a formal or informal dispute resolution mechanism, by type of mechanism",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.3.3",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "16.4",
+        "title": "By 2030, significantly reduce illicit financial and arms flows, strengthen the recovery and return of stolen assets and combat all forms of organized crime",
+        "description": "By 2030, significantly reduce illicit financial and arms flows, strengthen the recovery and return of stolen assets and combat all forms of organized crime",
+        "uri": "/v1/Target/16.4",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.4.2",
+            "description": "Proportion of seized, found or surrendered arms whose illicit origin or context has been traced or established by a competent authority in line with international instruments",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.4.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.4.1",
+            "description": "Total value of inward and outward illicit financial flows (in current United States dollars)",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.4.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "16.5",
+        "title": "Substantially reduce corruption and bribery in all their forms",
+        "description": "Substantially reduce corruption and bribery in all their forms",
+        "uri": "/v1/Target/16.5",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.5.2",
+            "description": "Proportion of businesses that had at least one contact with a public official and that paid a bribe to a public official, or were asked for a bribe by those public officials during the previous 12 months",
+            "tier": "1",
+            "uri": "/v1/Indicator/16.5.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.5.1",
+            "description": "Proportion of persons who had at least one contact with a public official and who paid a bribe to a public official, or were asked for a bribe by those public officials, during the previous 12 months",
+            "tier": "1",
+            "uri": "/v1/Indicator/16.5.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "16.6",
+        "title": "Develop effective, accountable and transparent institutions at all levels",
+        "description": "Develop effective, accountable and transparent institutions at all levels",
+        "uri": "/v1/Target/16.6",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.6.1",
+            "description": "Primary government expenditures as a proportion of original approved budget, by sector (or by budget codes or similar)",
+            "tier": "1",
+            "uri": "/v1/Indicator/16.6.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.6.2",
+            "description": "Proportion of population satisfied with their last experience of public services",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.6.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "16.7",
+        "title": "Ensure responsive, inclusive, participatory and representative decision-making at all levels",
+        "description": "Ensure responsive, inclusive, participatory and representative decision-making at all levels",
+        "uri": "/v1/Target/16.7",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.7.1",
+            "description": "Proportions of positions in national and local institutions, including (a) the legislatures; (b) the public service; and (c) the judiciary, compared to national distributions, by sex, age, persons with disabilities and population groups",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.7.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.7.2",
+            "description": "Proportion of population who believe decision-making is inclusive and responsive, by sex, age, disability and population group",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.7.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "16.8",
+        "title": "Broaden and strengthen the participation of developing countries in the institutions of global governance",
+        "description": "Broaden and strengthen the participation of developing countries in the institutions of global governance",
+        "uri": "/v1/Target/16.8",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.8.1",
+            "description": "Proportion of members and voting rights of developing countries in international organizations",
+            "tier": "1",
+            "uri": "/v1/Indicator/16.8.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "16.9",
+        "title": "By 2030, provide legal identity for all, including birth registration",
+        "description": "By 2030, provide legal identity for all, including birth registration",
+        "uri": "/v1/Target/16.9",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.9.1",
+            "description": "Proportion of children under 5 years of age whose births have been registered with a civil authority, by age",
+            "tier": "1",
+            "uri": "/v1/Indicator/16.9.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "16.10",
+        "title": "Ensure public access to information and protect fundamental freedoms, in accordance with national legislation and international agreements",
+        "description": "Ensure public access to information and protect fundamental freedoms, in accordance with national legislation and international agreements",
+        "uri": "/v1/Target/16.10",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.10.1",
+            "description": "Number of verified cases of killing, kidnapping, enforced disappearance, arbitrary detention and torture of journalists, associated media personnel, trade unionists and human rights advocates in the previous 12 months",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.10.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.10.2",
+            "description": "Number of countries that adopt and implement constitutional, statutory and/or policy guarantees for public access to information",
+            "tier": "1",
+            "uri": "/v1/Indicator/16.10.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "16.a",
+        "title": "Strengthen relevant national institutions, including through international cooperation, for building capacity at all levels, in particular in developing countries, to prevent violence and combat terrorism and crime",
+        "description": "Strengthen relevant national institutions, including through international cooperation, for building capacity at all levels, in particular in developing countries, to prevent violence and combat terrorism and crime",
+        "uri": "/v1/Target/16.a",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.a.1",
+            "description": "Existence of independent national human rights institutions in compliance with the Paris Principles",
+            "tier": "1",
+            "uri": "/v1/Indicator/16.a.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "16.b",
+        "title": "Promote and enforce non-discriminatory laws and policies for sustainable development",
+        "description": "Promote and enforce non-discriminatory laws and policies for sustainable development",
+        "uri": "/v1/Target/16.b",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "16.b.1",
+            "description": "Proportion of population reporting having personally felt discriminated against or harassed in the previous 12 months on the basis of a ground of discrimination prohibited under international human rights law",
+            "tier": "2",
+            "uri": "/v1/Indicator/16.b.1",
+            "series": []
+          }
+        ]
+      }
+    ]
+  }
+]

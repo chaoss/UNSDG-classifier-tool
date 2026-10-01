@@ -128,6 +128,21 @@ class TestFetchRepoText:
         assert captured["topics"] == ["a", "b"]
         assert captured["readme"] == "# readme"
 
+    def test_readme_excerpt_uses_cleaner_and_is_limited_to_500_words(self, monkeypatch):
+        provider = self._provider()
+        provider.fetch_meta.return_value = {"name": "n", "description": "d", "homepage": ""}
+        provider.fetch_topics.return_value = []
+        words = [f"word{index}" for index in range(510)]
+        provider.fetch_readme.return_value = (
+            "[Project](https://example.org)\n" + " ".join(words)
+        )
+        monkeypatch.setattr(embedding_url, "get_provider", lambda url, token=None: provider)
+        monkeypatch.setattr(embedding_url, "summarize_for_sdg", lambda **kw: "summary")
+
+        result = embedding_url.fetch_repo_text("https://github.com/o/r")
+
+        assert result["readme_excerpt"].split() == ["Project", *words[:499]]
+
     def test_meta_error_falls_back_to_default_meta_without_aborting(self, monkeypatch):
         """
         provider.fetch_meta() is called exactly once, wrapped in
@@ -442,6 +457,7 @@ class TestMain:
                     ("SDG 3: Ensure healthy lives and promote well-being for all at all ages", 0.98765),
                 ],
                 "summary": "summary used for recommendation context",
+                "readme_excerpt": "cleaned README excerpt",
                 "meta": {"name": "repo", "description": "desc", "topics": [], "homepage": ""},
             },
         )
@@ -455,4 +471,5 @@ class TestMain:
             "SDG 3: Ensure healthy lives and promote well-being for all at all ages": 0.988,
         }
         assert result["summary"] == "summary used for recommendation context"
+        assert result["readme_excerpt"] == "cleaned README excerpt"
         assert result["meta"] == {"name": "repo", "description": "desc", "topics": [], "homepage": ""}

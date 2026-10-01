@@ -1,0 +1,190 @@
+[
+  {
+    "code": "9",
+    "title": "Build resilient infrastructure, promote inclusive and sustainable industrialization and foster innovation",
+    "description": "Goal 9 focuses on the promotion of infrastructure development, industrialization and innovation. This can be accomplished through enhanced international and domestic financial, technological and technical support, research and innovation, and increased access to information and communication technology.",
+    "uri": "/v1/sdg/Goal/9",
+    "targets": [
+      {
+        "goal": null,
+        "code": "9.1",
+        "title": "Develop quality, reliable, sustainable and resilient infrastructure, including regional and trans-border infrastructure, to support economic development and human well-being, with a focus on affordable and equitable access for all",
+        "description": "Develop quality, reliable, sustainable and resilient infrastructure, including regional and trans-border infrastructure, to support economic development and human well-being, with a focus on affordable and equitable access for all",
+        "uri": "/v1/Target/9.1",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.1.2",
+            "description": "Passenger and freight volumes, by mode of transport",
+            "tier": "1",
+            "uri": "/v1/Indicator/9.1.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.1.1",
+            "description": "Proportion of the rural population who live within 2 km of an all-season road",
+            "tier": "2",
+            "uri": "/v1/Indicator/9.1.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "9.2",
+        "title": "Promote inclusive and sustainable industrialization and, by 2030, significantly raise industry's share of employment and gross domestic product, in line with national circumstances, and double its share in least developed countries",
+        "description": "Promote inclusive and sustainable industrialization and, by 2030, significantly raise industry's share of employment and gross domestic product, in line with national circumstances, and double its share in least developed countries",
+        "uri": "/v1/Target/9.2",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.2.1",
+            "description": "Manufacturing value added as a proportion of GDP and per capita",
+            "tier": "1",
+            "uri": "/v1/Indicator/9.2.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.2.2",
+            "description": "Manufacturing employment as a proportion of total employment",
+            "tier": "1",
+            "uri": "/v1/Indicator/9.2.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "9.3",
+        "title": "Increase the access of small-scale industrial and other enterprises, in particular in developing countries, to financial services, including affordable credit, and their integration into value chains and markets",
+        "description": "Increase the access of small-scale industrial and other enterprises, in particular in developing countries, to financial services, including affordable credit, and their integration into value chains and markets",
+        "uri": "/v1/Target/9.3",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.3.1",
+            "description": "Proportion of small-scale industries in total industry value added, based on (a) international classification and (b) national classifications",
+            "tier": "2",
+            "uri": "/v1/Indicator/9.3.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.3.2",
+            "description": "Proportion of small-scale industries with a loan or line of credit",
+            "tier": "1",
+            "uri": "/v1/Indicator/9.3.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "9.4",
+        "title": "By 2030, upgrade infrastructure and retrofit industries to make them sustainable, with increased resource-use efficiency and greater adoption of clean and environmentally sound technologies and industrial processes, with all countries taking action in accordance with their respective capabilities",
+        "description": "By 2030, upgrade infrastructure and retrofit industries to make them sustainable, with increased resource-use efficiency and greater adoption of clean and environmentally sound technologies and industrial processes, with all countries taking action in accordance with their respective capabilities",
+        "uri": "/v1/Target/9.4",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.4.1",
+            "description": "CO2 emission per unit of value added",
+            "tier": "1",
+            "uri": "/v1/Indicator/9.4.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "9.5",
+        "title": "Enhance scientific research, upgrade the technological capabilities of industrial sectors in all countries, in particular developing countries, including, by 2030, encouraging innovation and substantially increasing the number of research and development workers per 1 million people and public and private research and development spending",
+        "description": "Enhance scientific research, upgrade the technological capabilities of industrial sectors in all countries, in particular developing countries, including, by 2030, encouraging innovation and substantially increasing the number of research and development workers per 1 million people and public and private research and development spending",
+        "uri": "/v1/Target/9.5",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.5.1",
+            "description": "Research and development expenditure as a proportion of GDP",
+            "tier": "1",
+            "uri": "/v1/Indicator/9.5.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.5.2",
+            "description": "Researchers (in full-time equivalent) per million inhabitants",
+            "tier": "1",
+            "uri": "/v1/Indicator/9.5.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "9.a",
+        "title": "Facilitate sustainable and resilient infrastructure development in developing countries through enhanced financial, technological and technical support to African countries, least developed countries, landlocked developing countries and small island developing States",
+        "description": "Facilitate sustainable and resilient infrastructure development in developing countries through enhanced financial, technological and technical support to African countries, least developed countries, landlocked developing countries and small island developing States",
+        "uri": "/v1/Target/9.a",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.a.1",
+            "description": "Total official international support (official development assistance plus other official flows) to infrastructure",
+            "tier": "1",
+            "uri": "/v1/Indicator/9.a.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "9.b",
+        "title": "Support domestic technology development, research and innovation in developing countries, including by ensuring a conducive policy environment for, inter alia, industrial diversification and value addition to commodities",
+        "description": "Support domestic technology development, research and innovation in developing countries, including by ensuring a conducive policy environment for, inter alia, industrial diversification and value addition to commodities",
+        "uri": "/v1/Target/9.b",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.b.1",
+            "description": "Proportion of medium and high-tech industry value added in total value added",
+            "tier": "1",
+            "uri": "/v1/Indicator/9.b.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "9.c",
+        "title": "Significantly increase access to information and communications technology and strive to provide universal and affordable access to the Internet in least developed countries by 2020",
+        "description": "Significantly increase access to information and communications technology and strive to provide universal and affordable access to the Internet in least developed countries by 2020",
+        "uri": "/v1/Target/9.c",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "9.c.1",
+            "description": "Proportion of population covered by a mobile network, by technology",
+            "tier": "1",
+            "uri": "/v1/Indicator/9.c.1",
+            "series": []
+          }
+        ]
+      }
+    ]
+  }
+]

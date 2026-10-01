@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import JSZip from "jszip";
 import { MdDone } from "react-icons/md";
 import CardGrid from "./cardGrid";
 import RawResults from "./rawResults";
 import EditModal from "./editModal";
 import { SDGValue, ResultsData } from "@/types/main";
-import { IoIosInformationCircleOutline } from "react-icons/io";
-import { classifyByModel } from "@/services/api";
 import NoSdgPage from "./noSdgPage"
 
 /*
@@ -20,34 +18,6 @@ type ResultsProps = {
   setResults: (value: ResultsData | null) => void;
   setError: (value: string | null) => void;
 };
-
-const loadingPhrases = [
-  "Scanning repository signals...",
-  "Mapping SDG relevance...",
-  "Cross-checking project intent...",
-  "Preparing your results...",
-  "Aligning insights with the SDGs...",
-];
-
-const sdgSpinnerColors = [
-  "#e5243b",
-  "#d81b60",
-  "#f4a261",
-  "#e9c46a",
-  "#4caf50",
-  "#2e8b57",
-  "#26a69a",
-  "#29b6f6",
-  "#1976d2",
-  "#7b1fa2",
-  "#ff6f61",
-  "#ff9800",
-  "#c0ca33",
-  "#8bc34a",
-  "#009688",
-  "#03a9f4",
-  "#3f51b5",
-];
 
 const isNoSdgs = (predictions: ResultsData["predictions"]): boolean => {
   if (predictions == null) return true;
@@ -81,55 +51,7 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
 
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>("aurora");
-  const [isLoadingTab, setIsLoadingTab] = useState(false);
-  const [loadingPhraseIndex, setLoadingPhraseIndex] = useState(0);
-
-  const handleTabChange = async (newTab: string) => {
-    if (newTab === activeTab || !results) return;
-
-    setIsLoadingTab(true);
-    setActiveTab(newTab);
-
-    const requestData = {
-      projectName:
-        localStorage.getItem("projectName") || results.projectName || "",
-      projectUrl:
-        localStorage.getItem("projectUrl") || results.projectUrl || "",
-      projectDescription:
-        localStorage.getItem("projectDescription") ||
-        results.projectDescription ||
-        "",
-    };
-
-    try {
-      const response = await classifyByModel(
-        newTab as "aurora" | "st-url",
-        requestData,
-      );
-
-      if (response) {
-        setResults(response as ResultsData);
-      }
-    } catch (error) {
-      console.error("Error fetching data for tab:", error);
-      setError("Failed to load data for selected model. Please try again.");
-    } finally {
-      setIsLoadingTab(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isLoadingTab) {
-      return;
-    }
-
-    const interval = window.setInterval(() => {
-      setLoadingPhraseIndex((prev) => (prev + 1) % loadingPhrases.length);
-    }, 1200);
-
-    return () => window.clearInterval(interval);
-  }, [isLoadingTab]);
+  const [confidenceThreshold, setConfidenceThreshold] = useState(0);
 
   const getScore = (v: number | SDGValue | null | undefined) =>
     typeof v === "number"
@@ -299,12 +221,11 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
 
   const noSdgs = isNoSdgs(results?.predictions);
   const recommendation = results?.recommendation;
-  const spinnerGradient = `conic-gradient(from 180deg, ${sdgSpinnerColors
-    .map((color, index) => {
-      const step = 360 / sdgSpinnerColors.length;
-      return `${color} ${index * step}deg ${(index + 1) * step}deg`;
-    })
-    .join(", ")})`;
+  const visiblePredictions = Object.fromEntries(
+    Object.entries(results?.predictions ?? {}).filter(([, value]) =>
+      getScore(value as number | SDGValue) >= confidenceThreshold,
+    ),
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br">
@@ -319,7 +240,7 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
                 setError(null);
                 setSaveMessage(null);
               }}
-              className="px-6 py-3 bg-purple-700 hover:bg-purple-800 text-white font-semibold rounded-xl transition-colors duration-200"
+              className="px-6 py-3 bg-[#5b92e5] hover:bg-[#4d82d6] text-white font-semibold rounded-xl transition-colors duration-200"
             >
               Analyze Another Repository
             </button>
@@ -336,129 +257,80 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
           {/* Repository URL */}
           <div className="bg-white rounded-xl p-6 shadow-lg">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Analyzed Repository:</h3>
-            <p className="text-purple-700 font-medium break-all">{results?.projectUrl ?? "—"}</p>
+            <p className="text-[#5b92e5] font-medium break-all">{results?.projectUrl ?? "—"}</p>
           </div>
 
           {/* Results Display */}
           <div className="space-y-6">
             <h3 className="text-2xl font-semibold text-gray-800">UN SDG Goals Analysis</h3>
-
-            {/* Vertical Tabs Layout */}
-            <div className="flex gap-6">
-              {/* Sidebar Navigation */}
-              <div className="w-64 flex-shrink-0">
-                <div className="bg-white rounded-xl shadow-lg p-2 space-y-1">
-                  <h4 className="text-sm font-semibold text-gray-600 px-4 py-2">
-                    Available Models
-                  </h4>
-
-                  <button
-                    onClick={() => handleTabChange("aurora")}
-                    disabled={isLoadingTab}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${
-                      activeTab === "aurora"
-                        ? "bg-purple-50 text-purple-700 font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  >
-                    {activeTab === "aurora" && (
-                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>
-                    )}
-                    <span className="ml-2 flex items-center">
-                      Aurora Model
-                      <span className="relative group inline-block">
-                        <IoIosInformationCircleOutline className="ml-2 text-purple-600 cursor-help" />
-                        <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg shadow-lg z-10 whitespace-normal">
-                          This is a third party API from EU Alliance Research
-                          <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-800"></span>
-                        </span>
-                      </span>
-                    </span>
-                  </button>
-
-
-                  <button
-                    onClick={() => handleTabChange("st-url")}
-                    disabled={isLoadingTab}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 relative ${
-                      activeTab === "st-url"
-                        ? "bg-purple-50 text-purple-700 font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  >
-                    {activeTab === "st-url" && (
-                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>
-                    )}
-                    <span className="ml-2">
-                      Readme Analyser
-                      <span className="relative group inline-block">
-                        <IoIosInformationCircleOutline className="ml-2 text-purple-600 cursor-help" />
-                        <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg shadow-lg z-10 whitespace-normal">
-                          This is a sentence transformer modal from Huggingface
-                          that analyzes the github repository URL and all its metadata.
-                          <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-800"></span>
-                        </span>
-                      </span>
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Main Content Area */}
-              <div className="flex-1">
-                {isLoadingTab ? (
-                  <div className="rounded-3xl border border-purple-100 bg-white/95 p-10 shadow-2xl shadow-purple-900/10 backdrop-blur-sm">
-                    <div className="flex flex-col items-center justify-center gap-5 text-center">
-                      <div className="relative flex h-24 w-24 items-center justify-center">
-                        <div
-                          className="absolute inset-0 rounded-full animate-spin"
-                          style={{ background: spinnerGradient }}
-                        />
-                        <div className="absolute inset-2 rounded-full bg-white" />
-                        <div className="absolute h-6 w-6 rounded-full bg-gradient-to-br from-purple-600 to-fuchsia-500" />
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-xl font-semibold text-slate-900">
-                          {loadingPhrases[loadingPhraseIndex]}
+            {results ? (
+              noSdgs ? (
+                <NoSdgPage recommendation={recommendation} />
+              ) : (
+                <>
+                  <div className="flex items-start gap-6">
+                    <div className="min-w-0 flex-1">
+                      {Object.keys(visiblePredictions).length > 0 ? (
+                        <CardGrid sdgPredictions={visiblePredictions} />
+                      ) : (
+                        <p className="py-12 text-center text-gray-600">
+                          No results meet this confidence threshold.
                         </p>
-                        <p className="text-sm text-slate-600">
-                          The selected model is analyzing your repository now.
-                        </p>
-                      </div>
+                      )}
                     </div>
+                    <aside className="sticky top-6 flex shrink-0 flex-col items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-5 shadow-sm">
+                      <label
+                        htmlFor="confidence-threshold"
+                        className="max-w-24 text-center text-sm font-semibold text-gray-800"
+                      >
+                        Minimum relevance
+                      </label>
+                      <output
+                        htmlFor="confidence-threshold"
+                        className="text-lg font-bold text-gray-900"
+                      >
+                        {Math.round(confidenceThreshold * 100)}%
+                      </output>
+                      <span className="text-xs font-medium text-green-700">High</span>
+                      <input
+                        id="confidence-threshold"
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value={confidenceThreshold}
+                        onChange={(event) =>
+                          setConfidenceThreshold(Number(event.target.value))
+                        }
+                        aria-label="Minimum prediction relevance"
+                        className="confidence-slider h-52 w-6 cursor-pointer"
+                      />
+                      <span className="text-xs font-medium text-red-700">Low</span>
+                      <span className="text-xs text-gray-500">
+                        {Object.keys(visiblePredictions).length} shown
+                      </span>
+                    </aside>
                   </div>
-                ) : results ? (
-                  noSdgs ? (
-                    <NoSdgPage
-                      recommendation={recommendation}
-                    />
-                  ) : (
-                    <>
-                      {/* SDG Cards Grid */}
-                      <CardGrid sdgPredictions={results.predictions} />
 
-                      {/* Action Buttons */}
-                      <div className="flex flex-wrap items-center justify-end gap-3 mt-6">
-                        <button
-                          onClick={handleDownload}
-                          className="cursor-pointer px-4 py-2 bg-white text-purple-600 border border-purple-600 rounded-md hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                        >
-                          <span className="flex items-center">Download SDG Analysis Bundle</span>
-                        </button>
-                        <button
-                          onClick={handleChanges}
-                          className="cursor-pointer px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200"
-                        >
-                          Maybe, we need some edits
-                        </button>
-                      </div>
-                    </>
-                  )
-                ) : (
-                  <RawResults results={results} />
-                )}
-              </div>
-            </div>
+                  <div className="flex flex-wrap items-center justify-end gap-3 mt-6">
+                    <button
+                      onClick={handleDownload}
+                      className="cursor-pointer px-4 py-2 bg-white text-[#5b92e5] border border-[#5b92e5] rounded-md hover:bg-[#edf4ff] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                    >
+                      <span className="flex items-center">Download SDG Analysis Bundle</span>
+                    </button>
+                    <button
+                      onClick={handleChanges}
+                      className="cursor-pointer px-4 py-2 bg-[#5b92e5] text-white rounded-md hover:bg-[#4d82d6] transition-colors duration-200"
+                    >
+                      Maybe, we need some edits
+                    </button>
+                  </div>
+                </>
+              )
+            ) : (
+              <RawResults results={results} />
+            )}
           </div>
         </div>
       </main>

@@ -1,0 +1,379 @@
+[
+  {
+    "code": "3",
+    "title": "Ensure healthy lives and promote well-being for all at all ages",
+    "description": "Goal 3 aims to ensure health and well-being for all at all ages by improving reproductive, maternal and child health; ending the epidemics of major communicable diseases; reducing non-communicable and environmental diseases; achieving universal health coverage; and ensuring access to safe, affordable and effective medicines and vaccines for all.",
+    "uri": "/v1/sdg/Goal/3",
+    "targets": [
+      {
+        "goal": null,
+        "code": "3.1",
+        "title": "By 2030, reduce the global maternal mortality ratio to less than 70 per 100,000 live births",
+        "description": "By 2030, reduce the global maternal mortality ratio to less than 70 per 100,000 live births",
+        "uri": "/v1/Target/3.1",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.1.1",
+            "description": "Maternal mortality ratio",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.1.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.1.2",
+            "description": "Proportion of births attended by skilled health personnel",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.1.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.2",
+        "title": "By 2030, end preventable deaths of newborns and children under 5 years of age, with all countries aiming to reduce neonatal mortality to at least as low as 12 per 1,000 live births and under-5 mortality to at least as low as 25 per 1,000 live births",
+        "description": "By 2030, end preventable deaths of newborns and children under 5 years of age, with all countries aiming to reduce neonatal mortality to at least as low as 12 per 1,000 live births and under-5 mortality to at least as low as 25 per 1,000 live births",
+        "uri": "/v1/Target/3.2",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.2.1",
+            "description": "Under‑5 mortality rate",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.2.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.2.2",
+            "description": "Neonatal mortality rate",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.2.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.3",
+        "title": "By 2030, end the epidemics of AIDS, tuberculosis, malaria and neglected tropical diseases and combat hepatitis, water-borne diseases and other communicable diseases",
+        "description": "By 2030, end the epidemics of AIDS, tuberculosis, malaria and neglected tropical diseases and combat hepatitis, water-borne diseases and other communicable diseases",
+        "uri": "/v1/Target/3.3",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.3.1",
+            "description": "Number of new HIV infections per 1,000 uninfected population, by sex, age and key populations",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.3.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.3.2",
+            "description": "Tuberculosis incidence per 100,000 population",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.3.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.3.3",
+            "description": "Malaria incidence per 1,000 population",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.3.3",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.3.5",
+            "description": "Number of people requiring interventions against neglected tropical diseases",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.3.5",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.3.4",
+            "description": "Hepatitis B incidence per 100,000 population",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.3.4",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.4",
+        "title": "By 2030, reduce by one third premature mortality from non-communicable diseases through prevention and treatment and promote mental health and well-being",
+        "description": "By 2030, reduce by one third premature mortality from non-communicable diseases through prevention and treatment and promote mental health and well-being",
+        "uri": "/v1/Target/3.4",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.4.1",
+            "description": "Mortality rate attributed to cardiovascular disease, cancer, diabetes or chronic respiratory disease",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.4.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.4.2",
+            "description": "Suicide mortality rate",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.4.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.5",
+        "title": "Strengthen the prevention and treatment of substance abuse, including narcotic drug abuse and harmful use of alcohol",
+        "description": "Strengthen the prevention and treatment of substance abuse, including narcotic drug abuse and harmful use of alcohol",
+        "uri": "/v1/Target/3.5",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.5.2",
+            "description": "Alcohol per capita consumption (aged 15 years and older) within a calendar year in litres of pure alcohol",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.5.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.5.1",
+            "description": "Coverage of treatment interventions (pharmacological, psychosocial and rehabilitation and aftercare services) for substance use disorders",
+            "tier": "2",
+            "uri": "/v1/Indicator/3.5.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.6",
+        "title": "By 2020, halve the number of global deaths and injuries from road traffic accidents",
+        "description": "By 2020, halve the number of global deaths and injuries from road traffic accidents",
+        "uri": "/v1/Target/3.6",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.6.1",
+            "description": "Death rate due to road traffic injuries",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.6.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.7",
+        "title": "By 2030, ensure universal access to sexual and reproductive health-care services, including for family planning, information and education, and the integration of reproductive health into national strategies and programmes",
+        "description": "By 2030, ensure universal access to sexual and reproductive health-care services, including for family planning, information and education, and the integration of reproductive health into national strategies and programmes",
+        "uri": "/v1/Target/3.7",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.7.1",
+            "description": "Proportion of women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.7.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.7.2",
+            "description": "Adolescent birth rate (aged 10-14 years; aged 15-19 years) per 1,000 women in that age group",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.7.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.8",
+        "title": "Achieve universal health coverage, including financial risk protection, access to quality essential health-care services and access to safe, effective, quality and affordable essential medicines and vaccines for all",
+        "description": "Achieve universal health coverage, including financial risk protection, access to quality essential health-care services and access to safe, effective, quality and affordable essential medicines and vaccines for all",
+        "uri": "/v1/Target/3.8",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.8.2",
+            "description": "Proportion of population with positive out-of-pocket household expenditures on health exceeding 40 per cent of household discretionary budget",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.8.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.8.1",
+            "description": "Coverage of essential health services",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.8.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.9",
+        "title": "By 2030, substantially reduce the number of deaths and illnesses from hazardous chemicals and air, water and soil pollution and contamination",
+        "description": "By 2030, substantially reduce the number of deaths and illnesses from hazardous chemicals and air, water and soil pollution and contamination",
+        "uri": "/v1/Target/3.9",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.9.1",
+            "description": "Mortality rate attributed to household and ambient air pollution",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.9.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.9.2",
+            "description": "Mortality rate attributed to unsafe water, unsafe sanitation and lack of hygiene (exposure to unsafe Water, Sanitation and Hygiene for All (WASH) services)",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.9.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.9.3",
+            "description": "Mortality rate attributed to unintentional poisoning",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.9.3",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.a",
+        "title": "Strengthen the implementation of the World Health Organization Framework Convention on Tobacco Control in all countries, as appropriate",
+        "description": "Strengthen the implementation of the World Health Organization Framework Convention on Tobacco Control in all countries, as appropriate",
+        "uri": "/v1/Target/3.a",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.a.1",
+            "description": "Age-standardized prevalence of current tobacco use among persons aged 15 years and older",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.a.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.b",
+        "title": "Support the research and development of vaccines and medicines for the communicable and non-communicable diseases that primarily affect developing countries, provide access to affordable essential medicines and vaccines, in accordance with the Doha Declaration on the TRIPS Agreement and Public Health, which affirms the right of developing countries to use to the full the provisions in the Agreement on Trade-Related Aspects of Intellectual Property Rights regarding flexibilities to protect public health, and, in particular, provide access to medicines for all",
+        "description": "Support the research and development of vaccines and medicines for the communicable and non-communicable diseases that primarily affect developing countries, provide access to affordable essential medicines and vaccines, in accordance with the Doha Declaration on the TRIPS Agreement and Public Health, which affirms the right of developing countries to use to the full the provisions in the Agreement on Trade-Related Aspects of Intellectual Property Rights regarding flexibilities to protect public health, and, in particular, provide access to medicines for all",
+        "uri": "/v1/Target/3.b",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.b.2",
+            "description": "Total net official development assistance to medical research and basic health sectors",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.b.2",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.b.1",
+            "description": "Proportion of the target population covered by all vaccines included in their national programme",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.b.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.b.3",
+            "description": "Health product access index",
+            "tier": "2",
+            "uri": "/v1/Indicator/3.b.3",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.c",
+        "title": "Substantially increase health financing and the recruitment, development, training and retention of the health workforce in developing countries, especially in least developed countries and small island developing States",
+        "description": "Substantially increase health financing and the recruitment, development, training and retention of the health workforce in developing countries, especially in least developed countries and small island developing States",
+        "uri": "/v1/Target/3.c",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.c.1",
+            "description": "Health worker density and distribution",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.c.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "3.d",
+        "title": "Strengthen the capacity of all countries, in particular developing countries, for early warning, risk reduction and management of national and global health risks",
+        "description": "Strengthen the capacity of all countries, in particular developing countries, for early warning, risk reduction and management of national and global health risks",
+        "uri": "/v1/Target/3.d",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.d.1",
+            "description": "International Health Regulations (IHR) capacity and health emergency preparedness",
+            "tier": "1",
+            "uri": "/v1/Indicator/3.d.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "3.d.2",
+            "description": "Percentage of bloodstream infections due to selected antimicrobial-resistant organisms",
+            "tier": "2",
+            "uri": "/v1/Indicator/3.d.2",
+            "series": []
+          }
+        ]
+      }
+    ]
+  }
+]

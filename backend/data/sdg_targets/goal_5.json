@@ -1,0 +1,217 @@
+[
+  {
+    "code": "5",
+    "title": "Achieve gender equality and empower all women and girls",
+    "description": "Goal 5 aims to empower women and girls to reach their full potential, which requires eliminating all forms of discrimination and violence against them, including harmful practices. It seeks to ensure that they have every opportunity for sexual and reproductive health and reproductive rights; receive due recognition for their unpaid work; have full access to productive resources; and enjoy equal participation with men in political, economic and public life.",
+    "uri": "/v1/sdg/Goal/5",
+    "targets": [
+      {
+        "goal": null,
+        "code": "5.1",
+        "title": "End all forms of discrimination against all women and girls everywhere",
+        "description": "End all forms of discrimination against all women and girls everywhere",
+        "uri": "/v1/Target/5.1",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.1.1",
+            "description": "Whether or not legal frameworks are in place to promote, enforce and monitor equality and non‑discrimination on the basis of sex",
+            "tier": "1",
+            "uri": "/v1/Indicator/5.1.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "5.2",
+        "title": "Eliminate all forms of violence against all women and girls in the public and private spheres, including trafficking and sexual and other types of exploitation",
+        "description": "Eliminate all forms of violence against all women and girls in the public and private spheres, including trafficking and sexual and other types of exploitation",
+        "uri": "/v1/Target/5.2",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.2.1",
+            "description": "Proportion of ever-partnered women and girls aged 15 years and older subjected to physical, sexual or psychological violence by a current or former intimate partner in the previous 12 months, by form of violence and by age",
+            "tier": "1",
+            "uri": "/v1/Indicator/5.2.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.2.2",
+            "description": "Proportion of women and girls aged 15 years and older subjected to sexual violence by persons other than an intimate partner in the previous 12 months, by age and place of occurrence",
+            "tier": "2",
+            "uri": "/v1/Indicator/5.2.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "5.3",
+        "title": "Eliminate all harmful practices, such as child, early and forced marriage and female genital mutilation",
+        "description": "Eliminate all harmful practices, such as child, early and forced marriage and female genital mutilation",
+        "uri": "/v1/Target/5.3",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.3.1",
+            "description": "Proportion of women aged 20-24 years who were married or in a union before age 15 and before age 18",
+            "tier": "1",
+            "uri": "/v1/Indicator/5.3.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.3.2",
+            "description": "Proportion of girls and women aged 15-49 years who have undergone female genital mutilation, by age",
+            "tier": "1",
+            "uri": "/v1/Indicator/5.3.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "5.4",
+        "title": "Recognize and value unpaid care and domestic work through the provision of public services, infrastructure and social protection policies and the promotion of shared responsibility within the household and the family as nationally appropriate",
+        "description": "Recognize and value unpaid care and domestic work through the provision of public services, infrastructure and social protection policies and the promotion of shared responsibility within the household and the family as nationally appropriate",
+        "uri": "/v1/Target/5.4",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.4.1",
+            "description": "Proportion of time spent on unpaid domestic and care work, by sex, age and location",
+            "tier": "2",
+            "uri": "/v1/Indicator/5.4.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "5.5",
+        "title": "Ensure women's full and effective participation and equal opportunities for leadership at all levels of decision-making in political, economic and public life",
+        "description": "Ensure women's full and effective participation and equal opportunities for leadership at all levels of decision-making in political, economic and public life",
+        "uri": "/v1/Target/5.5",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.5.1",
+            "description": "Proportion of seats held by women in (a) national parliaments and (b) local governments",
+            "tier": "1",
+            "uri": "/v1/Indicator/5.5.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.5.2",
+            "description": "Proportion of women in managerial positions",
+            "tier": "1",
+            "uri": "/v1/Indicator/5.5.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "5.6",
+        "title": "Ensure universal access to sexual and reproductive health and reproductive rights as agreed in accordance with the Programme of Action of the International Conference on Population and Development and the Beijing Platform for Action and the outcome documents of their review conferences",
+        "description": "Ensure universal access to sexual and reproductive health and reproductive rights as agreed in accordance with the Programme of Action of the International Conference on Population and Development and the Beijing Platform for Action and the outcome documents of their review conferences",
+        "uri": "/v1/Target/5.6",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.6.1",
+            "description": "Proportion of women aged 15-49 years who make their own informed decisions regarding sexual relations, contraceptive use and reproductive health care",
+            "tier": "2",
+            "uri": "/v1/Indicator/5.6.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.6.2",
+            "description": "Number of countries with laws and regulations that guarantee full and equal access to women and men aged 15 years and older to sexual and reproductive health care, information and education",
+            "tier": "1",
+            "uri": "/v1/Indicator/5.6.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "5.a",
+        "title": "Undertake reforms to give women equal rights to economic resources, as well as access to ownership and control over land and other forms of property, financial services, inheritance and natural resources, in accordance with national laws",
+        "description": "Undertake reforms to give women equal rights to economic resources, as well as access to ownership and control over land and other forms of property, financial services, inheritance and natural resources, in accordance with national laws",
+        "uri": "/v1/Target/5.a",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.a.1",
+            "description": "(a) Proportion of total agricultural population with ownership or secure rights over agricultural land, by sex; and (b) share of women among owners or rights-bearers of agricultural land, by type of tenure",
+            "tier": "2",
+            "uri": "/v1/Indicator/5.a.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.a.2",
+            "description": "Proportion of countries where the legal framework (including customary law) guarantees women’s equal rights to land ownership and/or control",
+            "tier": "2",
+            "uri": "/v1/Indicator/5.a.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "5.b",
+        "title": "Enhance the use of enabling technology, in particular information and communications technology, to promote the empowerment of women",
+        "description": "Enhance the use of enabling technology, in particular information and communications technology, to promote the empowerment of women",
+        "uri": "/v1/Target/5.b",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.b.1",
+            "description": "Proportion of individuals who own a mobile telephone, by sex",
+            "tier": "2",
+            "uri": "/v1/Indicator/5.b.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "5.c",
+        "title": "Adopt and strengthen sound policies and enforceable legislation for the promotion of gender equality and the empowerment of all women and girls at all levels",
+        "description": "Adopt and strengthen sound policies and enforceable legislation for the promotion of gender equality and the empowerment of all women and girls at all levels",
+        "uri": "/v1/Target/5.c",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "5.c.1",
+            "description": "Proportion of countries with systems to track and make public allocations for gender equality and women’s empowerment",
+            "tier": "2",
+            "uri": "/v1/Indicator/5.c.1",
+            "series": []
+          }
+        ]
+      }
+    ]
+  }
+]

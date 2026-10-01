@@ -5,7 +5,10 @@ import { TiTick } from "react-icons/ti";
 import { ImCross } from "react-icons/im";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { ResultsData } from "@/types/main";
+import axios from "axios";
 import { sdgApi } from "@/services/api";
+
+const ST_URL_TIMEOUT_MS = 30 * 1000;
 
 /*
 MainScreen Component
@@ -27,6 +30,22 @@ const MainScreen: React.FC<{
   // const [longTermGoal, setLongTermGoal] = useState("");
   // const [solutionApproach, setSolutionApproach] = useState("");
   // const [targetAudience, setTargetAudience] = useState("");
+
+  const isValidRepoUrl = (() => {
+    if (!projectUrl.trim()) return false;
+
+    try {
+      const url = new URL(projectUrl);
+      return /^\/[^/]+\/[^/]+/.test(url.pathname);
+    } catch {
+      return false;
+    }
+  })();
+
+  const isFormReady =
+    Boolean(projectName.trim()) &&
+    Boolean(projectDescription.trim()) &&
+    isValidRepoUrl;
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,25 +84,23 @@ const MainScreen: React.FC<{
       setIsUploading(true);
       setUploadMsg(null);
 
-      const urlResp = await sdgApi.validateURL({
-        projectUrl,
-      });
+      let response;
+      try {
+        response = await sdgApi.classifySTUrl(
+          finalizedData,
+          ST_URL_TIMEOUT_MS,
+        );
+      } catch (error) {
+        const stUrlTimedOut =
+          axios.isAxiosError(error) &&
+          !error.response &&
+          ["ECONNABORTED", "ETIMEDOUT"].includes(error.code ?? "");
 
-      console.log("URL validation response:", urlResp);
+        if (!stUrlTimedOut) throw error;
 
-      if (!urlResp.valid) {
-        const message =
-          urlResp.message || "Please enter a valid repository URL.";
-
-        console.error("Repository validation failed:", message);
-
-        setUploadMsg(message);
-        return;
+        console.warn("ST URL classification timed out; falling back to Aurora.");
+        response = await sdgApi.classifyAurora(finalizedData);
       }
-
-      console.log("Repository is valid. Starting classification...");
-
-      const response = await sdgApi.classifyAurora(finalizedData);
 
       if (response && response.repo_url) {
         setUploadMsg("Text Analyzing Successfully!");
@@ -93,11 +110,11 @@ const MainScreen: React.FC<{
 
       setResults(response as ResultsData);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Classification error:", error);
 
       // Axios error
-      if (error?.response) {
+      if (axios.isAxiosError(error) && error.response) {
         console.error("Status:", error.response.status);
         console.error("Response data:", error.response.data);
 
@@ -110,7 +127,7 @@ const MainScreen: React.FC<{
       }
 
       // Network error
-      else if (error?.request) {
+      else if (axios.isAxiosError(error) && error.request) {
         console.error("No response received from backend:", error.request);
 
         setUploadMsg(
@@ -123,7 +140,9 @@ const MainScreen: React.FC<{
         console.error("Unexpected error:", error);
 
         setUploadMsg(
-          error?.message || "An unexpected error occurred. Please try again."
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred. Please try again."
         );
       }
 
@@ -143,7 +162,7 @@ const MainScreen: React.FC<{
             <div className="space-y-6">
               <h1 className="text-6xl font-bold text-black leading-tight">
                 Check which{" "}
-                <span className="text-purple-700">UN SDG goals</span> your
+                <span className="text-[#5b92e5]">UN SDG goals</span> your
                 project satisfy
               </h1>
               <p className="text-xl text-gray-800 leading-relaxed">
@@ -163,7 +182,7 @@ const MainScreen: React.FC<{
           </div>
         </div>
       </div>
-      <div className="text-center px-8 py-16 bg-purple-400">
+      <div className="text-center px-8 py-16 bg-[#5b92e5]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-white mb-2">
@@ -187,7 +206,7 @@ const MainScreen: React.FC<{
                 onChange={(e) => setProjectName(e.target.value)}
                 placeholder="Enter your project name"
                 required
-                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-[#5b92e5] focus:border-transparent transition-all duration-200"
               />
             </div>
 
@@ -206,7 +225,7 @@ const MainScreen: React.FC<{
                 onChange={(e) => setProjectUrl(e.target.value)}
                 placeholder="https://github.com/org/repo  ·  gitlab.com  ·  codeberg.org"
                 required
-                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent transition-all"
               />
               
             </div>
@@ -227,7 +246,7 @@ const MainScreen: React.FC<{
                 placeholder="Please write a description of your project's relevance to the UN SDGs in around 100 to 120 words."
                 required
                 rows={12}
-                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent transition-all"
                 maxLength={MAX_CHARS}
               />
             </div>
@@ -247,7 +266,7 @@ const MainScreen: React.FC<{
                 onChange={(e) => setProblemStatement(e.target.value)}
                 placeholder="Describe the problem your project aims to solve"
                 required
-                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none  focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none  focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent transition-all"
               />
             </div> */}
 
@@ -266,7 +285,7 @@ const MainScreen: React.FC<{
                 onChange={(e) => setLongTermGoal(e.target.value)}
                 placeholder="Describe the long term goal of your project"
                 required
-                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none  focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none  focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent transition-all"
               />
             </div> */}
 
@@ -285,7 +304,7 @@ const MainScreen: React.FC<{
                 onChange={(e) => setSolutionApproach(e.target.value)}
                 placeholder="Describe your solution approach"
                 required
-                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent transition-all"
               />
             </div> */}
 
@@ -304,7 +323,7 @@ const MainScreen: React.FC<{
                 onChange={(e) => setTargetAudience(e.target.value)}
                 placeholder="Describe your target audience"
                 required
-                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent transition-all"
               />
             </div> */}
 
@@ -334,8 +353,12 @@ const MainScreen: React.FC<{
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isUploading || !projectName || !projectUrl}
-              className="w-full px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              disabled={isUploading || !isFormReady}
+              className={`w-full px-6 py-4 text-base font-bold rounded-2xl text-white shadow-[0_8px_20px_rgba(91,146,229,0.25)] transition-colors duration-200 ease-out border-0 focus:outline-none focus:ring-2 focus:ring-white/70 disabled:cursor-not-allowed disabled:shadow-[0_4px_12px_rgba(148,163,184,0.2)] disabled:bg-slate-300 disabled:text-slate-600 disabled:hover:bg-slate-300 ${
+                isFormReady
+                  ? "bg-[#4ade80] hover:bg-[#22c55e]"
+                  : "bg-[#f472b6] hover:bg-[#ec4899]"
+              }`}
             >
               {isUploading ? (
                 <span className="flex items-center justify-center gap-2">

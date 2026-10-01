@@ -17,6 +17,9 @@ export type Recommendation = {
   reason: string;
   suggestions: string[];
   text_quality: number;
+  relevant?: boolean;
+  nearest_sdg?: string;
+  nearest_similarity?: number;
 };
 
 export type ResultsData = {
@@ -24,6 +27,7 @@ export type ResultsData = {
   projectName?: string;
   projectDescription?: string;
   recommendation?: Recommendation;
+  readme_assessment?: Recommendation;
   predictions?:
     | Record<string, SDGValue>
     | Record<string, number>

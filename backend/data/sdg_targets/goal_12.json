@@ -1,0 +1,226 @@
+[
+  {
+    "code": "12",
+    "title": "Ensure sustainable consumption and production patterns",
+    "description": "Goal 12 aims to promote sustainable consumption and production patterns through measures such as specific policies and international agreements on the management of materials that are toxic to the environment.",
+    "uri": "/v1/sdg/Goal/12",
+    "targets": [
+      {
+        "goal": null,
+        "code": "12.1",
+        "title": "Implement the 10-Year Framework of Programmes on Sustainable Consumption and Production Patterns, all countries taking action, with developed countries taking the lead, taking into account the development and capabilities of developing countries",
+        "description": "Implement the 10-Year Framework of Programmes on Sustainable Consumption and Production Patterns, all countries taking action, with developed countries taking the lead, taking into account the development and capabilities of developing countries",
+        "uri": "/v1/Target/12.1",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.1.1",
+            "description": "Number of countries developing, adopting or implementing policy instruments aimed at supporting the shift to sustainable consumption and production",
+            "tier": "2",
+            "uri": "/v1/Indicator/12.1.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "12.2",
+        "title": "By 2030, achieve the sustainable management and efficient use of natural resources",
+        "description": "By 2030, achieve the sustainable management and efficient use of natural resources",
+        "uri": "/v1/Target/12.2",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.2.1",
+            "description": "Material footprint, material footprint per capita, and material footprint per GDP",
+            "tier": "2",
+            "uri": "/v1/Indicator/12.2.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.2.2",
+            "description": "Domestic material consumption, domestic material consumption per capita, and domestic material consumption per GDP",
+            "tier": "1",
+            "uri": "/v1/Indicator/12.2.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "12.3",
+        "title": "By 2030, halve per capita global food waste at the retail and consumer levels and reduce food losses along production and supply chains, including post-harvest losses",
+        "description": "By 2030, halve per capita global food waste at the retail and consumer levels and reduce food losses along production and supply chains, including post-harvest losses",
+        "uri": "/v1/Target/12.3",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.3.1",
+            "description": "(a) Food loss index and (b) food waste index",
+            "tier": "2",
+            "uri": "/v1/Indicator/12.3.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "12.4",
+        "title": "By 2020, achieve the environmentally sound management of chemicals and all wastes throughout their life cycle, in accordance with agreed international frameworks, and significantly reduce their release to air, water and soil in order to minimize their adverse impacts on human health and the environment",
+        "description": "By 2020, achieve the environmentally sound management of chemicals and all wastes throughout their life cycle, in accordance with agreed international frameworks, and significantly reduce their release to air, water and soil in order to minimize their adverse impacts on human health and the environment",
+        "uri": "/v1/Target/12.4",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.4.1",
+            "description": "Number of parties to international multilateral environmental agreements on hazardous waste, and other chemicals that meet their commitments and obligations in transmitting information as required by each relevant agreement",
+            "tier": "1",
+            "uri": "/v1/Indicator/12.4.1",
+            "series": []
+          },
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.4.2",
+            "description": "(a) Hazardous waste generated per capita; and (b) proportion of hazardous waste treated, by type of treatment",
+            "tier": "2",
+            "uri": "/v1/Indicator/12.4.2",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "12.5",
+        "title": "By 2030, substantially reduce waste generation through prevention, reduction, recycling and reuse",
+        "description": "By 2030, substantially reduce waste generation through prevention, reduction, recycling and reuse",
+        "uri": "/v1/Target/12.5",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.5.1",
+            "description": "National recycling rate, tons of material recycled",
+            "tier": "2",
+            "uri": "/v1/Indicator/12.5.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "12.6",
+        "title": "Encourage companies, especially large and transnational companies, to adopt sustainable practices and to integrate sustainability information into their reporting cycle",
+        "description": "Encourage companies, especially large and transnational companies, to adopt sustainable practices and to integrate sustainability information into their reporting cycle",
+        "uri": "/v1/Target/12.6",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.6.1",
+            "description": "Number of companies publishing sustainability reports",
+            "tier": "2",
+            "uri": "/v1/Indicator/12.6.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "12.7",
+        "title": "Promote public procurement practices that are sustainable, in accordance with national policies and priorities",
+        "description": "Promote public procurement practices that are sustainable, in accordance with national policies and priorities",
+        "uri": "/v1/Target/12.7",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.7.1",
+            "description": "Number of countries implementing sustainable public procurement policies and action plans",
+            "tier": "2",
+            "uri": "/v1/Indicator/12.7.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "12.8",
+        "title": "By 2030, ensure that people everywhere have the relevant information and awareness for sustainable development and lifestyles in harmony with nature",
+        "description": "By 2030, ensure that people everywhere have the relevant information and awareness for sustainable development and lifestyles in harmony with nature",
+        "uri": "/v1/Target/12.8",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.8.1",
+            "description": "Extent to which (i) global citizenship education and (ii) education for sustainable development are mainstreamed in (a) national education policies; (b) curricula; (c) teacher education; and (d) student assessment",
+            "tier": "2",
+            "uri": "/v1/Indicator/12.8.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "12.a",
+        "title": "Support developing countries to strengthen their scientific and technological capacity to move towards more sustainable patterns of consumption and production",
+        "description": "Support developing countries to strengthen their scientific and technological capacity to move towards more sustainable patterns of consumption and production",
+        "uri": "/v1/Target/12.a",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.a.1",
+            "description": "Installed renewable energy-generating capacity in developing and developed countries (in watts per capita)",
+            "tier": "1",
+            "uri": "/v1/Indicator/12.a.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "12.b",
+        "title": "Develop and implement tools to monitor sustainable development impacts for sustainable tourism that creates jobs and promotes local culture and products",
+        "description": "Develop and implement tools to monitor sustainable development impacts for sustainable tourism that creates jobs and promotes local culture and products",
+        "uri": "/v1/Target/12.b",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.b.1",
+            "description": "Implementation of standard accounting tools to monitor the economic and environmental aspects of tourism sustainability",
+            "tier": "1",
+            "uri": "/v1/Indicator/12.b.1",
+            "series": []
+          }
+        ]
+      },
+      {
+        "goal": null,
+        "code": "12.c",
+        "title": "Rationalize inefficient fossil-fuel subsidies that encourage wasteful consumption by removing market distortions, in accordance with national circumstances, including by restructuring taxation and phasing out those harmful subsidies, where they exist, to reflect their environmental impacts, taking fully into account the specific needs and conditions of developing countries and minimizing the possible adverse impacts on their development in a manner that protects the poor and the affected communities",
+        "description": "Rationalize inefficient fossil-fuel subsidies that encourage wasteful consumption by removing market distortions, in accordance with national circumstances, including by restructuring taxation and phasing out those harmful subsidies, where they exist, to reflect their environmental impacts, taking fully into account the specific needs and conditions of developing countries and minimizing the possible adverse impacts on their development in a manner that protects the poor and the affected communities",
+        "uri": "/v1/Target/12.c",
+        "indicators": [
+          {
+            "goal": null,
+            "target": null,
+            "code": "12.c.1",
+            "description": "Amount of fossil-fuel subsidies (production and consumption) per unit of GDP",
+            "tier": "1",
+            "uri": "/v1/Indicator/12.c.1",
+            "series": []
+          }
+        ]
+      }
+    ]
+  }
+]

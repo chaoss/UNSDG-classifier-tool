@@ -47,10 +47,12 @@ export const sdgApi = {
 
   classifySTUrl: async (
     data: SDGClassificationRequest,
+    timeoutMs = 30_000,
   ): Promise<SDGClassificationResponse> => {
     const response = await apiClient.post<SDGClassificationResponse>(
       "api/classify_st_url",
       data,
+      { timeout: timeoutMs },
     );
     return response.data;
   },

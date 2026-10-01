@@ -32,7 +32,7 @@ k = os.getenv("GROQ_API_KEY")
 
 
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL   = "openai/gpt-oss-120b"
+GROQ_MODEL   = "openai/gpt-oss-20b"
 
 # import hashlib
 # import diskcache
@@ -53,7 +53,6 @@ def _supports_reasoning_effort(model_id: str) -> bool:
     return model_id.startswith(_REASONING_EFFORT_MODEL_PREFIXES)
 
 
-# ─────────────────────────── prompt design ────────────────────────────────────
 
 SYSTEM_PROMPT = """\
 You are a development effectiveness analyst working for the Digital Public Goods Alliance (DPGA).
@@ -139,7 +138,7 @@ Write the SDG-classification paragraph now.\
 #     raw = f"{name.strip()}|{description.strip()}|{readme[:2000]}"
 #     return hashlib.sha256(raw.encode()).hexdigest()
 
-# ─────────────────────────── cleaner for LLM input ───────────────────────────
+# ─────────────── cleaner for LLM input ───────────────────
 
 def _prepare_for_llm(raw_readme: str, max_chars: int = 12_000) -> str:
     """

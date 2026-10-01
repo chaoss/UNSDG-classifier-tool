@@ -29,6 +29,30 @@ except Exception:
 app = Flask(__name__)
 CORS(app)
 
+# Route-level output cutoff. The ST scorer's 0.3 threshold is an earlier
+# candidate filter inside embedding_url.py, not the API response cutoff.
+SDG_PREDICTION_CUTOFF = 0.4
+
+
+def _recommendation_payload(recommendation):
+    payload = {
+        "reason": recommendation["reason"],
+        "suggestions": recommendation["suggestions"],
+        "text_quality": recommendation["text_quality"],
+    }
+    for key in ("nearest_sdg", "nearest_similarity"):
+        if key in recommendation:
+            payload[key] = recommendation[key]
+    return payload
+
+
+def _filter_predictions(predictions):
+    return [
+        prediction
+        for prediction in predictions
+        if prediction.get("prediction", 0) > SDG_PREDICTION_CUTOFF
+    ]
+
 
 @app.route('/api/hello', methods=['GET'])
 def hello():
@@ -137,17 +161,13 @@ def classify_aurora():
         if isinstance(sdg_preds, dict)
         else sdg_preds
     )
-    filtered = [p for p in preds if p.get("prediction", 0) > 0.4]
+    filtered = _filter_predictions(preds)
 
     response = {
         "projectName": aurora_result.get("project_name"),
         "projectUrl":  aurora_result.get("project_url"),
         "predictions": filtered,
-        "recommendation": {
-            "reason": rec["reason"],
-            "suggestions": rec["suggestions"],
-            "text_quality": rec["text_quality"],
-        } if not filtered else None,
+        "recommendation": _recommendation_payload(rec) if not filtered else None,
     }
 
     return jsonify(response), 200
@@ -235,22 +255,26 @@ def classify_st_url():
         or st_url_result.get("meta", {}).get("description", "")
         or "",
     )
+    readme_assessment = assess_relevance(
+        st_url_result.get("readme_excerpt", "") or "",
+        "",
+    )
 
     preds = [
         {"sdg": name, "prediction": score}
         for name, score in st_url_result.get("sdg_predictions", {}).items()
     ]
-    filtered = [p for p in preds if p.get("prediction", 0) > 0.4]
+    filtered = _filter_predictions(preds)
 
     response = {
         "projectName": projectName,
         "projectUrl":  projectUrl,
         "predictions": filtered,
-        "recommendation": {
-            "reason": rec["reason"],
-            "suggestions": rec["suggestions"],
-            "text_quality": rec["text_quality"],
-        } if not filtered else None,
+        "recommendation": _recommendation_payload(rec) if not filtered else None,
+        "readme_assessment": {
+            **_recommendation_payload(readme_assessment),
+            "relevant": readme_assessment["relevant"],
+        },
     }
 
     return jsonify(response), 200
