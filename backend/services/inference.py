@@ -17,7 +17,7 @@ port before ~1.7 GB of weights are read.
 from __future__ import annotations
 
 import torch
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
 from sdg_constants import SDG_NAMES
 from services.sdg_model import SDGClassifier
@@ -29,9 +29,9 @@ NUM_CLASSES = 17
 DROPOUT_RATE = 0.26     # optimised rate from the paper's training run
 MAX_LENGTH = 512
 
-_model = None
-_tokenizer = None
-_device = None
+_model: SDGClassifier | None = None
+_tokenizer: PreTrainedTokenizerBase | None = None
+_device: torch.device | None = None
 
 
 def _assert_checkpoint_covers_model(model, state_dict) -> None:
@@ -100,7 +100,12 @@ def predict_scores(text: str) -> dict[str, float]:
 
     load()
 
-    enc = _tokenizer(
+    model = _model
+    tokenizer = _tokenizer
+    device = _device
+    assert model is not None and tokenizer is not None and device is not None
+
+    enc = tokenizer(
         text,
         add_special_tokens=True,
         max_length=MAX_LENGTH,
@@ -108,14 +113,14 @@ def predict_scores(text: str) -> dict[str, float]:
         truncation=True,
         return_token_type_ids=True,
         return_tensors="pt",
-    ).to(_device)
+    ).to(device)
 
     seq_len = enc["input_ids"].shape[1]
-    enc["position"] = torch.arange(seq_len).unsqueeze(0).to(_device)
-    enc["labels"] = torch.zeros(1, NUM_CLASSES).to(_device)
+    enc["position"] = torch.arange(seq_len).unsqueeze(0).to(device)
+    enc["labels"] = torch.zeros(1, NUM_CLASSES).to(device)
 
     with torch.no_grad():
-        logits, _, _ = _model(**enc)
+        logits, _, _ = model(**enc)
 
     probs = torch.sigmoid(logits).squeeze(0).float().cpu().numpy()
     return {label: round(float(p), 4) for label, p in zip(SDG_NAMES, probs)}

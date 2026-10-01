@@ -117,7 +117,7 @@ const EditModal: React.FC<EditModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-        <div className="bg-purple-600 text-white p-6">
+        <div className="bg-[#5b92e5] text-white p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">Edit SDG Predictions</h2>
             <button
@@ -136,7 +136,7 @@ const EditModal: React.FC<EditModalProps> = ({
             </p>
             <button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="flex items-center gap-2 px-3 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm"
+              className="flex items-center gap-2 px-3 py-2 bg-[#5b92e5] text-white rounded-md hover:bg-[#4d82d6] transition-colors text-sm"
             >
               <IoAdd className="w-4 h-4" />
               Add New SDG
@@ -144,7 +144,7 @@ const EditModal: React.FC<EditModalProps> = ({
           </div>
 
           {showAddForm && (
-            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
+            <div className="bg-[#edf4ff] border border-[#cfe0ff] rounded-lg p-4 mb-4">
               <h4 className="font-semibold text-gray-800 mb-3">
                 Add New SDG Goal
               </h4>
@@ -158,7 +158,7 @@ const EditModal: React.FC<EditModalProps> = ({
                     onChange={(e) => {
                       handleSDGSelection(e);
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
                   >
                     <option value="">Select SDG Number</option>
                     {Array.from({ length: 17 }, (_, i) => i + 1).map((num) => (
@@ -178,7 +178,7 @@ const EditModal: React.FC<EditModalProps> = ({
                     value={newSDGName}
                     onChange={(e) => setNewSDGName(e.target.value)}
                     placeholder="SDG Goal Name"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -192,7 +192,7 @@ const EditModal: React.FC<EditModalProps> = ({
                     step="0.01"
                     value={newSDGScore}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -205,7 +205,7 @@ const EditModal: React.FC<EditModalProps> = ({
                 </button>
                 <button
                   onClick={addNewSDG}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm"
+                  className="px-4 py-2 bg-[#5b92e5] text-white rounded-md hover:bg-[#4d82d6] transition-colors text-sm"
                 >
                   Add SDG
                 </button>
@@ -230,7 +230,7 @@ const EditModal: React.FC<EditModalProps> = ({
                     className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                      <div className="w-12 h-12 bg-[#5b92e5] rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                         {sdgNumber}
                       </div>
 
@@ -257,7 +257,7 @@ const EditModal: React.FC<EditModalProps> = ({
                           step="0.001"
                           value={confidence}
                           disabled
-                          className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
                         />
                         <span className="text-sm text-gray-500">
                           ({Math.round(Number(confidence) * 100)}%)
@@ -275,7 +275,7 @@ const EditModal: React.FC<EditModalProps> = ({
                     <div className="mt-3 ml-16">
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className="bg-purple-500 h-2 rounded-full transition-all duration-300"
+                          className="bg-[#5b92e5] h-2 rounded-full transition-all duration-300"
                           style={{
                             width: `${Math.round(Number(confidence) * 100)}%`,
                           }}
@@ -297,7 +297,7 @@ const EditModal: React.FC<EditModalProps> = ({
           </button>
           <button
             onClick={saveEditedResults}
-            className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+            className="px-6 py-2 bg-[#5b92e5] text-white rounded-md hover:bg-[#4d82d6] transition-colors"
           >
             Save Changes
           </button>

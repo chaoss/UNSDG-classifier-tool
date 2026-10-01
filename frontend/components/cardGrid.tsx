@@ -42,7 +42,7 @@ const SDGCard = ({ sdgNumber, sdgName, confidence }: SDGCardProps) => {
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+          <div className="w-12 h-12 bg-[#5b92e5] rounded-full flex items-center justify-center text-white font-bold text-lg">
             {sdgNumber}
           </div>
           <div>

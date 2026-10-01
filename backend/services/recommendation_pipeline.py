@@ -1,6 +1,6 @@
 """
 recommendation_pipeline.py
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 A pipeline that determines why a project may not have received any SDG
 classifications and provides recommendations for improving the input data.
@@ -91,9 +91,9 @@ def _has_sdg_signals(text: str) -> Tuple[bool, str]:
                      "function", "import", "class", "module"]
     tech_count = sum(1 for kw in tech_keywords if kw in cleaned)
     
-    # If >50% of keywords are technical, flag as heavily technical
+    # If >40% of keywords are technical, flag as heavily technical
     word_count = len(cleaned.split())
-    if word_count > 0 and tech_count / word_count > 0.5:
+    if word_count > 0 and tech_count / word_count > 0.4:
         return False, "heavily_technical"
     
     # No signals found at all
