@@ -3,6 +3,8 @@ import {
   ResultsData,
   SDGClassificationRequest,
   SDGClassificationResponse,
+  URLValidationResponse,
+  URLValidationRequest,
 } from "@/types/main";
 
 // Base URL of the Flask backend. Set NEXT_PUBLIC_API_BASE_URL in frontend/.env.local
@@ -24,6 +26,15 @@ const apiClient = axios.create({
 });
 
 export const sdgApi = {
+  validateURL: async (
+    data: URLValidationRequest,
+  ): Promise<URLValidationResponse> => {
+    const response = await apiClient.post<URLValidationResponse>(
+      "api/validate-url",
+      data,
+    );
+    return response.data;
+  },
   classifyAurora: async (
     data: SDGClassificationRequest,
   ): Promise<SDGClassificationResponse> => {

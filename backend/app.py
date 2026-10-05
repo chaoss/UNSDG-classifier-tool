@@ -6,6 +6,8 @@ from embedding_url import main as classify_url
 from aurora_api import main as aurora_classify
 from dotenv import load_dotenv
 from services.recommendation_pipeline import assess_relevance
+from services.repo_fetcher import get_provider
+
 load_dotenv()
 
 try:
@@ -32,7 +34,71 @@ CORS(app)
 def hello():
     return jsonify({'message': 'Hello, World!'})
 
+@app.route('/api/validate-url', methods=['POST'])
+def validate_url():
+    data = request.json or {}
+    projectUrl = data.get('projectUrl')
 
+    if not projectUrl:
+        return jsonify({
+            'error': 'Project URL is required'
+        }), 400
+
+    try:
+        # This performs:
+        # 1. URL validation
+        # 2. Host validation
+        # 3. Repository existence/access check
+        provider = get_provider(projectUrl)
+
+        return jsonify({
+            'valid': True,
+            'projectUrl': provider.url,
+            'message': 'Valid repository URL.'
+        }), 200
+
+    except InvalidURLError as e:
+        return jsonify({
+            'valid': False,
+            'error': str(e),
+            'message': 'Invalid repository URL.'
+        }), 400
+
+    except UnsupportedHostError as e:
+        return jsonify({
+            'valid': False,
+            'error': str(e),
+            'message': 'Repository host is not supported.'
+        }), 400
+
+    except RepositoryNotFoundError as e:
+        return jsonify({
+            'valid': False,
+            'error': str(e),
+            'message': 'Invalid repository URL. The repository does not exist or is not accessible.'
+        }), 400
+
+    except RateLimitError as e:
+        return jsonify({
+            'valid': False,
+            'error': str(e),
+            'message': 'Repository API rate limit reached. Please try again later.'
+        }), 429
+
+    except FetchError as e:
+        return jsonify({
+            'valid': False,
+            'error': str(e),
+            'message': 'Unable to verify the repository. Please try again later.'
+        }), 502
+
+    except Exception as e:
+        print(f"URL validation unexpected error: {e}", flush=True)
+        return jsonify({
+            'valid': False,
+            'error': str(e),
+            'message': 'Failed to validate repository URL.'
+        }), 500
 # ---------------------------------------------------------------------------
 # Aurora
 # ---------------------------------------------------------------------------

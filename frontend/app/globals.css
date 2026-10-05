@@ -51,7 +51,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: #5b92e5;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -70,7 +70,7 @@
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary: #5b92e5;
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
@@ -119,4 +119,43 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.confidence-slider {
+  appearance: none;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  background: transparent;
+}
+
+.confidence-slider::-webkit-slider-runnable-track {
+  width: 8px;
+  border-radius: 9999px;
+  background: linear-gradient(to top, #ef4444, #facc15, #22c55e);
+}
+
+.confidence-slider::-moz-range-track {
+  width: 8px;
+  border-radius: 9999px;
+  background: linear-gradient(to top, #ef4444, #facc15, #22c55e);
+}
+
+.confidence-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-left: -5px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #1f2937;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 30%);
+}
+
+.confidence-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #1f2937;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 30%);
 }

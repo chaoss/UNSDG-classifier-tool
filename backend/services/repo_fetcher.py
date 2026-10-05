@@ -172,6 +172,15 @@ class BaseRepositoryProvider(ABC):
     def fetch_topics(self) -> list[str]:
         """Return list of topic / tag strings (may be empty)."""
 
+    @abstractmethod
+    def validate_repository(self) -> None:
+        """
+        Verify that the repository itself exists and is accessible.
+
+        Raises RepositoryNotFoundError if the repository does not exist
+        or cannot be accessed.
+        """
+
     # ── shared helpers ─────────────────────────────────────────────────────
 
     def _base_headers(self) -> dict:
@@ -299,6 +308,18 @@ class GitHubProvider(BaseRepositoryProvider):
             headers=headers,
         )
         return r.json().get("topics", [])
+    
+    def validate_repository(self) -> None:
+        """
+        Verify that the GitHub repository exists and is accessible.
+
+        A 404 from the repository metadata endpoint means the repository
+        does not exist or is not accessible with the supplied credentials.
+        """
+        self._get(
+            f"{self._API}/repos/{self._owner}/{self._repo}",
+            context="GitHub validate_repository",
+        )
 
     def fetch_meta(self) -> dict:
         """name, description, homepage — convenience method beyond the contract."""
@@ -908,7 +929,12 @@ def get_provider(repo_url: object, token: str | None = None) -> BaseRepositoryPr
             f"this may be GitHub Enterprise, Bitbucket Server, or an unsupported host."
         )
 
-    return cls(url, token=token)
+    # return cls(url, token=token)
+    provider = cls(url, token=token)
+
+    provider.validate_repository()
+
+    return provider
 
 def main():
     get_provider("https://gitlab.com/trapper-project/trapper")

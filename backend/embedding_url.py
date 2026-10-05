@@ -160,7 +160,7 @@ def ensemble_scores(zs: np.ndarray, es: np.ndarray, alpha: float = 0.5) -> np.nd
     return alpha * zs + (1 - alpha) * es
 
 # ── CHANGE 3: added project_description param, passed to fetch_repo_text ─────
-def classify_repo(url: str, threshold: float = 0.5, top_k: int = 10, use_ensemble: bool = True, proj_desc: str = ""):
+def classify_repo(url: str, threshold: float = 0.3, top_k: int = 10, use_ensemble: bool = True, proj_desc: str = ""):
     data = fetch_repo_text(url, project_description=proj_desc)
     text = data["text"][:6000]
 
@@ -175,7 +175,7 @@ def classify_repo(url: str, threshold: float = 0.5, top_k: int = 10, use_ensembl
 
     if use_ensemble:
         es = embedding_similarity_scores(text, sdg_constants.SDG_DESCS)
-        scores = ensemble_scores(zs, es, alpha=0.3)
+        scores = ensemble_scores(zs, es, alpha=0.4)
     else:
         scores = zs
 
@@ -195,7 +195,7 @@ def classify_repo(url: str, threshold: float = 0.5, top_k: int = 10, use_ensembl
 # ── CHANGE 4: main() accepts and passes project_description ──────────────────
 def main(url: str, project_description: str = ""):
 
-    result = classify_repo(url, threshold=0.7, use_ensemble=True, proj_desc=project_description)
+    result = classify_repo(url, threshold=0.3, use_ensemble=True, proj_desc=project_description)
 
     predictions = {
         "project_name": result["repo"],

@@ -86,3 +86,14 @@ export type EditModalProps = {
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   saveEditedResults: () => void;
 };
+
+export interface URLValidationRequest {
+  projectUrl: string;
+}
+
+export interface URLValidationResponse {
+  valid: boolean;
+  projectUrl?: string;
+  error?: string;
+  message: string;
+}
