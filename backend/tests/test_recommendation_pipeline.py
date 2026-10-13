@@ -5,7 +5,7 @@ import pytest
 
 import app as flask_app
 import sdg_constants
-from app import SDG_PREDICTION_CUTOFF, _filter_predictions
+from app import AURORA_PREDICTION_CUTOFF, _filter_aurora_predictions
 from services import recommendation_pipeline as pipeline
 
 
@@ -50,9 +50,9 @@ def _impact_description():
     )
 
 
-def test_route_cutoff_is_shared_and_strict():
-    assert SDG_PREDICTION_CUTOFF == 0.4
-    assert _filter_predictions([
+def test_aurora_route_cutoff_is_strict():
+    assert AURORA_PREDICTION_CUTOFF == 0.4
+    assert _filter_aurora_predictions([
         {"sdg": "SDG 1", "prediction": 0.3},
         {"sdg": "SDG 2", "prediction": 0.4},
         {"sdg": "SDG 3", "prediction": 0.4001},
@@ -119,41 +119,50 @@ def test_low_similarity_quality_is_clamped_to_unit_interval(monkeypatch):
     assert 0.0 <= result["text_quality"] <= 1.0
 
 
-def test_st_route_returns_separate_readme_assessment(monkeypatch):
-    seen = []
+def test_st_route_preserves_p5_predictions_accepted_by_classifier(monkeypatch):
+    sdg_4 = sdg_constants.SDG_NAMES[3]
+    sdg_9 = sdg_constants.SDG_NAMES[8]
     monkeypatch.setattr(
         flask_app,
         "classify_url",
         lambda **_kwargs: {
-            "summary": "classifier summary",
-            "readme_excerpt": "cleaned README excerpt",
-            "meta": {"description": "repository description"},
-            "sdg_predictions": {},
+            "summary": "p5.js supports creative coding education for students.",
+            "readme_excerpt": "p5.js supports creative coding education for students.",
+            "meta": {"description": "Creative coding education"},
+            # Scores observed from the p5.js ST ensemble. embedding_url.py has
+            # already accepted these with its calibrated >= 0.3 cutoff.
+            "sdg_predictions": {
+                sdg_4: 0.351,
+                sdg_9: 0.307,
+            },
+        },
+    )
+    monkeypatch.setattr(
+        flask_app,
+        "assess_relevance",
+        lambda *_args: {
+            "relevant": True,
+            "reason": "signals_present_but_low_similarity",
+            "text_quality": 0.9,
+            "suggestions": [],
+            "nearest_sdg": sdg_4,
+            "nearest_similarity": 0.22,
         },
     )
 
-    def assess(description, readme):
-        seen.append((description, readme))
-        return {
-            "relevant": description == "cleaned README excerpt",
-            "reason": "no_sdg_signals",
-            "text_quality": 0.2,
-            "suggestions": [],
-        }
-
-    monkeypatch.setattr(flask_app, "assess_relevance", assess)
     response = flask_app.app.test_client().post(
         "/api/classify_st_url",
         json={
-            "projectName": "project",
-            "projectUrl": "https://github.com/example/project",
-            "projectDescription": "user description",
+            "projectName": "p5.js",
+            "projectUrl": "https://github.com/processing/p5.js/",
+            "projectDescription": "Creative coding education for students and teachers.",
         },
     )
 
     assert response.status_code == 200
-    assert seen == [
-        ("user description", "classifier summary"),
-        ("cleaned README excerpt", ""),
+    payload = response.get_json()
+    assert payload["predictions"] == [
+        {"sdg": sdg_4, "prediction": 0.351},
+        {"sdg": sdg_9, "prediction": 0.307},
     ]
-    assert response.get_json()["readme_assessment"]["relevant"] is True
+    assert payload["recommendation"] is None

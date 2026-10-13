@@ -29,9 +29,10 @@ except Exception:
 app = Flask(__name__)
 CORS(app)
 
-# Route-level output cutoff. The ST scorer's 0.3 threshold is an earlier
-# candidate filter inside embedding_url.py, not the API response cutoff.
-SDG_PREDICTION_CUTOFF = 0.4
+# Aurora returns unfiltered scores, so its route applies this output cutoff.
+# The ST URL classifier applies its own calibrated >= 0.3 cutoff before it
+# returns from embedding_url.py and must not be filtered a second time here.
+AURORA_PREDICTION_CUTOFF = 0.4
 
 
 def _recommendation_payload(recommendation):
@@ -46,11 +47,11 @@ def _recommendation_payload(recommendation):
     return payload
 
 
-def _filter_predictions(predictions):
+def _filter_aurora_predictions(predictions):
     return [
         prediction
         for prediction in predictions
-        if prediction.get("prediction", 0) > SDG_PREDICTION_CUTOFF
+        if prediction.get("prediction", 0) > AURORA_PREDICTION_CUTOFF
     ]
 
 
@@ -161,7 +162,7 @@ def classify_aurora():
         if isinstance(sdg_preds, dict)
         else sdg_preds
     )
-    filtered = _filter_predictions(preds)
+    filtered = _filter_aurora_predictions(preds)
 
     response = {
         "projectName": aurora_result.get("project_name"),
@@ -264,13 +265,11 @@ def classify_st_url():
         {"sdg": name, "prediction": score}
         for name, score in st_url_result.get("sdg_predictions", {}).items()
     ]
-    filtered = _filter_predictions(preds)
-
     response = {
         "projectName": projectName,
         "projectUrl":  projectUrl,
-        "predictions": filtered,
-        "recommendation": _recommendation_payload(rec) if not filtered else None,
+        "predictions": preds,
+        "recommendation": _recommendation_payload(rec) if not preds else None,
         "readme_assessment": {
             **_recommendation_payload(readme_assessment),
             "relevant": readme_assessment["relevant"],

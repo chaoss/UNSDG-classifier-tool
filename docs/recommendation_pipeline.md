@@ -15,7 +15,7 @@ The recommendation code itself does not call an LLM. When the repository classif
    - `POST /api/classify_st_url` for repository/README analysis.
    - `POST /api/classify_aurora` for Aurora classification.
 3. The frontend prefers the repository/README response. It waits up to 120 seconds for that request; if it fails or times out, it waits for the Aurora request instead. The Aurora request is started even while the preferred request is running.
-4. The selected backend route performs its classifier and filters the predictions. Both routes keep only scores strictly greater than `0.3`.
+4. The selected backend route performs its classifier. The ST URL classifier keeps scores greater than or equal to `0.3`, and the Flask route preserves that already-filtered output. Aurora returns unfiltered candidates, so its Flask route keeps scores strictly greater than `0.4`.
 5. After classification succeeds, the route calls `assess_relevance` with the project description and a second text value, then attaches a recommendation only if the filtered predictions list is empty.
 6. The frontend stores the selected route's response and renders the results view. If its `predictions` are empty, `frontend/components/results.tsx` renders `NoSdgPage` and passes it the optional recommendation.
 
@@ -24,7 +24,7 @@ The recommendation is therefore a post-classification explanation for an empty, 
 ### Important paths that bypass the recommendation
 
 - `/api/classify_st_url` returns early with an empty predictions list and a message if no repository URL is provided. This early response does not call `assess_relevance` and has no recommendation. The current frontend form normally requires a repository URL, but the backend route supports this separate case.
-- If a route returns one or more predictions above `0.4`, its `recommendation` field is `null`, even when the recommendation scorer might have found weak text signals.
+- If a route returns one or more predictions that survive its model-specific cutoff, its `recommendation` field is `null`, even when the recommendation scorer might have found weak text signals.
 - If classification fails with an HTTP error, the route returns its error response rather than a recommendation result.
 - In the frontend, the ST URL response is preferred. If it succeeds with no predictions, its recommendation is shown; the concurrently started Aurora response is not substituted just because its predictions might differ.
 
@@ -106,7 +106,7 @@ There is no learned relevance threshold in this recommendation scorer. Its simil
 - `max_sim > 0.25` after signal detection: `threshold_too_high`.
 - `max_sim <= 0.25` after signal detection: `signals_present_but_low_similarity`.
 
-This `0.25` boundary is separate from the classifier routes' `0.4` prediction-output cutoff. Increasing the frontend's result confidence slider does not alter either value and does not rerun the recommendation scorer.
+This `0.25` boundary is separate from the ST URL classifier's `>= 0.3` cutoff and Aurora's strict `> 0.4` route cutoff. Increasing the frontend's result confidence slider does not alter these values and does not rerun the recommendation scorer.
 
 ### `text_quality` arithmetic
 
@@ -217,7 +217,7 @@ When the filtered predictions are empty, the existing recommendation is returned
 }
 ```
 
-When at least one prediction survives the backend cutoff, `recommendation` is `null`; `readme_assessment` is still returned by the ST URL route. The frontend type includes both fields, but the current UI does not render `readme_assessment`.
+When at least one prediction survives the backend cutoff, `recommendation` is `null`; `readme_assessment` is still returned by the ST URL route. When no prediction survives, the frontend compares the nearest-SDG candidates from both assessments and displays the candidate with the higher similarity as a closest signal, not as a prediction that passed the cutoff.
 
 ## 9. Where and how users see it
 
@@ -229,14 +229,15 @@ When at least one prediction survives the backend cutoff, `recommendation` is `n
 
 When no SDGs are present, the component renders `frontend/components/noSdgPage.tsx` instead of the SDG cards. The page displays:
 
-- A heading: “This project does not satisfy any SDG”. This is stronger wording than the helper can justify; technically the result means no prediction survived the route's filter.
+- A heading explaining that no SDG match passed the route's filter.
 - A reason message selected from the `reason` key, when a recommendation exists.
-- The suggestion list returned by the backend under “Possible solutions”.
-- A “Show detailed guidance” modal. Its title and textarea content use a shorter, frontend-maintained description for the selected reason; the modal does not display every returned suggestion or `text_quality`.
+- The closest SDG signal and its similarity when either assessment provides one.
+- The suggestion list returned by the backend under “Strengthen the project context”.
+- A detailed-guidance modal whose copyable guidance uses a shorter, frontend-maintained description for the selected reason; the modal does not display every returned suggestion or `text_quality`.
 
 If no recommendation is present, the page uses generic fallback text and a fixed fallback suggestion list. In the current ordinary no-prediction cases for the two classification routes, a recommendation is included; the fallback mainly protects other response shapes or older callers.
 
-The `text_quality` value and `readme_assessment` are not currently rendered in the UI. The recommendation shown on the no-SDG page remains the existing no-predictions recommendation.
+The `text_quality` value is not currently rendered in the UI. The recommendation shown on the no-SDG page remains the existing no-predictions recommendation, while the closest available `nearest_sdg` and `nearest_similarity` values may come from either that recommendation or `readme_assessment`.
 
 ## 10. What the recommendation is and is not
 
@@ -263,14 +264,14 @@ It is not:
 - **The response drops `relevant`:** clients cannot use the intended boolean unless the route contract is changed.
 - **`text_quality` is not consistently bounded:** the low-similarity formula is not clamped to `[0, 1]`.
 - **Frontend wording overstates the result:** “does not satisfy any SDG” communicates a project-level conclusion, while the route only reports no scores above its filter.
-- **No focused automated tests currently cover this helper or its route integration.** `backend/scripts/check_recommendation.py` is a manual smoke script with four example inputs. The general backend test guide also lists `app.py` and this kind of route behavior as lacking automated coverage.
+- `backend/tests/test_recommendation_pipeline.py` covers the helper and includes a p5.js regression test ensuring ST classifier predictions are not removed by Aurora's stricter route cutoff.
 
 ## 12. Source map
 
 - [backend/services/recommendation_pipeline.py](../backend/services/recommendation_pipeline.py): cleaning, word-count check, keyword categories, embedding calculation, decision branches, scores, and suggestions.
 - [backend/services/embedder.py](../backend/services/embedder.py): shared lazy `all-mpnet-base-v2` model.
 - [backend/sdg_constants.py](../backend/sdg_constants.py): 17 SDG descriptions used by the recommendation similarity comparison.
-- [backend/app.py](../backend/app.py): recommendation invocation, `0.4` strict prediction filter, and API response assembly for both routes.
+- [backend/app.py](../backend/app.py): recommendation invocation, Aurora's strict `> 0.4` filter, preservation of ST classifier output, and API response assembly.
 - [backend/embedding_url.py](../backend/embedding_url.py): repository text/summary source used by the ST URL path.
 - [backend/services/summariser.py](../backend/services/summariser.py): Groq summary and fallback behavior used upstream of the ST URL recommendation input.
 - [backend/aurora_api.py](../backend/aurora_api.py): Aurora response fields; its current output has no `project_description` field.

@@ -4,6 +4,7 @@ import { Recommendation } from "@/types/main";
 
 interface NoSdgPageProps {
   recommendation?: Recommendation;
+  readmeAssessment?: Recommendation;
 }
 
 const reasonMessages: Record<string, string> = {
@@ -22,7 +23,10 @@ const reasonDescriptions: Record<string, string> = {
   signals_present_but_low_similarity: "Add more specific details about your project's impact, beneficiaries, and geographic or sector context.",
 };
 
-const NoSdgPage: React.FC<NoSdgPageProps> = ({ recommendation }) => {
+const NoSdgPage: React.FC<NoSdgPageProps> = ({
+  recommendation,
+  readmeAssessment,
+}) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
 
@@ -50,6 +54,18 @@ const NoSdgPage: React.FC<NoSdgPageProps> = ({ recommendation }) => {
         "Add geographic or sector context (e.g., 'rural farmers', 'low-income countries')",
       ];
 
+  const nearestAssessment = [recommendation, readmeAssessment]
+    .filter(
+      (assessment): assessment is Recommendation & { nearest_sdg: string } =>
+        Boolean(assessment?.nearest_sdg),
+    )
+    .sort(
+      (first, second) =>
+        (second.nearest_similarity ?? 0) - (first.nearest_similarity ?? 0),
+    )[0];
+
+  const nearestSimilarity = nearestAssessment?.nearest_similarity;
+
   return (
     <section className="relative isolate overflow-hidden rounded-lg border border-[#b9def0] bg-[#f3faff] px-5 py-6 sm:px-8 sm:py-8">
       <div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-12 h-48 w-48 rounded-full border-[24px] border-[#dceffa] sm:-right-5 sm:-top-16 sm:h-64 sm:w-64" />
@@ -70,6 +86,23 @@ const NoSdgPage: React.FC<NoSdgPageProps> = ({ recommendation }) => {
           No SDG match found for this project
         </h2>
         <p className="mt-3 max-w-2xl text-base leading-7 text-[#426172]">{reason}</p>
+
+        {nearestAssessment && (
+          <div className="mt-5 max-w-2xl rounded-md border border-[#b9def0] bg-white/85 px-4 py-4">
+            <p className="text-xs font-bold uppercase tracking-wide text-[#0079a8]">
+              Closest SDG signal detected
+            </p>
+            <p className="mt-1 text-lg font-semibold text-[#123b56]">
+              {nearestAssessment.nearest_sdg}
+            </p>
+            <p className="mt-1 text-sm leading-6 text-[#567484]">
+              {typeof nearestSimilarity === "number"
+                ? `${Math.round(nearestSimilarity * 100)}% similarity. `
+                : ""}
+              This was the closest signal, but it did not pass the classification cutoff.
+            </p>
+          </div>
+        )}
 
         <div className="mt-7 border-t border-[#c8e3f0] pt-6">
           <div className="mb-4">

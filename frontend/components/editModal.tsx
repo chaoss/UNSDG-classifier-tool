@@ -184,7 +184,7 @@ const EditModal: React.FC<EditModalProps> = ({
                   <select
                     value={newSDGNumber}
                     onChange={(e) => {
-                      handleSDGSelection(e);
+                      handleSDGSelection(e.target.value);
                     }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
                   >

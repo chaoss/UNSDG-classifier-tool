@@ -74,13 +74,13 @@ POST /api/classify_st_url
   -> return JSON
 ```
 
-`classify_repo()` initially selects scores greater than or equal to `0.3`. The Flask route then applies a second filter and returns only scores strictly greater than `0.4`, so a score of exactly `0.4` is not returned. The function's `top_k` limit is 10.
+`classify_repo()` selects scores greater than or equal to `0.3`. The Flask route preserves those already-filtered predictions instead of applying a second, incompatible cutoff. The function's `top_k` limit is 10.
 
 ### Aurora path
 
 The Aurora route sends the user's project description to `https://aurora-sdg.labs.vu.nl/classifier/classify/elsevier-sdg-multi`. It does not fetch the repository or call the local LUKE classifier. The response is normalized, scores above `0.1` are retained in `aurora_api.py`, and the Flask route applies its own strict `> 0.4` output filter.
 
-Both routes perform a recommendation assessment after classification. Its result is attached only if no prediction remains after the route's `> 0.4` filter, but the assessment function itself is called whether or not predictions remain. Depending on text length and keywords, that assessment can do additional MPNet work even when the recommendation field is ultimately `null`.
+Both routes perform a recommendation assessment after classification. Its result is attached only if no prediction remains after the route's model-specific filtering, but the assessment function itself is called whether or not predictions remain. Depending on text length and keywords, that assessment can do additional MPNet work even when the recommendation field is ultimately `null`.
 
 ## Repository and README path
 
@@ -172,7 +172,7 @@ It cleans both arguments and checks their combined text in this order:
 
 Important input detail: the combined description plus summary is used for the word count and keyword checks, but the similarity calculation embeds only `user_description`. In the ST route, the second argument is the generated summary (or repository description fallback); in the Aurora route, the current Aurora response normally has no `project_description`, so the helper usually receives an empty second string.
 
-The recommendation calculation runs after the route's primary classification. If the route returns one or more predictions above `0.4`, its recommendation result is discarded from the response. The recommendation check can nevertheless add time in that case if the text passes its length and keyword gates.
+The recommendation calculation runs after the route's primary classification. If the route returns one or more predictions that survive its model-specific cutoff, its recommendation result is discarded from the response. The recommendation check can nevertheless add time in that case if the text passes its length and keyword gates.
 
 ## Model lifecycle and efficiency
 
