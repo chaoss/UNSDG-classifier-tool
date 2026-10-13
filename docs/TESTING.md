@@ -10,7 +10,7 @@ This document inventories the testing this project needs: what exists today, wha
 | SDG inference (`backend/services/inference.py`, `sdg_model.py`) | covered indirectly | No direct tests — loading real weights makes naive unit testing hard (see [§7](#7-sdg-inference)). `zero_shot_scores` is tested on both branches (in-process and `MODEL_SERVICE_URL` over HTTP), and the load path is pinned by a mocked import trace. |
 | Frontend (`frontend/`) | Vitest + React Testing Library | `test/classification-flow.test.tsx` submits the form through a mocked API boundary and validates accepted prediction rendering. |
 
-Run the classification contract suite with `cd backend && pytest tests/test_recommendation_pipeline.py`, and run the frontend flow with `cd frontend && npm test`. `.github/workflows/classification-flow.yml` runs both on pushes and pull requests. The broader backend suite currently has unrelated `repo_fetcher` failures and should not be described as green until those tests are reconciled with repository validation behavior.
+Run the classification contract suite with `cd backend && pytest tests/test_recommendation_pipeline.py`, and run the frontend flow with `cd frontend && npm test`. The broader backend suite currently has unrelated `repo_fetcher` failures and should not be described as green until those tests are reconciled with repository validation behavior.
 
 
 
