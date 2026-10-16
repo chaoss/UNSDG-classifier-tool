@@ -181,6 +181,20 @@ const EditModal: React.FC<EditModalProps> = ({
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     SDG Number
                   </label>
+                  <select
+                    value={newSDGNumber}
+                    onChange={(e) => {
+                      handleSDGSelection(e.target.value);
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
+                  >
+                    <option value="">Select SDG Number</option>
+                    {Array.from({ length: 17 }, (_, i) => i + 1).map((num) => (
+                      <option key={num} value={num}>
+                        SDG {num}
+                      </option>
+                    ))}
+                  </select>
                   <div className="relative" ref={dropdownRef}>
                     <button
                       type="button"

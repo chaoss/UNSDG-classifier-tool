@@ -1,16 +1,16 @@
 # Testing Guide
 
-This document inventories the testing this project needs: what exists today, what's missing, and the specific test cases each module should have. It's meant to guide contributors picking up `test/` issues, not to describe an aspirational end state — the backend now has a real `pytest` suite covering two modules (see table below), but most of the checklist is still unimplemented, and the frontend has no test runner at all.
+This document inventories the testing this project needs: what exists today, what's missing, and the specific test cases each module should have. The backend has a `pytest` suite, and the frontend uses Vitest with React Testing Library for its classification flow.
 
 ## Current **state**
 
 | Area | Test runner | Status |
 |------|-------------|--------|
-| Backend (`backend/`) | `pytest` (installed, in `requirements.txt`) | Two modules have real automated coverage: [`test_repo_fetcher.py`](../backend/tests/test_repo_fetcher.py) (72 tests) and [`test_embedding_url.py`](../backend/tests/test_embedding_url.py) (24 tests) — **all 96 passing**. `test_dpga_real_positives.py` and `test_gitlab_provider.py` remain manual, live-network scripts (excluded from collection via `conftest.py`'s `collect_ignore`) — useful as smoke tests, not part of the automated suite. `aurora_api.py`, `summariser.py`, `sdg_constants.py`, and `app.py` (§3–§6 below) still have no tests at all. |
+| Backend (`backend/`) | `pytest` (installed, in `requirements.txt`) | The deterministic classification contract is covered in `test_recommendation_pipeline.py`. Other modules also have tests, but the broader suite currently contains unrelated `repo_fetcher` failures and is not the CI gate for this flow. The live-network scripts remain excluded from collection. |
 | SDG inference (`backend/services/inference.py`, `sdg_model.py`) | covered indirectly | No direct tests — loading real weights makes naive unit testing hard (see [§7](#7-sdg-inference)). `zero_shot_scores` is tested on both branches (in-process and `MODEL_SERVICE_URL` over HTTP), and the load path is pinned by a mocked import trace. |
-| Frontend (`frontend/`) | none | No Jest/Vitest/React Testing Library installed. `npm run lint` is the only check that runs today. |
+| Frontend (`frontend/`) | Vitest + React Testing Library | `test/classification-flow.test.tsx` submits the form through a mocked API boundary and validates accepted prediction rendering. |
 
-Run the backend suite with `cd backend && pytest tests/` (the two manual scripts are auto-excluded). Setting up a frontend runner (`Jest` + `React Testing Library`) is still a prerequisite for most of the work in §7–§8 and is good first-issue material.
+Run the classification contract suite with `cd backend && pytest tests/test_recommendation_pipeline.py`, and run the frontend flow with `cd frontend && npm test`. The broader backend suite currently has unrelated `repo_fetcher` failures and should not be described as green until those tests are reconciled with repository validation behavior.
 
 
 
@@ -82,6 +82,7 @@ Integration-style tests using Flask's test client (no live server needed):
 
 - `POST /api/classify_aurora`: missing `projectDescription` → `400`; happy path filters predictions to `> 0.4`; an exception from `aurora_classify` → `500` with the documented error shape.
 - `POST /api/classify_st_url`: missing `projectDescription` → `400`; missing `projectUrl` → `200` with empty `predictions` and an explanatory `message`; each of `InvalidURLError`/`UnsupportedHostError`/`ValueError` → `400`, `RepositoryNotFoundError` → `404`, `RateLimitError` → `429`, `FetchError`/`requests.exceptions.HTTPError` → `502`, anything else → `500`. This status-code mapping is exactly the kind of thing that silently breaks during a refactor if it isn't pinned down by a test.
+- The ST route contract test also pins the p5.js regression: classifier-approved SDG 4 (`0.351`) and SDG 9 (`0.307`) scores must reach `predictions` without being subjected to Aurora's stricter cutoff.
 - No `/api/classify_st_description` route exists, and no frontend code calls it anymore (see [gap above](#known-gap-this-inventory-surfaced-resolved)) — nothing to test here unless the route is intentionally reintroduced later.
 - CORS headers are present on responses.
 
@@ -95,7 +96,7 @@ Recommended approach:
 
 ## 8. Frontend
 
-Requires installing Jest or Vitest + React Testing Library first.
+Vitest and React Testing Library are configured in `frontend/vitest.config.ts`.
 
 **Pure logic (no rendering required):**
 - `lib/utils.ts` — `cn()` class merging/deduplication.
@@ -105,6 +106,7 @@ Requires installing Jest or Vitest + React Testing Library first.
 - `services/api.ts` — `classifyByModel` switch: each model type routes to the correct client method; an unknown type falls back to Aurora.
 
 **Component tests:**
+- `test/classification-flow.test.tsx` — covered: form submission, API handoff, and accepted prediction rendering.
 - `mainScreen.tsx` — every form-validation message branch ("Please fill in...", "valid repository URL").
 - `results.tsx` — tab switching (`handleTabChange`) and its error path, `handleDownload`'s JSON/blob generation.
 - `editModal.tsx` — add/remove SDG flow end to end.

@@ -15,7 +15,7 @@ The recommendation code itself does not call an LLM. When the repository classif
    - `POST /api/classify_st_url` for repository/README analysis.
    - `POST /api/classify_aurora` for Aurora classification.
 3. The frontend prefers the repository/README response. It waits up to 120 seconds for that request; if it fails or times out, it waits for the Aurora request instead. The Aurora request is started even while the preferred request is running.
-4. The selected backend route performs its classifier and filters the predictions. Both routes keep only scores strictly greater than `0.3`.
+4. The selected backend route performs its classifier. The ST URL classifier keeps scores greater than or equal to `0.3`, and the Flask route preserves that already-filtered output. Aurora returns unfiltered candidates, so its Flask route keeps scores strictly greater than `0.4`.
 5. After classification succeeds, the route calls `assess_relevance` with the project description and a second text value, then attaches a recommendation only if the filtered predictions list is empty.
 6. The frontend stores the selected route's response and renders the results view. If its `predictions` are empty, `frontend/components/results.tsx` renders `NoSdgPage` and passes it the optional recommendation.
 
@@ -24,7 +24,7 @@ The recommendation is therefore a post-classification explanation for an empty, 
 ### Important paths that bypass the recommendation
 
 - `/api/classify_st_url` returns early with an empty predictions list and a message if no repository URL is provided. This early response does not call `assess_relevance` and has no recommendation. The current frontend form normally requires a repository URL, but the backend route supports this separate case.
-- If a route returns one or more predictions above `0.4`, its `recommendation` field is `null`, even when the recommendation scorer might have found weak text signals.
+- If a route returns one or more predictions that survive its model-specific cutoff, its `recommendation` field is `null`, even when the recommendation scorer might have found weak text signals.
 - If classification fails with an HTTP error, the route returns its error response rather than a recommendation result.
 - In the frontend, the ST URL response is preferred. If it succeeds with no predictions, its recommendation is shown; the concurrently started Aurora response is not substituted just because its predictions might differ.
 
@@ -35,6 +35,12 @@ The route inputs differ slightly:
 | Route | `user_description` | `readme_text` |
 |---|---|---|
 | Aurora | User's submitted project description | `aurora_result.get("project_description", "")`, if present; otherwise empty |
+| ST URL recommendation | User's submitted project description | The classifier's `summary`; if absent, repository metadata description; otherwise empty |
+| ST URL README assessment | First 500 whitespace-separated words from the fetched README, after `clean_text()` | Empty string |
+
+The current `aurora_api.main()` response does not set a `project_description` property. Consequently, the Aurora route normally assesses the submitted description alone.
+
+The ST URL path fetches repository metadata, topics, and README text. `fetch_repo_text()` gives the user's submitted description priority over the repository's metadata description, then passes the README and metadata to `summarize_for_sdg()`. The classifier summary continues to feed the existing no-predictions recommendation. Separately, the fetched README is passed through the shared `clean_text()` helper and capped at 500 whitespace-separated words; this excerpt is assessed independently and returned as `readme_assessment`.
 | ST URL | User's submitted project description | The classifier's `summary`; if absent, repository metadata description; otherwise empty |
 
 The current `aurora_api.main()` response does not set a `project_description` property. Consequently, the Aurora route normally assesses the submitted description alone.
@@ -60,11 +66,13 @@ It counts words using whitespace splitting. If the combined text has fewer than 
 
 This length test uses both inputs. It is a count, not a measure of distinct information, readability, or coverage of the SDGs.
 
+For `readme_assessment`, the second input is empty, and the first input is the cleaned README excerpt. The 500-word cap is applied after `clean_text()`; it is not a 500-token model limit.
+
 ## 5. Signal detection
 
 If the combined text is long enough, `_has_sdg_signals()` searches its lowercase, cleaned form in this order:
 
-1. **Explicit SDG-related terms:** `sdg`, `sustainable development`, `goal`, `goal 1`, or `goal 2`. These are substring checks; for example, the broad word `goal` can match text without naming a particular SDG.
+1. **Explicit SDG-related terms:** `sdg`, `sustainable development`, or `goal`. These use word-boundary matching; the broad word `goal` can still match text without naming a particular SDG.
 2. **Domain vocabulary:** any keyword in one of these groups:
    - Health: `health`, `medical`, `hospital`, `patient`, `clinical`
    - Education: `education`, `learning`, `school`, `student`, `teaching`
@@ -75,7 +83,7 @@ If the combined text is long enough, `_has_sdg_signals()` searches its lowercase
    - Governance: `governance`, `policy`, `government`, `policy`
    - Gender: `gender`, `women`, `equality`, `female`
 3. **Problem or beneficiary language:** `problem`, `solution`, `beneficiaries`, `users`, `impact`, `helps`, `addresses`, `reduces`, or `improves`.
-4. **Heavily technical text check:** if none of the above matched, the code counts how many terms from this list occur as substrings: `python`, `javascript`, `react`, `api`, `database`, `framework`, `library`, `container`, `docker`, `cls`, `function`, `import`, `class`, `module`. It divides the number of matching terms by total whitespace-separated words. A ratio strictly greater than `0.5` returns the `heavily_technical` signal category.
+4. **Heavily technical text check:** if none of the above matched, the code counts how many whole-word terms from this list occur: `python`, `javascript`, `react`, `api`, `database`, `framework`, `library`, `container`, `docker`, `cls`, `function`, `import`, `class`, `module`. It divides the number of matching terms by total whitespace-separated words. A ratio strictly greater than `0.4` returns the `heavily_technical` signal category.
 5. Otherwise, no signal is found.
 
 The category is selected by the first matching step. These are simple keyword checks, not language understanding: they do not account for negation, context, whether a claim is supported, or whether the terms refer to the project's real-world impact.
@@ -84,21 +92,21 @@ The category is selected by the first matching step. These are simple keyword ch
 
 The assessor uses the process-wide embedder from `backend/services/embedder.py` only when the keyword scan has found a signal. The model is `sentence-transformers/all-mpnet-base-v2`, loaded lazily on first use and then reused within the process.
 
-For a signal-positive input, the assessor:
+For a signal-positive input, the assessor tokenizes its first argument and splits it into chunks that fit `embedder.max_seq_length` after accounting for tokenizer special tokens. Thus the 500-word README excerpt is not silently truncated to one model sequence. The assessor:
 
-1. Encodes **the cleaned `user_description` only**, with normalized embeddings.
+1. Encodes each chunk of the first argument with normalized embeddings. In the ordinary recommendation, that argument is the cleaned user description; in `readme_assessment`, it is the cleaned README excerpt.
 2. Encodes all 17 entries in `SDG_DESCS` from `backend/sdg_constants.py`, also with normalized embeddings.
-3. Takes the dot product of every SDG-description embedding with the user-description embedding. With normalized vectors, this is cosine similarity.
-4. Uses the maximum of those 17 similarities, `max_sim`, for a single coarse decision. It does not retain or return the best-matching SDG, and does not calculate a separate recommendation per SDG.
+3. Takes the dot product between every chunk embedding and every SDG-description embedding. With normalized vectors, this is cosine similarity.
+4. Keeps the maximum similarity per SDG across chunks, then selects the highest-scoring SDG overall. This is a coarse diagnostic, not a per-SDG recommendation.
 
-The combined text is used for the length and keyword checks, but the embedding calculation does not use the combined text or the README/summary. This distinction matters: repository text can cause a signal-positive branch while only the submitted description is measured for similarity. An empty or very short submitted description can therefore be embedded even when the second argument contains useful text.
+For the ordinary recommendation, the combined text is used for length and keyword checks, but the embedding is based only on the user description. The independent README assessment instead embeds the README excerpt as its first argument. SDG description embeddings are cached for reuse within the process.
 
 There is no learned relevance threshold in this recommendation scorer. Its similarity boundary is the literal, strict comparison `max_sim > 0.25`:
 
 - `max_sim > 0.25` after signal detection: `threshold_too_high`.
 - `max_sim <= 0.25` after signal detection: `signals_present_but_low_similarity`.
 
-This `0.25` boundary is separate from the classifier routes' `0.4` prediction-output cutoff. Increasing the frontend's result confidence slider does not alter either value and does not rerun the recommendation scorer.
+This `0.25` boundary is separate from the ST URL classifier's `>= 0.3` cutoff and Aurora's strict `> 0.4` route cutoff. Increasing the frontend's result confidence slider does not alter these values and does not rerun the recommendation scorer.
 
 ### `text_quality` arithmetic
 
@@ -107,12 +115,12 @@ The `text_quality` field is a heuristic generated by the selected branch. It is 
 | Decision branch | Formula / fixed value |
 |---|---|
 | Text too short | `0.3` |
-| Signals found and `max_sim > 0.25` | `min(max_sim * 4, 1.0)` |
-| Signals found and `max_sim <= 0.25` | `round(max_sim * 5, 2)` |
+| Signals found and `max_sim > 0.25` | `clip(max_sim * 4, 0.0, 1.0)` |
+| Signals found and `max_sim <= 0.25` | `clip(max_sim * 5, 0.0, 1.0)` |
 | Heavily technical | `0.4` |
 | No signals | `0.2` |
 
-Although the docstring describes a 0-to-1 score, only the `threshold_too_high` branch clamps its result. In the low-similarity branch, values just below or equal to `0.25` can produce a `text_quality` greater than `1.0` (up to `1.25` at `0.25`). Cosine similarities can also be negative, in which case multiplication can produce a negative value. The field is currently returned by the API but is not displayed in the frontend.
+Both similarity branches clamp the heuristic score to the 0-to-1 range; non-finite values become `0.0`. The field is returned by the API but is not displayed in the frontend.
 
 ## 7. Decision outcomes
 
@@ -188,7 +196,7 @@ The following branches are evaluated in order. The first matching branch returns
 }
 ```
 
-The Flask routes do **not** return the `relevant` boolean. When the filtered predictions are empty, they return the other three fields under `recommendation`:
+When the filtered predictions are empty, the existing recommendation is returned under `recommendation`. The ST URL route also always returns a separate `readme_assessment` object, including its `relevant` boolean, based on the cleaned README excerpt:
 
 ```json
 {
@@ -199,11 +207,17 @@ The Flask routes do **not** return the `relevant` boolean. When the filtered pre
     "reason": "no_sdg_signals",
     "suggestions": ["..."],
     "text_quality": 0.2
+  },
+  "readme_assessment": {
+    "relevant": false,
+    "reason": "no_sdg_signals",
+    "suggestions": ["..."],
+    "text_quality": 0.2
   }
 }
 ```
 
-When at least one prediction survives the backend cutoff, the shape is the same except `recommendation` is `null`. The frontend type in `frontend/types/main.d.ts` marks `recommendation` as optional, and the reason is represented as a string rather than a closed union of known values.
+When at least one prediction survives the backend cutoff, `recommendation` is `null`; `readme_assessment` is still returned by the ST URL route. When no prediction survives, the frontend compares the nearest-SDG candidates from both assessments and displays the candidate with the higher similarity as a closest signal, not as a prediction that passed the cutoff.
 
 ## 9. Where and how users see it
 
@@ -215,27 +229,28 @@ When at least one prediction survives the backend cutoff, the shape is the same 
 
 When no SDGs are present, the component renders `frontend/components/noSdgPage.tsx` instead of the SDG cards. The page displays:
 
-- A heading: “This project does not satisfy any SDG”. This is stronger wording than the helper can justify; technically the result means no prediction survived the route's filter.
+- A heading explaining that no SDG match passed the route's filter.
 - A reason message selected from the `reason` key, when a recommendation exists.
-- The suggestion list returned by the backend under “Possible solutions”.
-- A “Show detailed guidance” modal. Its title and textarea content use a shorter, frontend-maintained description for the selected reason; the modal does not display every returned suggestion or `text_quality`.
+- The closest SDG signal and its similarity when either assessment provides one.
+- The suggestion list returned by the backend under “Strengthen the project context”.
+- A detailed-guidance modal whose copyable guidance uses a shorter, frontend-maintained description for the selected reason; the modal does not display every returned suggestion or `text_quality`.
 
 If no recommendation is present, the page uses generic fallback text and a fixed fallback suggestion list. In the current ordinary no-prediction cases for the two classification routes, a recommendation is included; the fallback mainly protects other response shapes or older callers.
 
-The `text_quality` value is not currently rendered. The `relevant` key is not available to the UI because the routes omit it.
+The `text_quality` value is not currently rendered in the UI. The recommendation shown on the no-SDG page remains the existing no-predictions recommendation, while the closest available `nearest_sdg` and `nearest_similarity` values may come from either that recommendation or `readme_assessment`.
 
 ## 10. What the recommendation is and is not
 
 It is:
 - A deterministic, rule-based explanation selected from five reason categories.
 - A heuristic that combines simple word-count and keyword checks with one embedding similarity comparison for signal-positive cases.
-- A way to suggest improvements to the description or README summary after no predictions survived the API route's filtering.
+- A way to suggest improvements to the project description and a separate diagnostic result for the README excerpt.
 
 It is not:
 - A second SDG classifier or an independent validation of the classifier's predictions.
 - A guarantee that the project does or does not contribute to any SDG.
 - A probability, calibrated quality metric, or explanation of the classifier's internal reasoning.
-- A per-SDG ranking; only the maximum similarity is used, and the matching SDG is not returned.
+- A per-SDG ranking; it returns only the nearest SDG and its similarity for signal-positive assessments.
 - A check of the classifier's actual threshold setting. The label `threshold_too_high` is a heuristic suggestion, not a measured diagnosis.
 - A request for or display of more repository data. Suggestions are shown to the user; they do not modify the submitted text or automatically rerun classification.
 
@@ -249,14 +264,14 @@ It is not:
 - **The response drops `relevant`:** clients cannot use the intended boolean unless the route contract is changed.
 - **`text_quality` is not consistently bounded:** the low-similarity formula is not clamped to `[0, 1]`.
 - **Frontend wording overstates the result:** “does not satisfy any SDG” communicates a project-level conclusion, while the route only reports no scores above its filter.
-- **No focused automated tests currently cover this helper or its route integration.** `backend/scripts/check_recommendation.py` is a manual smoke script with four example inputs. The general backend test guide also lists `app.py` and this kind of route behavior as lacking automated coverage.
+- `backend/tests/test_recommendation_pipeline.py` covers the helper and includes a p5.js regression test ensuring ST classifier predictions are not removed by Aurora's stricter route cutoff.
 
 ## 12. Source map
 
 - [backend/services/recommendation_pipeline.py](../backend/services/recommendation_pipeline.py): cleaning, word-count check, keyword categories, embedding calculation, decision branches, scores, and suggestions.
 - [backend/services/embedder.py](../backend/services/embedder.py): shared lazy `all-mpnet-base-v2` model.
 - [backend/sdg_constants.py](../backend/sdg_constants.py): 17 SDG descriptions used by the recommendation similarity comparison.
-- [backend/app.py](../backend/app.py): recommendation invocation, `0.4` strict prediction filter, and API response assembly for both routes.
+- [backend/app.py](../backend/app.py): recommendation invocation, Aurora's strict `> 0.4` filter, preservation of ST classifier output, and API response assembly.
 - [backend/embedding_url.py](../backend/embedding_url.py): repository text/summary source used by the ST URL path.
 - [backend/services/summariser.py](../backend/services/summariser.py): Groq summary and fallback behavior used upstream of the ST URL recommendation input.
 - [backend/aurora_api.py](../backend/aurora_api.py): Aurora response fields; its current output has no `project_description` field.

@@ -186,8 +186,13 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
       return;
     }
 
+    if (Object.keys(visiblePredictions).length === 0) {
+      setError("No SDG predictions meet the selected relevance threshold.");
+      return;
+    }
+
     try {
-      const predictions = results.predictions as Record<string, number | SDGValue>;
+      const predictions = visiblePredictions as Record<string, number | SDGValue>;
       const zip = new JSZip();
 
       const files = [
@@ -265,7 +270,10 @@ const Results = ({ results, setResults, setError }: ResultsProps) => {
             <h3 className="text-2xl font-semibold text-gray-800">UN SDG Goals Analysis</h3>
             {results ? (
               noSdgs ? (
-                <NoSdgPage recommendation={recommendation} />
+                <NoSdgPage
+                  recommendation={recommendation ?? undefined}
+                  readmeAssessment={results.readme_assessment}
+                />
               ) : (
                 <>
                   <div className="flex items-start gap-6">

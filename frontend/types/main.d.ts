@@ -17,13 +17,17 @@ export type Recommendation = {
   reason: string;
   suggestions: string[];
   text_quality: number;
+  relevant?: boolean;
+  nearest_sdg?: string;
+  nearest_similarity?: number;
 };
 
 export type ResultsData = {
   projectUrl?: string;
   projectName?: string;
   projectDescription?: string;
-  recommendation?: Recommendation;
+  recommendation?: Recommendation | null;
+  readme_assessment?: Recommendation;
   predictions?:
     | Record<string, SDGValue>
     | Record<string, number>
@@ -63,7 +67,9 @@ export interface SDGClassificationResponse {
   projectName?: string;
   projectUrl?: string;
   repo_url?: string;
-  [key: string]: any;
+  recommendation?: Recommendation | null;
+  readme_assessment?: Recommendation;
+  [key: string]: unknown;
 }
 
 export type SDGCardProps = {

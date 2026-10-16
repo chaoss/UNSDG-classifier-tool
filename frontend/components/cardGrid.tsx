@@ -1,5 +1,9 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { SDGValue, CardGridProps } from "@/types/main";
+import { Info } from "lucide-react";
+import SdgGoalDetails from "@/components/sdgGoalDetails";
 
 /*
 CardGrid Component
@@ -14,6 +18,7 @@ type SDGCardProps = {
 };
 
 const SDGCard = ({ sdgNumber, sdgName, confidence }: SDGCardProps) => {
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const confidenceScore = Number(confidence);
   const confidencePercentage = Math.round(confidenceScore * 100);
@@ -62,10 +67,21 @@ const SDGCard = ({ sdgNumber, sdgName, confidence }: SDGCardProps) => {
             </span>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold text-gray-800">
-            {confidencePercentage}%
+        <div className="flex items-center gap-3">
+          <div className="text-right">
+            <div className="text-2xl font-bold text-gray-800">
+              {confidencePercentage}%
+            </div>
           </div>
+          <button
+            type="button"
+            aria-label={`View targets and indicators for SDG ${sdgNumber}`}
+            title="View targets and indicators"
+            onClick={() => setIsDetailsOpen(true)}
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-white/70 hover:text-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-1"
+          >
+            <Info size={17} strokeWidth={1.8} aria-hidden="true" />
+          </button>
         </div>
       </div>
 
@@ -91,6 +107,13 @@ const SDGCard = ({ sdgNumber, sdgName, confidence }: SDGCardProps) => {
           ></div>
         </div>
       </div>
+
+      {isDetailsOpen && (
+        <SdgGoalDetails
+          sdgNumber={sdgNumber}
+          onClose={() => setIsDetailsOpen(false)}
+        />
+      )}
     </div>
   );
 };

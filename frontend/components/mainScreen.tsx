@@ -5,9 +5,10 @@ import { TiTick } from "react-icons/ti";
 import { ImCross } from "react-icons/im";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { ResultsData } from "@/types/main";
+import axios from "axios";
 import { sdgApi } from "@/services/api";
 
-const README_ANALYSER_TIMEOUT_MS = 30 * 1000;
+const ST_URL_TIMEOUT_MS = 30 * 1000;
 
 /*
 MainScreen Component
@@ -83,32 +84,22 @@ const MainScreen: React.FC<{
       setIsUploading(true);
       setUploadMsg(null);
 
-        
-      
-      const readmeResult = sdgApi.classifySTUrl(finalizedData);
-      const auroraResult = sdgApi.classifyAurora(finalizedData);
-      void auroraResult.catch(() => undefined);
-      let readmeTimeoutId: number | undefined;
-      const readmeTimeout = new Promise<never>((_, reject) => {
-        readmeTimeoutId = window.setTimeout(
-          () => reject(new Error("Readme Analyser timed out")),
-          README_ANALYSER_TIMEOUT_MS,
-        );
-      });
-
-      let response: Awaited<ReturnType<typeof sdgApi.classifySTUrl>>;
+      let response;
       try {
-        response = await Promise.race([readmeResult, readmeTimeout]);
-      } catch (readmeError) {
-        console.warn(
-          "Readme Analyser unavailable, waiting for Aurora fallback:",
-          readmeError,
+        response = await sdgApi.classifySTUrl(
+          finalizedData,
+          ST_URL_TIMEOUT_MS,
         );
-        response = await auroraResult;
-      } finally {
-        if (readmeTimeoutId !== undefined) {
-          window.clearTimeout(readmeTimeoutId);
-        }
+      } catch (error) {
+        const stUrlTimedOut =
+          axios.isAxiosError(error) &&
+          !error.response &&
+          ["ECONNABORTED", "ETIMEDOUT"].includes(error.code ?? "");
+
+        if (!stUrlTimedOut) throw error;
+
+        console.warn("ST URL classification timed out; falling back to Aurora.");
+        response = await sdgApi.classifyAurora(finalizedData);
       }
 
       if (response && response.repo_url) {
@@ -119,11 +110,11 @@ const MainScreen: React.FC<{
 
       setResults(response as ResultsData);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Classification error:", error);
 
       // Axios error
-      if (error?.response) {
+      if (axios.isAxiosError(error) && error.response) {
         console.error("Status:", error.response.status);
         console.error("Response data:", error.response.data);
 
@@ -136,7 +127,7 @@ const MainScreen: React.FC<{
       }
 
       // Network error
-      else if (error?.request) {
+      else if (axios.isAxiosError(error) && error.request) {
         console.error("No response received from backend:", error.request);
 
         setUploadMsg(
@@ -149,7 +140,9 @@ const MainScreen: React.FC<{
         console.error("Unexpected error:", error);
 
         setUploadMsg(
-          error?.message || "An unexpected error occurred. Please try again."
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred. Please try again."
         );
       }
 

@@ -10,6 +10,7 @@ from sdg_constants import SDG_LABELS, SDG_NAMES, SDG_DESCS
 from services.repo_fetcher import get_provider
 from urllib.parse import urlparse
 from services.summariser import summarize_for_sdg
+from services.text_cleaner import clean_text
 from services.embedder import get_embedder
 from services.inference import predict_scores
 
@@ -18,6 +19,12 @@ try:
     from services.repo_fetcher import ProviderError  # type: ignore
 except Exception:  # pragma: no cover
     ProviderError = Exception
+
+
+def _readme_assessment_excerpt(readme: str, max_words: int = 500) -> str:
+    cleaned = clean_text(readme)
+    return " ".join(cleaned.split()[:max_words])
+
 
 # ── CHANGE 1: added project_description param ────────────────────────────────
 def fetch_repo_text(url: str, project_description: str = "", max_issues: int = 10) -> Dict:
@@ -69,11 +76,14 @@ def fetch_repo_text(url: str, project_description: str = "", max_issues: int = 1
         description=description,
         topics=topics
     )
+    readme_excerpt = _readme_assessment_excerpt(readme)
+    print(f"DEBUG - Extracted summary length: {len(extracted_summary.split())} words")
     print(extracted_summary)
     return {
         "owner": provider._owner,
         "repo":  provider._repo,
         "text":  extracted_summary,
+        "readme_excerpt": readme_excerpt,
         "meta":  {
             "name":        name,
             "description": description,
@@ -190,6 +200,7 @@ def classify_repo(url: str, threshold: float = 0.3, top_k: int = 10, use_ensembl
         "top_all":     ranked[:top_k],
         "meta":        data["meta"],
         "summary":     text,
+        "readme_excerpt": data.get("readme_excerpt", ""),
     }
 
 # ── CHANGE 4: main() accepts and passes project_description ──────────────────
@@ -205,10 +216,13 @@ def main(url: str, project_description: str = ""):
         },
         "summary": result["summary"],
         "meta": result["meta"],
+        "readme_excerpt": result.get("readme_excerpt", ""),
     }
+    print(predictions)
 
     return predictions
 
 if __name__ == "__main__":
     print("\033[43m GET THE REPO_ANALYSED RESULTS\033[0m")
+
     
