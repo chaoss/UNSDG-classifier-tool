@@ -177,24 +177,10 @@ const EditModal: React.FC<EditModalProps> = ({
                 Add New SDG Goal
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    SDG Number
+                    SDG
                   </label>
-                  <select
-                    value={newSDGNumber}
-                    onChange={(e) => {
-                      handleSDGSelection(e.target.value);
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
-                  >
-                    <option value="">Select SDG Number</option>
-                    {Array.from({ length: 17 }, (_, i) => i + 1).map((num) => (
-                      <option key={num} value={num}>
-                        SDG {num}
-                      </option>
-                    ))}
-                  </select>
                   <div className="relative" ref={dropdownRef}>
                     <button
                       type="button"
@@ -204,7 +190,7 @@ const EditModal: React.FC<EditModalProps> = ({
                       <span className={newSDGNumber ? "text-gray-900" : "text-gray-400"}>
                         {newSDGNumber
                           ? `SDG ${newSDGNumber} - ${SDG.find((s) => s.id === parseInt(newSDGNumber))?.name}`
-                          : "Select SDG Number"}
+                          : "Select an SDG"}
                       </span>
                       <svg
                         className={`w-4 h-4 text-gray-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
@@ -244,19 +230,6 @@ const EditModal: React.FC<EditModalProps> = ({
                       </p>
                     </div>
                   )}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    SDG Name
-                  </label>
-                  <input
-                    type="text"
-                    disabled
-                    value={newSDGName}
-                    onChange={(e) => setNewSDGName(e.target.value)}
-                    placeholder="SDG Goal Name"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
-                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
