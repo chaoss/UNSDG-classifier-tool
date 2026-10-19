@@ -122,33 +122,42 @@ def test_low_similarity_quality_is_clamped_to_unit_interval(monkeypatch):
 def test_st_route_preserves_p5_predictions_accepted_by_classifier(monkeypatch):
     sdg_4 = sdg_constants.SDG_NAMES[3]
     sdg_9 = sdg_constants.SDG_NAMES[8]
-    monkeypatch.setattr(
-        flask_app,
-        "classify_url",
-        lambda **_kwargs: {
-            "summary": "p5.js supports creative coding education for students.",
-            "readme_excerpt": "p5.js supports creative coding education for students.",
+    events = []
+
+    def fetch_repo(*_args, **_kwargs):
+        events.append("fetch")
+        return {
+            "text": "p5.js supports creative coding education for students.",
+            "readme_excerpt": "Creative coding education for students.",
             "meta": {"description": "Creative coding education"},
-            # Scores observed from the p5.js ST ensemble. embedding_url.py has
-            # already accepted these with its calibrated >= 0.3 cutoff.
-            "sdg_predictions": {
-                sdg_4: 0.351,
-                sdg_9: 0.307,
-            },
-        },
-    )
-    monkeypatch.setattr(
-        flask_app,
-        "assess_relevance",
-        lambda *_args: {
+            "owner": "processing",
+            "repo": "p5.js",
+        }
+
+    def classify_repo(_data):
+        events.append("classify")
+        return {
+            "predictions": [(sdg_4, 0.351), (sdg_9, 0.307)],
+        }
+
+    def assess(*_args):
+        events.append("assess")
+        return {
             "relevant": True,
             "reason": "signals_present_but_low_similarity",
             "text_quality": 0.9,
             "suggestions": [],
             "nearest_sdg": sdg_4,
             "nearest_similarity": 0.22,
-        },
+        }
+
+    monkeypatch.setattr(
+        flask_app,
+        "fetch_repo_text",
+        fetch_repo,
     )
+    monkeypatch.setattr(flask_app, "classify_fetched_repo", classify_repo)
+    monkeypatch.setattr(flask_app, "assess_relevance", assess)
 
     response = flask_app.app.test_client().post(
         "/api/classify_st_url",
@@ -166,3 +175,54 @@ def test_st_route_preserves_p5_predictions_accepted_by_classifier(monkeypatch):
         {"sdg": sdg_9, "prediction": 0.307},
     ]
     assert payload["recommendation"] is None
+    assert events == ["fetch", "assess", "assess", "classify"]
+
+
+def test_st_route_skips_classification_when_recommendation_is_not_relevant(monkeypatch):
+    monkeypatch.setattr(
+        flask_app,
+        "fetch_repo_text",
+        lambda *_args, **_kwargs: {
+            "text": "NO_SDG_SIGNAL",
+            "readme_excerpt": "Redis is a general-purpose data structure server.",
+            "meta": {"description": "A general-purpose data structure server."},
+            "owner": "redis",
+            "repo": "redis",
+        },
+    )
+    assessments = iter([
+        {
+            "relevant": False,
+            "reason": "no_sdg_signals",
+            "text_quality": 0.2,
+            "suggestions": ["Describe the real-world impact."],
+        },
+        {
+            "relevant": False,
+            "reason": "no_sdg_signals",
+            "text_quality": 0.2,
+            "suggestions": [],
+        },
+    ])
+    monkeypatch.setattr(
+        flask_app,
+        "assess_relevance",
+        lambda *_args: next(assessments),
+    )
+    classify = MagicMock(side_effect=AssertionError("classification should be skipped"))
+    monkeypatch.setattr(flask_app, "classify_fetched_repo", classify)
+
+    response = flask_app.app.test_client().post(
+        "/api/classify_st_url",
+        json={
+            "projectName": "redis",
+            "projectUrl": "https://github.com/redis/redis",
+            "projectDescription": "A general-purpose data structure server.",
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["predictions"] == []
+    assert payload["recommendation"]["reason"] == "no_sdg_signals"
+    classify.assert_not_called()

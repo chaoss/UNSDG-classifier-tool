@@ -194,7 +194,7 @@ def assess_relevance(
     
     if has_signals:
         embedder = get_embedder()
-        description_embeddings = _encode_text_chunks(desc_clean, embedder)
+        description_embeddings = _encode_text_chunks(combined, embedder)
         sdg_embs = _get_sdg_embeddings()
         sims_by_chunk = np.dot(description_embeddings, sdg_embs.T)
         sims = np.max(sims_by_chunk, axis=0)
