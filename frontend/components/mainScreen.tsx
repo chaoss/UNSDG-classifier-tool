@@ -8,7 +8,7 @@ import { ResultsData } from "@/types/main";
 import axios from "axios";
 import { sdgApi } from "@/services/api";
 
-const ST_URL_TIMEOUT_MS = 30 * 1000;
+const ST_URL_TIMEOUT_MS = 400 * 1000;
 
 /*
 MainScreen Component

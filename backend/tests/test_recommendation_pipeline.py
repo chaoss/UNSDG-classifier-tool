@@ -10,7 +10,7 @@ from services import recommendation_pipeline as pipeline
 
 
 class _WhitespaceTokenizer:
-    def encode(self, text, add_special_tokens=False):
+    def encode(self, text, add_special_tokens=False, verbose=True):
         return text.split()
 
     def num_special_tokens_to_add(self, pair=False):
@@ -84,6 +84,24 @@ def test_description_already_in_summary_is_counted_once():
 
     assert combined == f"Project name. {description}."
     assert pipeline._is_too_short(combined, min_words=20)
+
+
+def test_long_text_is_chunked_before_model_encoding(monkeypatch):
+    embedder = _mock_embedder(
+        monkeypatch,
+        np.zeros((len(sdg_constants.SDG_DESCS), 2)),
+    )
+    text = "word " * 25
+
+    embeddings = pipeline._encode_text_chunks(text, embedder)
+
+    assert embeddings.shape == (3, 2)
+    query_call = next(
+        call for call in embedder.encode.call_args_list
+        if len(call.args[0]) != len(sdg_constants.SDG_DESCS)
+    )
+    assert len(query_call.args[0]) == 3
+    assert sum(len(chunk.split()) for chunk in query_call.args[0]) == 25
 
 
 def test_sdg_embeddings_are_reused_and_nearest_sdg_is_returned(monkeypatch):

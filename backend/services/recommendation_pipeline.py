@@ -68,7 +68,13 @@ def _get_sdg_embeddings() -> np.ndarray:
 def _encode_text_chunks(text: str, embedder) -> np.ndarray:
     tokenizer = embedder.tokenizer
     max_content_tokens = embedder.max_seq_length - tokenizer.num_special_tokens_to_add(pair=False)
-    token_ids = tokenizer.encode(text, add_special_tokens=False)
+    # This full-text tokenization is intentional: the IDs are chunked before
+    # any model call, so suppress only the tokenizer's overlength warning here.
+    token_ids = tokenizer.encode(
+        text,
+        add_special_tokens=False,
+        verbose=False,
+    )
     if not token_ids:
         chunks = [text]
     else:
