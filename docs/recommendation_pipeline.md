@@ -72,21 +72,13 @@ For `readme_assessment`, the second input is empty, and the first input is the c
 
 If the combined text is long enough, `_has_sdg_signals()` searches its lowercase, cleaned form in this order:
 
-1. **Explicit SDG-related terms:** `sdg`, `sustainable development`, or `goal`. These use word-boundary matching; the broad word `goal` can still match text without naming a particular SDG.
-2. **Domain vocabulary:** any keyword in one of these groups:
-   - Health: `health`, `medical`, `hospital`, `patient`, `clinical`
-   - Education: `education`, `learning`, `school`, `student`, `teaching`
-   - Environment: `environment`, `climate`, `ecological`, `sustainability`
-   - Water: `water`, `sanitation`, `hygiene`, `wash`
-   - Energy: `energy`, `power`, `electricity`, `renewable`
-   - Agriculture: `agriculture`, `farm`, `farming`, `crop`, `rural`
-   - Governance: `governance`, `policy`, `government`, `policy`
-   - Gender: `gender`, `women`, `equality`, `female`
-3. **Problem or beneficiary language:** `problem`, `solution`, `beneficiaries`, `users`, `impact`, `helps`, `addresses`, `reduces`, or `improves`.
-4. **Heavily technical text check:** if none of the above matched, the code counts how many whole-word terms from this list occur: `python`, `javascript`, `react`, `api`, `database`, `framework`, `library`, `container`, `docker`, `cls`, `function`, `import`, `class`, `module`. It divides the number of matching terms by total whitespace-separated words. A ratio strictly greater than `0.4` returns the `heavily_technical` signal category.
+1. **Explicit SDG references:** `sdg`, `sustainable development`, or a numbered `goal 1` through `goal 17`. The unqualified word `goal` alone does not count.
+2. **Goal-specific vocabulary:** phrases from `backend/recommendation_signals.py`, grouped under each of the 17 SDGs. Each group records the official UN target codes that ground the vocabulary and a short rationale. The source records are the target files in `backend/data/sdg_targets/`, fetched from the UN Statistics Division SDG API by `backend/scripts/fetch_sdg_targets.py`. Terms include target concepts and recognizable alternatives (for example, Goal 2 includes food insecurity, malnutrition, smallholder farmers, and sustainable agriculture). This is designed to cover more than the small set of generic sector labels formerly used.
+3. **Cross-cutting beneficiary/context phrases:** a smaller set of specific phrases such as `underserved communities`, `people with disabilities`, and `displaced people`, categorized as `problem_description`. Generic words such as `users`, `problem`, `solution`, and `impact` no longer trigger a signal by themselves.
+4. **Heavily technical text check:** if none of the above matched, the code counts how many whole-word terms from the technical vocabulary in `backend/recommendation_signals.py` occur. It divides the number of matching terms by total whitespace-separated words. A ratio strictly greater than `0.4` returns the `heavily_technical` signal category.
 5. Otherwise, no signal is found.
 
-The category is selected by the first matching step. These are simple keyword checks, not language understanding: they do not account for negation, context, whether a claim is supported, or whether the terms refer to the project's real-world impact.
+The category is selected by the first matching step. The taxonomy is a traceable, curated vocabulary grounded in official SDG targets, not a list generated automatically from target text. Whole-word and phrase matching reduces accidental matches inside other words, but matching is still context-free: it does not account for negation, whether a claim is supported, or whether the terms refer to the project's real-world impact. A hit is only a signal to continue the existing embedding assessment, not proof of SDG contribution.
 
 ## 6. Embedding similarity and scoring
 
@@ -257,7 +249,7 @@ It is not:
 ## 11. Known implementation limitations
 
 - **Mismatch between assessor text and embedding text:** length and keyword checks use the combined input, while similarity uses only `user_description`. README/summary context can trigger the embedding branch without contributing to its similarity value.
-- **Keyword matching is broad and context-free:** substring matching can produce false positives, and missing vocabulary can produce false negatives. For example, `goal` is broad; SDG 18 is not supported as a meaningful category, but a sentence containing the word `goal` still triggers a signal.
+- **Keyword matching remains context-free:** the curated, goal/target-grounded phrases can still produce false positives when used in an unrelated context, and a project's relevant terminology may not yet be covered. `goal` alone is not a signal; explicit numbered goal references are limited to SDGs 1-17.
 - **The “technical ratio” is not a token frequency:** each listed technical term contributes at most one count regardless of how many times it occurs, then that count is divided by all words. It is not a conventional percentage of technical words.
 - **The `threshold_too_high` message is not based on the model's actual threshold:** it is selected from `max_sim > 0.25`, independently of the route's strict `prediction > 0.4` filter.
 - **The length branch comes first:** even text with obvious SDG keywords is classified as `text_too_short` if the combined word count is below 20.
@@ -269,6 +261,9 @@ It is not:
 ## 12. Source map
 
 - [backend/services/recommendation_pipeline.py](../backend/services/recommendation_pipeline.py): cleaning, word-count check, keyword categories, embedding calculation, decision branches, scores, and suggestions.
+- [backend/recommendation_signals.py](../backend/recommendation_signals.py): goal-specific signal phrases, target references, rationale, and cross-cutting beneficiary terms.
+- [backend/data/sdg_targets/](../backend/data/sdg_targets/): official UN target records used to ground the vocabulary.
+- [backend/scripts/fetch_sdg_targets.py](../backend/scripts/fetch_sdg_targets.py): fetches the target records from the UN Statistics Division SDG API.
 - [backend/services/embedder.py](../backend/services/embedder.py): shared lazy `all-mpnet-base-v2` model.
 - [backend/sdg_constants.py](../backend/sdg_constants.py): 17 SDG descriptions used by the recommendation similarity comparison.
 - [backend/app.py](../backend/app.py): recommendation invocation, Aurora's strict `> 0.4` filter, preservation of ST classifier output, and API response assembly.
