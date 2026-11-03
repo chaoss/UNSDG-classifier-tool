@@ -134,9 +134,6 @@ README CONTENT:
 
 Write the SDG-classification paragraph now.\
 """
-# def _cache_key(name: str, description: str, readme: str) -> str:
-#     raw = f"{name.strip()}|{description.strip()}|{readme[:2000]}"
-#     return hashlib.sha256(raw.encode()).hexdigest()
 
 # ─────────────── cleaner for LLM input ───────────────────
 

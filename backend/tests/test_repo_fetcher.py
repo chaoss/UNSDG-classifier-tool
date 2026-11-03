@@ -288,6 +288,16 @@ class TestGitLabFetch:
     def _provider(self):
         return GitLabProvider("https://gitlab.com/group/project")
 
+    def test_validate_repository(self, monkeypatch):
+        mock_get = MagicMock(return_value=_mock_response(200))
+        monkeypatch.setattr(repo_fetcher.requests, "get", mock_get)
+
+        self._provider().validate_repository()
+
+        assert mock_get.call_args.args[0] == (
+            "https://gitlab.com/api/v4/projects/group%2Fproject"
+        )
+
     def test_fetch_readme_uses_filename_from_readme_url(self, monkeypatch):
         meta_resp = _mock_response(
             200,
@@ -323,6 +333,16 @@ class TestGitLabFetch:
 class TestCodebergFetch:
     def _provider(self):
         return CodebergProvider("https://codeberg.org/forgejo/forgejo")
+
+    def test_validate_repository(self, monkeypatch):
+        mock_get = MagicMock(return_value=_mock_response(200))
+        monkeypatch.setattr(repo_fetcher.requests, "get", mock_get)
+
+        self._provider().validate_repository()
+
+        assert mock_get.call_args.args[0] == (
+            "https://codeberg.org/api/v1/repos/forgejo/forgejo"
+        )
 
     def test_fetch_readme_first_filename_succeeds(self, monkeypatch):
         branch_resp = _mock_response(200, json_data={"default_branch": "main"})
@@ -370,6 +390,16 @@ class TestCodebergFetch:
 class TestBitbucketFetch:
     def _provider(self, url="https://bitbucket.org/cioapps/wapor-et-look"):
         return BitbucketProvider(url)
+
+    def test_validate_repository(self, monkeypatch):
+        mock_get = MagicMock(return_value=_mock_response(200))
+        monkeypatch.setattr(repo_fetcher.requests, "get", mock_get)
+
+        self._provider().validate_repository()
+
+        assert mock_get.call_args.args[0] == (
+            "https://api.bitbucket.org/2.0/repositories/cioapps/wapor-et-look"
+        )
 
     def test_fetch_readme_uses_mainbranch_name(self, monkeypatch):
         meta_resp = _mock_response(200, json_data={"mainbranch": {"name": "develop"}})
@@ -462,29 +492,79 @@ class TestDetectEngine:
 # ─────────────────────────── get_provider factory ────────────────────────────
 
 class TestGetProviderFactory:
-    def test_known_domain_routes_without_network_call(self, monkeypatch):
-        mock_get = MagicMock()
+    def test_known_domain_routes_without_engine_probe(self, monkeypatch):
+        mock_get = MagicMock(return_value=_mock_response(200))
         monkeypatch.setattr(repo_fetcher.requests, "get", mock_get)
 
         provider = get_provider("https://github.com/torvalds/linux")
 
         assert isinstance(provider, GitHubProvider)
-        mock_get.assert_not_called()
+        mock_get.assert_called_once_with(
+            "https://api.github.com/repos/torvalds/linux",
+            timeout=30,
+            headers={
+                "Accept": "application/vnd.github+json",
+                "User-Agent": "sdg-classifier",
+            },
+        )
 
-    def test_self_hosted_gitlab_domain_derives_api_base(self):
+    def test_self_hosted_gitlab_domain_derives_api_base(self, monkeypatch):
+        monkeypatch.setattr(
+            repo_fetcher.requests, "get",
+            MagicMock(return_value=_mock_response(200)),
+        )
         provider = get_provider("https://framagit.org/group/project")
         assert isinstance(provider, GitLabProvider)
         assert provider._API == "https://framagit.org/api/v4"
 
-    def test_github_pages_url_rewritten_before_routing(self):
+    def test_github_pages_url_rewritten_before_routing(self, monkeypatch):
+        monkeypatch.setattr(
+            repo_fetcher.requests, "get",
+            MagicMock(return_value=_mock_response(200)),
+        )
         provider = get_provider("https://owner.github.io/repo")
         assert isinstance(provider, GitHubProvider)
         assert (provider._owner, provider._repo) == ("owner", "repo")
 
     def test_unregistered_host_falls_through_to_detect_engine(self, monkeypatch):
         monkeypatch.setattr(repo_fetcher, "_detect_engine", lambda host: GitLabProvider)
+        monkeypatch.setattr(
+            repo_fetcher.requests, "get",
+            MagicMock(return_value=_mock_response(200)),
+        )
         provider = get_provider("https://git.unknown-forge.example/group/project")
         assert isinstance(provider, GitLabProvider)
+
+    @pytest.mark.parametrize(
+        ("url", "provider_type", "api_url"),
+        [
+            (
+                "https://gitlab.com/group/project",
+                GitLabProvider,
+                "https://gitlab.com/api/v4/projects/group%2Fproject",
+            ),
+            (
+                "https://codeberg.org/owner/repo",
+                CodebergProvider,
+                "https://codeberg.org/api/v1/repos/owner/repo",
+            ),
+            (
+                "https://bitbucket.org/workspace/repo",
+                BitbucketProvider,
+                "https://api.bitbucket.org/2.0/repositories/workspace/repo",
+            ),
+        ],
+    )
+    def test_factory_constructs_and_validates_non_github_providers(
+        self, monkeypatch, url, provider_type, api_url
+    ):
+        mock_get = MagicMock(return_value=_mock_response(200))
+        monkeypatch.setattr(repo_fetcher.requests, "get", mock_get)
+
+        provider = get_provider(url)
+
+        assert isinstance(provider, provider_type)
+        assert mock_get.call_args.args[0] == api_url
 
     def test_unsupported_host_raises_with_supported_hosts_listed(self, monkeypatch):
         monkeypatch.setattr(repo_fetcher, "_detect_engine", lambda host: None)
@@ -496,6 +576,13 @@ class TestGetProviderFactory:
         with pytest.raises(InvalidURLError):
             get_provider(None)
 
-    def test_token_passed_through_to_provider(self):
-        provider = get_provider("https://github.com/owner/repo", token="secret-token")
+    def test_token_passed_through_to_provider(self, monkeypatch):
+        # Validation uses the provider API; keep this test fully offline.
+        monkeypatch.setattr(
+            repo_fetcher.requests, "get",
+            MagicMock(return_value=_mock_response(200)),
+        )
+        provider = get_provider(
+            "https://github.com/owner/repo", token="secret-token"
+        )
         assert provider.token == "secret-token"

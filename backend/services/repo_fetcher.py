@@ -462,6 +462,13 @@ class GitLabProvider(BaseRepositoryProvider):
         )
         return r.json().get("topics", [])
 
+    def validate_repository(self) -> None:
+        """Verify that the GitLab project exists and is accessible."""
+        self._get(
+            f"{self._API}/projects/{self._encoded_path()}",
+            context="GitLab validate_repository",
+        )
+
 
 # ─────────────────────────── Codeberg / Gitea / Forgejo ──────────────────────
 
@@ -525,6 +532,13 @@ class CodebergProvider(BaseRepositoryProvider):
             # Forgejo requires the literal word "token" before the PAT
             h["Authorization"] = f"token {self.token}"
         return h
+
+    def validate_repository(self) -> None:
+        """Verify that the Gitea/Forgejo repository exists and is accessible."""
+        self._get(
+            f"{self._API}/repos/{self._owner}/{self._repo}",
+            context="Codeberg validate_repository",
+        )
 
     def _default_branch(self) -> str:
         """
@@ -664,6 +678,13 @@ class BitbucketProvider(BaseRepositoryProvider):
             context="Bitbucket repo meta",
         )
         return r.json()
+
+    def validate_repository(self) -> None:
+        """Verify that the Bitbucket repository exists and is accessible."""
+        self._get(
+            f"{self._API}/repositories/{self._owner}/{self._repo}",
+            context="Bitbucket validate_repository",
+        )
 
     def fetch_readme(self) -> str:
         """
@@ -907,7 +928,9 @@ def get_provider(repo_url: object, token: str | None = None) -> BaseRepositoryPr
     InvalidURLError        bad type, empty, wrong scheme, or missing owner/repo
     UnsupportedHostError   domain not in the registry AND engine detection
                             found neither GitLab nor Gitea/Forgejo
-    (Other errors are raised lazily when fetch_* methods are called.)
+    RepositoryNotFoundError if the repository does not exist or is inaccessible
+    RateLimitError / FetchError if repository verification fails for another
+    API or network reason
     """
     
     url = _sanitise_url(repo_url)           # type + format guard
