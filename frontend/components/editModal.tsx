@@ -233,17 +233,22 @@ const EditModal: React.FC<EditModalProps> = ({
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Confidence Score
+                    Score
                   </label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value={newSDGScore}
-                    disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
-                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={newSDGScore}
+                      onChange={(e) => setNewSDGScore(parseFloat(e.target.value) || 0)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
+                    />
+                    <span className="text-sm text-gray-500">
+                      ({Math.round(newSDGScore * 100)}%)
+                    </span>
+                  </div>
                 </div>
               </div>
               <div className="flex justify-end gap-2 mt-4">
@@ -306,7 +311,12 @@ const EditModal: React.FC<EditModalProps> = ({
                           max="1"
                           step="0.001"
                           value={confidence}
-                          disabled
+                          onChange={(e) =>
+                            setEditableResults((prev) => ({
+                              ...prev,
+                              [sdgKey]: { ...value, prediction: parseFloat(e.target.value) || 0 },
+                            }))
+                          }
                           className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
                         />
                         <span className="text-sm text-gray-500">
