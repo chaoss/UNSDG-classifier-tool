@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   verify:
-    runs-on: [self-hosted, linux, x64, unsdg-deploy]
+    runs-on: [self-hosted, linux, x64, unsdg-runner]
 
     steps:
       - name: Verify runner
