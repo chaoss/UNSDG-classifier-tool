@@ -159,6 +159,26 @@ jobs:
       - name: Set image prefix
         run: echo "IMAGE_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
 
+      - name: Debug repository checkout
+        run: |
+          echo "Current directory:"
+          pwd
+
+          echo "Checked-out commit:"
+          git log -1 --oneline
+
+          echo "Checked-out branch/ref:"
+          echo "$GITHUB_REF"
+
+          echo "Root directory contents:"
+          ls -lah
+
+          echo "Find compose files:"
+          find . -iname '*compose*'
+
+          echo "Check whether Git tracks the file:"
+          git ls-files | grep -i 'docker-compose'
+          
       - name: Prepare deployment files
         run: |
             set -euo pipefail
