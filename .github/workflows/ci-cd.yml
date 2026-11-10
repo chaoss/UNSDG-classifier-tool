@@ -1,0 +1,182 @@
+name: CI/CD
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One run per ref. PR runs get cancelled when a new commit arrives.
+# Runs on main are queued, never cancelled, so a deploy is never interrupted halfway.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  backend-test:
+    name: Backend lint and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt ruff pytest pip-audit
+
+    #   - name: Lint
+    #     run: ruff check .
+
+    #   - name: Test
+    #     # Exit code 5 means no tests were collected. Remove the fallback once tests exist.
+    #     run: pytest -q || [ $? -eq 5 ]
+
+      - name: Dependency audit
+        continue-on-error: true
+        run: pip-audit -r requirements.txt
+
+  frontend-test:
+    name: Frontend lint and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint --if-present
+      - run: npm run typecheck --if-present
+      - run: npm test --if-present
+
+      - name: Dependency audit
+        continue-on-error: true
+        run: npm audit --audit-level=high
+
+  build:
+    name: Build and publish ${{ matrix.name }} image
+    needs: [backend-test, frontend-test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - name: backend
+            context: ./backend
+            file: ./backend/Dockerfile
+            build_args: ""
+          - name: frontend
+            context: .
+            file: ./frontend/Dockerfile
+            build_args: NEXT_PUBLIC_API_BASE_URL=/
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image prefix
+        run: echo "IMAGE_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Check runner disk space
+        run: |
+          echo "=== Disk space ==="
+          df -h
+          echo "=== Docker disk usage ==="
+          docker system df
+          echo "=== Docker storage ==="
+          sudo du -sh /usr/local/lib/docker 2>/dev/null || true
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          build-args: ${{ matrix.build_args }}
+
+          # Never import the image into local Docker.
+          load: false
+
+          # Build on PRs; publish on other events.
+          push: ${{ github.event_name != 'pull_request' }}
+
+          tags: |
+            ${{ env.IMAGE_PREFIX }}/unsdg-${{ matrix.name }}:${{ github.sha }}
+            ${{ env.IMAGE_PREFIX }}/unsdg-${{ matrix.name }}:latest
+
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
+
+    
+ 
+  deploy:
+    name: Deploy to AWS VM
+    needs: build
+    runs-on: [self-hosted, linux, x64, unsdg-runner]
+    timeout-minutes: 20
+    environment: production
+    permissions:
+      contents: read
+      packages: read
+    env:
+      APP_DIR: ${{ vars.APP_DIR || '/opt/unsdg' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image prefix
+        run: echo "IMAGE_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+
+      - name: Prepare deployment files
+        run: |
+            set -euo pipefail
+
+            mkdir -p "$APP_DIR"
+
+            install -m 0644 \
+            docker-compose.prod.yml \
+            "$APP_DIR/docker-compose.prod.yml"
+
+            install -m 0755 \
+            deploy/deploy.sh \
+            "$APP_DIR/deploy.sh"
+
+      - name: Smoke test
+        if: vars.APP_URL != ''
+        run: curl --fail --silent --show-error --retry 5 --retry-delay 5 "${{ vars.APP_URL }}" > /dev/null
+
+      # - name: Clean up SSH material
+      #   if: always()
+      #   run: rm -f ~/.ssh/deploy_key 

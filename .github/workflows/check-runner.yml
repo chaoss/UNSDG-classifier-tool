@@ -1,0 +1,27 @@
+name: Test Self-Hosted Runner
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: [self-hosted, linux, x64, unsdg-runner]
+
+    steps:
+      - name: Verify runner
+        run: |
+          echo "Runner is working!"
+          echo "Hostname: $(hostname)"
+          echo "User: $(whoami)"
+          echo "Architecture: $(uname -m)"
+
+      - name: Verify Docker
+        run: |
+          docker ps
+          docker compose version
+
+      - name: Check disk
+        run: df -h 

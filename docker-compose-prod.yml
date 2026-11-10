@@ -1,0 +1,46 @@
+services:
+  backend:
+    image: ${IMAGE_PREFIX:?IMAGE_PREFIX is required}/unsdg-backend:${IMAGE_TAG:?IMAGE_TAG is required}
+    container_name: unsdg-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    volumes:
+      - hf-cache:/root/.cache/huggingface
+    expose:
+      - "8010"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; socket.create_connection(('127.0.0.1', 8010), 3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    image: ${IMAGE_PREFIX:?IMAGE_PREFIX is required}/unsdg-frontend:${IMAGE_TAG:?IMAGE_TAG is required}
+    container_name: unsdg-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "80:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  hf-cache:
