@@ -3,7 +3,9 @@ name: CI/CD
 on:
   pull_request:
   push:
-    branches: [main]
+    branches:
+      - main
+      - feature/implement-ci-cd
   workflow_dispatch:
 
 # One run per ref. PR runs get cancelled when a new commit arrives.
