@@ -142,41 +142,41 @@ jobs:
 
     
  
-  # deploy:
-  #   name: Deploy to AWS VM
-  #   # needs: build
-  #   if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-  #   runs-on: [self-hosted, linux, x64, unsdg-deploy]
-  #   timeout-minutes: 20
-  #   environment: production
-  #   permissions:
-  #     contents: read
-  #     packages: read
-  #   env:
-  #     APP_DIR: ${{ vars.APP_DIR || '/opt/unsdg' }}
-  #   steps:
-  #     - uses: actions/checkout@v4
+  deploy:
+    name: Deploy to AWS VM
+    # needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, linux, x64, unsdg-runner]
+    timeout-minutes: 20
+    environment: production
+    permissions:
+      contents: read
+      packages: read
+    env:
+      APP_DIR: ${{ vars.APP_DIR || '/opt/unsdg' }}
+    steps:
+      - uses: actions/checkout@v4
 
-  #     - name: Set image prefix
-  #       run: echo "IMAGE_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+      - name: Set image prefix
+        run: echo "IMAGE_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
 
-  #     - name: Prepare deployment files
-  #       run: |
-  #           set -euo pipefail
+      - name: Prepare deployment files
+        run: |
+            set -euo pipefail
 
-  #           mkdir -p "$APP_DIR"
+            mkdir -p "$APP_DIR"
 
-  #           install -m 0644 \
-  #           docker-compose.prod.yml \
-  #           "$APP_DIR/docker-compose.prod.yml"
+            install -m 0644 \
+            docker-compose.prod.yml \
+            "$APP_DIR/docker-compose.prod.yml"
 
-  #           install -m 0755 \
-  #           deploy/deploy.sh \
-  #           "$APP_DIR/deploy.sh"
+            install -m 0755 \
+            deploy/deploy.sh \
+            "$APP_DIR/deploy.sh"
 
-  #     - name: Smoke test
-  #       if: vars.APP_URL != ''
-  #       run: curl --fail --silent --show-error --retry 5 --retry-delay 5 "${{ vars.APP_URL }}" > /dev/null
+      - name: Smoke test
+        if: vars.APP_URL != ''
+        run: curl --fail --silent --show-error --retry 5 --retry-delay 5 "${{ vars.APP_URL }}" > /dev/null
 
       # - name: Clean up SSH material
       #   if: always()
