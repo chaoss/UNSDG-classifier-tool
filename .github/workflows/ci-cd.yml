@@ -159,6 +159,26 @@ jobs:
       - name: Set image prefix
         run: echo "IMAGE_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
 
+      - name: Debug repository checkout
+        run: |
+          echo "Current directory:"
+          pwd
+
+          echo "Checked-out commit:"
+          git log -1 --oneline
+
+          echo "Checked-out branch/ref:"
+          echo "$GITHUB_REF"
+
+          echo "Root directory contents:"
+          ls -lah
+
+          echo "Find compose files:"
+          find . -iname '*compose*'
+
+          echo "Check whether Git tracks the file:"
+          git ls-files | grep -i 'docker-compose'
+          
       - name: Prepare deployment files
         run: |
             set -euo pipefail
@@ -172,6 +192,24 @@ jobs:
             install -m 0755 \
             deploy/deploy.sh \
             "$APP_DIR/deploy.sh"
+
+      - name: Run deployment script
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          echo "Starting deployment..."
+          echo "Commit: $GITHUB_SHA"
+          echo "Image prefix: $IMAGE_PREFIX"
+
+          printf '%s' "$GHCR_TOKEN" | \
+            bash "$APP_DIR/deploy.sh" \
+              "$GITHUB_SHA" \
+              "$GITHUB_ACTOR" \
+              "$IMAGE_PREFIX"
+
+          echo "Deployment script completed successfully."
 
       - name: Smoke test
         if: vars.APP_URL != ''
