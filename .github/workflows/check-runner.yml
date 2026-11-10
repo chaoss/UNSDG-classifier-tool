@@ -24,4 +24,4 @@ jobs:
           docker compose version
 
       - name: Check disk
-        run: df -h
+        run: df -h 
