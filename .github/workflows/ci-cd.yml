@@ -193,6 +193,24 @@ jobs:
             deploy/deploy.sh \
             "$APP_DIR/deploy.sh"
 
+      - name: Run deployment script
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          echo "Starting deployment..."
+          echo "Commit: $GITHUB_SHA"
+          echo "Image prefix: $IMAGE_PREFIX"
+
+          printf '%s' "$GHCR_TOKEN" | \
+            bash "$APP_DIR/deploy.sh" \
+              "$GITHUB_SHA" \
+              "$GITHUB_ACTOR" \
+              "$IMAGE_PREFIX"
+
+          echo "Deployment script completed successfully."
+
       - name: Smoke test
         if: vars.APP_URL != ''
         run: curl --fail --silent --show-error --retry 5 --retry-delay 5 "${{ vars.APP_URL }}" > /dev/null
