@@ -144,8 +144,9 @@ jobs:
  
   deploy:
     name: Deploy to AWS VM
-    # needs: build
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    # if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' 
     runs-on: [self-hosted, linux, x64, unsdg-runner]
     timeout-minutes: 20
     environment: production
