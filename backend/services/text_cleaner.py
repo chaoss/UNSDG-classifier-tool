@@ -27,19 +27,10 @@ def clean_text(raw: str) -> str:
     """
     text = raw
 
-    # 1️⃣ Remove markdown images: !\[alt\](url)
     text = re.sub(r'!\[[^\]]*\]\([^\)]+\)', '', text)
-
-    # 2️⃣ Convert markdown links [text](url) → keep only the text part
     text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
-
-    # 3️⃣ Strip generic HTML tags <...>
     text = re.sub(r'<[^>]+>', '', text)
-
-    # 4️⃣ Remove bare http:// or https:// URLs
     text = re.sub(r'https?://\S+', '', text)
-
-    # 5️⃣ Collapse runs of whitespace / multiple newlines into single space
     text = re.sub(r'[ \t]+', ' ', text)
     text = re.sub(r'\n{3,}', '\n\n', text)
 

@@ -2,7 +2,7 @@ import os
 import requests
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from embedding_url import main as classify_url
+from embedding_url import classify_fetched_repo, fetch_repo_text
 from aurora_api import main as aurora_classify
 from dotenv import load_dotenv
 from services.recommendation_pipeline import assess_relevance
@@ -199,11 +199,27 @@ def classify_st_url():
         }), 200
 
     try:
-        st_url_result = classify_url(
-            url                 = projectUrl,
-            project_description = projectDescription,
+        repo_text = fetch_repo_text(
+            projectUrl,
+            project_description=projectDescription,
         )
-        print("ST URL model completed successfully")
+
+        # Assess both available text sources before triggering model inference.
+        rec = assess_relevance(
+            projectDescription or "",
+            repo_text.get("text")
+            or repo_text.get("meta", {}).get("description", "")
+            or "",
+        )
+        readme_assessment = assess_relevance(
+            repo_text.get("readme_excerpt", "") or "",
+            "",
+        )
+        predictions = (
+            classify_fetched_repo(repo_text)["predictions"]
+            if rec["relevant"]
+            else []
+        )
 
     # ── 400 — bad input from the user ────────────────────────────────────────
     # These all mean the URL is wrong in some way the user can fix themselves.
@@ -249,21 +265,14 @@ def classify_st_url():
             "message": "Sentence Transformer URL model classification failed.",
         }), 500
 
-    # ── Recommendation pipeline: assess why no SDGs were returned ──────────
-    rec = assess_relevance(
-        projectDescription or "",
-        st_url_result.get("summary")
-        or st_url_result.get("meta", {}).get("description", "")
-        or "",
-    )
-    readme_assessment = assess_relevance(
-        st_url_result.get("readme_excerpt", "") or "",
-        "",
-    )
+    if rec["relevant"]:
+        print("ST URL model completed successfully")
+    else:
+        print("Skipping ST URL classification: recommendation assessment found no SDG relevance")
 
     preds = [
         {"sdg": name, "prediction": score}
-        for name, score in st_url_result.get("sdg_predictions", {}).items()
+        for name, score in predictions
     ]
     response = {
         "projectName": projectName,

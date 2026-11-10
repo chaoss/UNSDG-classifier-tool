@@ -77,7 +77,7 @@ def fetch_repo_text(url: str, project_description: str = "", max_issues: int = 1
         topics=topics
     )
     readme_excerpt = _readme_assessment_excerpt(readme)
-    print(f"DEBUG - Extracted summary length: {len(extracted_summary.split())} words")
+    print(f"DEBUG - Extracted summary length: {len(extracted_summary.split())} words\n\n\n")
     print(extracted_summary)
     return {
         "owner": provider._owner,
@@ -172,6 +172,20 @@ def ensemble_scores(zs: np.ndarray, es: np.ndarray, alpha: float = 0.5) -> np.nd
 # ── CHANGE 3: added project_description param, passed to fetch_repo_text ─────
 def classify_repo(url: str, threshold: float = 0.3, top_k: int = 10, use_ensemble: bool = True, proj_desc: str = ""):
     data = fetch_repo_text(url, project_description=proj_desc)
+    return classify_fetched_repo(
+        data,
+        threshold=threshold,
+        top_k=top_k,
+        use_ensemble=use_ensemble,
+    )
+
+
+def classify_fetched_repo(
+    data: Dict,
+    threshold: float = 0.3,
+    top_k: int = 10,
+    use_ensemble: bool = True,
+):
     text = data["text"][:6000]
 
     if not text:
@@ -218,7 +232,7 @@ def main(url: str, project_description: str = ""):
         "meta": result["meta"],
         "readme_excerpt": result.get("readme_excerpt", ""),
     }
-    print(predictions)
+    print(f"\n\n\n{predictions}")
 
     return predictions
 

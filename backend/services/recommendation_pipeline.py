@@ -21,22 +21,29 @@ from typing import Tuple
 import numpy as np
 
 from sdg_constants import SDG_DESCS, SDG_NAMES
+from recommendation_signals import (
+    CROSS_CUTTING_SIGNAL_KEYWORDS,
+    EXPLICIT_SDG_KEYWORDS,
+    SDG_SIGNAL_GROUPS,
+    TECHNICAL_KEYWORDS,
+)
 from services.embedder import get_embedder
+from services.text_cleaner import clean_text;
 
 
 
-def _clean_text(raw: str) -> str:
-    """Basic cleaning: strip, collapse whitespace, remove bare URLs."""
-    text = raw.strip()
-    text = re.sub(r"[ \t]+", " ", text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
-    text = re.sub(r"https?://\S+", "", text)
-    return text
+# def _clean_text(raw: str) -> str:
+#     """Basic cleaning: strip, collapse whitespace, remove bare URLs."""
+#     text = raw.strip()
+#     text = re.sub(r"[ \t]+", " ", text)
+#     text = re.sub(r"\n{3,}", "\n\n", text)
+#     text = re.sub(r"https?://\S+", "", text)
+#     return text
 
 
 def _is_too_short(text: str, min_words: int = 15) -> bool:
     """Check if text has fewer than min_words after cleaning."""
-    cleaned = _clean_text(text)
+    cleaned = clean_text(text)
     return len(cleaned.split()) < min_words
 
 
@@ -68,7 +75,13 @@ def _get_sdg_embeddings() -> np.ndarray:
 def _encode_text_chunks(text: str, embedder) -> np.ndarray:
     tokenizer = embedder.tokenizer
     max_content_tokens = embedder.max_seq_length - tokenizer.num_special_tokens_to_add(pair=False)
-    token_ids = tokenizer.encode(text, add_special_tokens=False)
+    # This full-text tokenization is intentional: the IDs are chunked before
+    # any model call, so suppress only the tokenizer's overlength warning here.
+    token_ids = tokenizer.encode(
+        text,
+        add_special_tokens=False,
+        verbose=False,
+    )
     if not token_ids:
         chunks = [text]
     else:
@@ -104,45 +117,30 @@ def _has_sdg_signals(text: str) -> Tuple[bool, str]:
     - Domain-specific vocabulary (health, education, environment, etc.)
     - Problem/beneficiary descriptions
     """
-    cleaned = _clean_text(text).lower()
+    cleaned = clean_text(text).lower()
 
-    # Explicit SDG mentions
-    sdg_keywords = ["sdg", "sustainable development", "goal"]
-    for kw in sdg_keywords:
+    # Explicit references and goal-specific signals are grounded in UN targets.
+    for kw in EXPLICIT_SDG_KEYWORDS:
         if _contains_keyword(cleaned, kw):
             return True, "sdg_mentioned"
 
-    # Domain-specific vocabulary that maps to SDG topics
-    domain_keywords = {
-        "health": ["health", "medical", "hospital", "patient", "clinical"],
-        "education": ["education", "learning", "school", "student", "teaching"],
-        "environment": ["environment", "climate", "ecological", "sustainability"],
-        "water": ["water", "sanitation", "hygiene", "wash"],
-        "energy": ["energy", "power", "electricity", "renewable"],
-        "agriculture": ["agriculture", "farm", "farming", "crop", "rural"],
-        "governance": ["governance", "policy", "government"],
-        "gender": ["gender", "women", "equality", "female"],
-    }
-
-    found_categories = []
-    for category, keywords in domain_keywords.items():
-        if any(_contains_keyword(cleaned, kw) for kw in keywords):
-            found_categories.append(category)
-
-    if found_categories:
+    if any(
+        _contains_keyword(cleaned, keyword)
+        for group in SDG_SIGNAL_GROUPS.values()
+        for keyword in group["keywords"]
+    ):
         return True, "domain_signals"
 
-    # Check for problem/beneficiary language
-    problem_keywords = ["problem", "solution", "beneficiaries", "users", "impact",
-                        "helps", "addresses", "reduces", "improves"]
-    if any(_contains_keyword(cleaned, kw) for kw in problem_keywords):
+    if any(
+        _contains_keyword(cleaned, keyword)
+        for keyword in CROSS_CUTTING_SIGNAL_KEYWORDS
+    ):
         return True, "problem_description"
 
-    # Check for heavily technical content (e.g., code, libraries, frameworks)
-    tech_keywords = ["python", "javascript", "react", "api", "database",
-                     "framework", "library", "container", "docker", "cls",
-                     "function", "import", "class", "module"]
-    tech_count = sum(1 for kw in tech_keywords if _contains_keyword(cleaned, kw))
+    tech_count = sum(
+        1 for keyword in TECHNICAL_KEYWORDS
+        if _contains_keyword(cleaned, keyword)
+    )
     
     # If >40% of keywords are technical, flag as heavily technical
     word_count = len(cleaned.split())
@@ -170,8 +168,8 @@ def assess_relevance(
         - suggestions: List[str] - actionable recommendations
     """
     # Clean both inputs
-    desc_clean = _clean_text(user_description)
-    readme_clean = _clean_text(readme_text)
+    desc_clean = clean_text(user_description)
+    readme_clean = clean_text(readme_text)
     
     # Check combined text first
     combined = _combine_text(desc_clean, readme_clean)
@@ -194,7 +192,7 @@ def assess_relevance(
     
     if has_signals:
         embedder = get_embedder()
-        description_embeddings = _encode_text_chunks(desc_clean, embedder)
+        description_embeddings = _encode_text_chunks(combined, embedder)
         sdg_embs = _get_sdg_embeddings()
         sims_by_chunk = np.dot(description_embeddings, sdg_embs.T)
         sims = np.max(sims_by_chunk, axis=0)

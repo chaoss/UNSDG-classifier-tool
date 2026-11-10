@@ -22,8 +22,7 @@ def main(text: str, project_name: str = "", project_url: str = ""):
         # response.raise_for_status()
         
         raw_result = response.json()
-        # Transform Aurora API response to match embedding model format
-        # Aurora API can return different structures, handle both cases
+        
         
         sdg_predictions = {}
         
@@ -31,14 +30,12 @@ def main(text: str, project_name: str = "", project_url: str = ""):
         if "predictions" in raw_result and isinstance(raw_result["predictions"], list):
             for idx, pred in enumerate(raw_result["predictions"]):
                 
-                # Handle case where pred might be a dict with nested structure
                 if isinstance(pred, dict):
                     # Extract SDG code and score
                     sdg_code = None
                     sdg_name = None
                     score = None
-                    
-                    # Check if sdg is a dict with code field (Aurora API format)
+                 
                     if "sdg" in pred and isinstance(pred["sdg"], dict):
                         sdg_value = pred["sdg"]
                         # Get the SDG code (e.g., "1", "2", etc.)
