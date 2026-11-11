@@ -302,26 +302,44 @@ const EditModal: React.FC<EditModalProps> = ({
                       </div>
 
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <label className="text-sm text-gray-600 font-medium">
-                          Score:
-                        </label>
-                        <input
-                          type="number"
-                          min="0"
-                          max="1"
-                          step="0.001"
-                          value={confidence}
-                          onChange={(e) =>
+                      <label className="text-sm text-gray-600 font-medium">
+                        Score:
+                      </label>
+
+                      <input
+                        type="number"
+                        min="0"
+                        max="1"
+                        step="0.001"
+                        value={confidence}
+                        onChange={(e) => {
+                          const rawValue = e.target.value;
+
+                          if (rawValue === "") {
                             setEditableResults((prev) => ({
                               ...prev,
-                              [sdgKey]: { ...value, prediction: parseFloat(e.target.value) || 0 },
-                            }))
+                              [sdgKey]: { ...value, prediction: 0 },
+                            }));
+                            return;
                           }
-                          className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
-                        />
-                        <span className="text-sm text-gray-500">
-                          ({Math.round(Number(confidence) * 100)}%)
-                        </span>
+
+                          const score = Number(rawValue);
+
+                          if (!Number.isFinite(score)) return;
+
+                          setEditableResults((prev) => ({
+                            ...prev,
+                            [sdgKey]: {
+                              ...value,
+                              prediction: Math.min(1, Math.max(0, score)),
+                            },
+                          }));
+                        }}
+                        className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#5b92e5] focus:border-transparent"
+                      />
+                      <span className="text-sm text-gray-500">
+                        ({Math.round(Number(confidence) * 100)}%)
+                      </span>
                         <button
                           onClick={() => removeSDG(sdgKey)}
                           className="ml-2 text-red-500 hover:text-red-700 transition-colors"
@@ -337,7 +355,7 @@ const EditModal: React.FC<EditModalProps> = ({
                         <div
                           className="bg-[#5b92e5] h-2 rounded-full transition-all duration-300"
                           style={{
-                            width: `${Math.round(Number(confidence) * 100)}%`,
+                            width: `${Math.min(100, Math.max(0, Number(confidence) * 100 || 0))}%`,
                           }}
                         ></div>
                       </div>
